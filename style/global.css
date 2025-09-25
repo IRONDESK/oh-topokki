@@ -130,6 +130,7 @@ option {
     outline: none;
     color: inherit;
     border-radius: 0;
+    font: inherit;
     text-decoration: none;
 }
 

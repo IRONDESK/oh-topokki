@@ -1,7 +1,8 @@
 import React, { useImperativeHandle, useRef } from "react";
 import { selectStyle } from "@/share/components/css/select.css";
 import { fonts } from "@/style/typo.css";
-import { flexs } from "@/style/container.css";
+import { flexs, fullwidth } from "@/style/container.css";
+import clsx from "clsx";
 
 interface SelectBoxProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "ref" | "style"> {
@@ -20,8 +21,8 @@ export const SelectBox = (
   return (
     <label className={selectStyle.label}>
       {icon}
-      <div className={flexs({ dir: "col", gap: "2" })}>
-        <span className={fonts.body4.medium}>{title}</span>
+      <div className={clsx(fullwidth, flexs({ dir: "col", gap: "2" }))}>
+        <span className={fonts.body3.medium}>{title}</span>
         <span className={fonts.caption1.regular}>{description}</span>
       </div>
       <input

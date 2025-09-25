@@ -1,5 +1,6 @@
 import { style, styleVariants } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
+import { global, theme } from "@/style/theme.css";
 
 export const flexs = recipe({
   base: {
@@ -7,6 +8,11 @@ export const flexs = recipe({
     alignItems: "center",
   },
   variants: {
+    flex: {
+      1: { flex: 1 },
+      2: { flex: 2 },
+      3: { flex: 3 },
+    },
     justify: {
       center: { justifyContent: "center" },
       spb: { justifyContent: "space-between" },
@@ -16,6 +22,7 @@ export const flexs = recipe({
     align: {
       start: { alignItems: "flex-start" },
       end: { alignItems: "flex-end" },
+      stretch: { alignItems: "stretch" },
     },
     dir: {
       row: { flexDirection: "row" },
@@ -48,4 +55,25 @@ export const flexRatio = styleVariants({
   1: { flex: 1 },
   2: { flex: 2 },
   3: { flex: 3 },
+});
+
+export const fixedBottom = style({
+  position: "fixed",
+  bottom: 0,
+  left: 0,
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  width: "100vw",
+  backgroundColor: theme.color.white,
+  padding: "16px 16px 24px",
+  zIndex: 100,
+  boxShadow: theme.shadow.md,
+  "@media": {
+    "(min-width: 1280px)": {
+      width: global.size.overlayMaxWidth,
+      left: "50%",
+      transform: "translateX(-50%)",
+    },
+  },
 });

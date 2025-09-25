@@ -6,16 +6,18 @@ type Props =
       t?: "round" | "straight";
       name: string;
       size?: number;
+      color?: string;
     }
   | {
       w: "brands";
       t?: never;
       name: string;
       size?: number;
+      color?: string;
     };
 
 function Icons(props: Props) {
-  const { size = 16 } = props;
+  const { size = 16, color } = props;
   if (props.w === "brands") {
     return (
       <i
@@ -23,6 +25,7 @@ function Icons(props: Props) {
         style={{
           fontSize: size,
           height: size,
+          color,
         }}
       ></i>
     );
@@ -34,6 +37,7 @@ function Icons(props: Props) {
         style={{
           fontSize: size,
           height: size,
+          color,
         }}
       ></i>
     );
