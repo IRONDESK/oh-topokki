@@ -1,0 +1,102 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: {
+        restaurantId: params.id,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return NextResponse.json(reviews);
+  } catch (error) {
+    console.error('리뷰 조회 오류:', error);
+    return NextResponse.json(
+      { error: '리뷰 조회에 실패했습니다.' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const body = await request.json();
+    const { content, rating, authorId } = body;
+
+    if (!content || !rating || !authorId) {
+      return NextResponse.json(
+        { error: '필수 정보가 누락되었습니다.' },
+        { status: 400 }
+      );
+    }
+
+    if (rating < 1 || rating > 5) {
+      return NextResponse.json(
+        { error: '별점은 1-5 사이의 값이어야 합니다.' },
+        { status: 400 }
+      );
+    }
+
+    const review = await prisma.review.create({
+      data: {
+        content,
+        rating: parseInt(rating),
+        authorId,
+        restaurantId: params.id,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // 맛집의 평균 별점과 리뷰 개수 업데이트
+    const reviews = await prisma.review.findMany({
+      where: { restaurantId: params.id },
+      select: { rating: true },
+    });
+
+    const averageRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    const reviewCount = reviews.length;
+
+    await prisma.restaurant.update({
+      where: { id: params.id },
+      data: {
+        averageRating,
+        reviewCount,
+      },
+    });
+
+    return NextResponse.json(review, { status: 201 });
+  } catch (error) {
+    console.error('리뷰 생성 오류:', error);
+    return NextResponse.json(
+      { error: '리뷰 작성에 실패했습니다.' },
+      { status: 500 }
+    );
+  }
+}
