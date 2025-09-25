@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  provider  String
+  providerId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurants Restaurant[]
+  reviews     Review[]
+
+  @@unique([provider, providerId])
+  @@map("users")
+}
+
+model Restaurant {
+  id          String   @id @default(uuid())
+  name        String
+  address     String
+  latitude    Float
+  longitude   Float
+  phoneNumber String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 작성자 정보
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // 떡볶이 관련 정보
+  topokkiType String? // '즉석떡볶이', '판떡볶이', '국물떡볶이'
+  price       Int? // 단일 가격
+  riceKinds   String[] // ['밀떡', '쌀떡', '가래떡']
+  sauceKinds  String[] // ['달콤', '매콤', '불맛']
+  spiciness   Int? // 맵기 정도 (0-5)
+  canChangeSpicy Boolean @default(false) // 맵기 조절 가능 여부
+  sideMenus   String[]
+  noodleKinds String[] // ['라면', '쫄면', '우동면', '중국당면']
+  sundaeType  String? // '순대만', '기본내장', '모든내장'
+  others      String[] // 기타 속성들
+  recommend   Json[] // [{type: string(4글자), url: string}]
+  
+  // 리뷰
+  reviews     Review[]
+  
+  // 평점 (계산된 값)
+  averageRating Float @default(0)
+  reviewCount   Int   @default(0)
+
+  @@map("restaurants")
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  content      String
+  rating       Int      // 1-5 별점
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
