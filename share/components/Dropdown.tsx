@@ -51,7 +51,7 @@ export const Dropdown = (
       ref={refs.setReference}
       onClick={() => setOpen((prev) => !prev)}
     >
-      <div className={selectStyle.dropdownBox} data-placeholder={"true"}>
+      <div className={selectStyle.dropdownBox} data-placeholder={displayValue === null}>
         {displayValue ?? placeholder ?? "선택해 주세요"}
         <Icons w="regular" t="round" name="angle-small-down" size={24} />
       </div>
