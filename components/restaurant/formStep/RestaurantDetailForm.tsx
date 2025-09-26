@@ -13,23 +13,21 @@ import { FieldSection } from "@/components/restaurant/formStep/FieldSection";
 import { Text } from "@/share/components/Text";
 import { mainButton } from "@/share/components/css/share.css";
 
-interface RestaurantDetailFormProps {
+type Props = {
   setStep: (step: number) => void;
-  onSubmit: (data: RestaurantFormData) => Promise<void>;
-  submitting: boolean;
 }
 
 const RestaurantDetailForm = ({
   setStep,
-  onSubmit,
-  submitting,
-}: RestaurantDetailFormProps) => {
+}: Props) => {
   const [order, setOrder] = useState(0);
-  const { watch, handleSubmit } = useFormContext<RestaurantFormData>();
+  const { watch } = useFormContext<RestaurantFormData>();
   const formData = watch();
 
+
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+    <section className={styles.form}>
       <div className={flexs({ justify: "spb", align: "start" })}>
         <div>
           <p className={fonts.head5.medium}>
@@ -86,7 +84,7 @@ const RestaurantDetailForm = ({
           </button>
         )}
       </div>
-    </form>
+    </section>
   );
 };
 

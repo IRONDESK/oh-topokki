@@ -1,14 +1,15 @@
 "use client";
 
-import { fixedBottom, flexs, fullwidth } from "@/style/container.css";
-import * as styles from "../RestaurantForm.css";
-import { InputHead } from "@/share/components/InputHead";
-import { align, fonts } from "@/style/typo.css";
-import Spinner from "@/share/components/Spinner";
-import { mainButton } from "@/share/components/css/share.css";
 import clsx from "clsx";
+import { useFormContext } from "react-hook-form";
+
 import { Text } from "@/share/components/Text";
-import { category } from "../RestaurantForm.css";
+import { InputHead } from "@/share/components/InputHead";
+import Spinner from "@/share/components/Spinner";
+import { fixedBottom, flexs, fullwidth } from "@/style/container.css";
+import { fonts } from "@/style/typo.css";
+import * as styles from "../RestaurantForm.css";
+import { mainButton } from "@/share/components/css/share.css";
 
 interface PlaceSearchResult {
   title: string;
@@ -19,24 +20,51 @@ interface PlaceSearchResult {
   mapx: string;
   mapy: string;
 }
-
-interface PlaceSearchFormProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  searchResults: PlaceSearchResult[];
-  loading: boolean;
-  handlePlaceSearch: () => Promise<void>;
-  handlePlaceSelect: (place: PlaceSearchResult) => void;
+type Props = {
+  setStep: (step: number) => void;
 }
 
-const PlaceSearchForm = ({
-  searchQuery,
-  setSearchQuery,
-  searchResults,
-  loading,
-  handlePlaceSearch,
-  handlePlaceSelect,
-}: PlaceSearchFormProps) => {
+const PlaceSearchForm = ({ setStep }: Props) => {
+  const { setValue } = useFormContext<RestaurantFormData>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([]);
+    
+
+  const [loading, setLoading] = useState(false);
+
+    const handlePlaceSearch = async () => {
+      if (!searchQuery.trim()) return;
+  
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `/api/search/places?query=${encodeURIComponent(searchQuery + " 떡볶이")}`,
+        );
+        if (!response.ok) throw new Error("검색 실패");
+  
+        const data = await response.json();
+        setSearchResults(data.items || []);
+      } catch (error) {
+        console.error("장소 검색 오류:", error);
+        alert("장소 검색에 실패했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+      const handlePlaceSelect = (place: PlaceSearchResult) => {
+        const longitude = parseFloat(place.mapx) / 10000000;
+        const latitude = parseFloat(place.mapy) / 10000000;
+    
+        setValue("name", place.title);
+        setValue("address", place.roadAddress || place.address);
+        setValue("phoneNumber", place.telephone || "");
+        setValue("latitude", latitude);
+        setValue("longitude", longitude);
+    
+        setStep(2);
+      };
+
   return (
     <div
       className={flexs({
@@ -99,6 +127,7 @@ const PlaceSearchForm = ({
 
       <div className={fixedBottom}>
         <button
+          type="button"
           onClick={handlePlaceSearch}
           disabled={loading}
           className={mainButton}

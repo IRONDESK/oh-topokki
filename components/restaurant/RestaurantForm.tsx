@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ComponentProps } from "react";
 import { useFormContext } from "react-hook-form";
-import Icons from "@/share/components/Icons";
-import * as styles from "./RestaurantForm.css";
+import { type OverlayControllerComponent, } from 'overlay-kit';
 import { useAuth } from "@/contexts/AuthContext";
+
+import * as styles from "./RestaurantForm.css";
+import Icons from "@/share/components/Icons";
 import { RestaurantFormProvider } from "./RestaurantFormProvider";
 import PlaceSearchForm from "./formStep/PlaceSearchForm";
 import RestaurantDetailForm from "./formStep/RestaurantDetailForm";
@@ -29,75 +31,17 @@ export interface RestaurantFormData {
   myComment?: string;
 }
 
-interface PlaceSearchResult {
-  title: string;
-  address: string;
-  roadAddress: string;
-  category: string;
-  telephone: string;
-  mapx: string;
-  mapy: string;
-}
-
-interface RestaurantFormProps {
-  isOpen: boolean;
-  close: (data: RestaurantFormData) => void;
-}
-
-const RestaurantFormContent = ({
-  close,
-}: {
-  close: (data: RestaurantFormData) => void;
-}) => {
+const RestaurantFormContent = ({ close }: Partial<ComponentProps<OverlayControllerComponent>>) => {
   const { user } = useAuth();
-  const { setValue, getValues, reset } = useFormContext<RestaurantFormData>();
-
+  const { reset, handleSubmit } = useFormContext<RestaurantFormData>();
   const [step, setStep] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [tempInputs, setTempInputs] = useState({
-    rice: "",
-    sauce: "",
-    sideMenu: "",
-    noodle: "",
-    other: "",
-    recommendType: "",
-    recommendUrl: "",
-  });
 
-  const handlePlaceSearch = async () => {
-    if (!searchQuery.trim()) return;
-
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `/api/search/places?query=${encodeURIComponent(searchQuery + " 떡볶이")}`,
-      );
-      if (!response.ok) throw new Error("검색 실패");
-
-      const data = await response.json();
-      setSearchResults(data.items || []);
-    } catch (error) {
-      console.error("장소 검색 오류:", error);
-      alert("장소 검색에 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePlaceSelect = (place: PlaceSearchResult) => {
-    const longitude = parseFloat(place.mapx) / 10000000;
-    const latitude = parseFloat(place.mapy) / 10000000;
-
-    setValue("name", place.title);
-    setValue("address", place.roadAddress || place.address);
-    setValue("phoneNumber", place.telephone || "");
-    setValue("latitude", latitude);
-    setValue("longitude", longitude);
-
-    setStep(2);
+  const handleClose = () => {
+    setStep(1);
+    setSearchQuery("");
+    setSearchResults([]);
+    close();
+    reset();
   };
 
   const onSubmit = async (data: RestaurantFormData) => {
@@ -117,24 +61,6 @@ const RestaurantFormContent = ({
     }
   };
 
-  const handleClose = () => {
-    const formData = getValues();
-    setStep(1);
-    setSearchQuery("");
-    setSearchResults([]);
-    setTempInputs({
-      rice: "",
-      sauce: "",
-      sideMenu: "",
-      noodle: "",
-      other: "",
-      recommendType: "",
-      recommendUrl: "",
-    });
-    reset();
-    close(formData);
-  };
-
   return (
     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
       <div className={styles.header}>
@@ -147,7 +73,7 @@ const RestaurantFormContent = ({
         </button>
       </div>
 
-      <div className={styles.content}>
+      <form className={styles.content} onSubmit={handleSubmit(onSubmit)}>
         {step === 1 && (
           <h3 className={formStyle.formTitle}>
             {user?.user_metadata.name}님의
@@ -157,35 +83,28 @@ const RestaurantFormContent = ({
         )}
         {step === 1 ? (
           <PlaceSearchForm
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            searchResults={searchResults}
-            loading={loading}
-            handlePlaceSearch={handlePlaceSearch}
-            handlePlaceSelect={handlePlaceSelect}
+            setStep={setStep}
           />
         ) : (
           <RestaurantDetailForm
             setStep={setStep}
-            onSubmit={onSubmit}
-            submitting={submitting}
           />
         )}
-      </div>
+      </form>
     </div>
   );
 };
 
-const RestaurantForm = ({ isOpen, close }: RestaurantFormProps) => {
+const RestaurantRegisterForm = (controller: ComponentProps<OverlayControllerComponent>) => {
   if (!isOpen) return null;
 
   return (
     <RestaurantFormProvider>
       <div className={styles.overlay}>
-        <RestaurantFormContent close={close} />
+        <RestaurantFormContent close={controller.close} />
       </div>
     </RestaurantFormProvider>
   );
 };
 
-export default RestaurantForm;
+export default RestaurantRegisterForm;
