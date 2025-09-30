@@ -1,13 +1,25 @@
-import { overlay } from 'overlay-kit';
-import { Dialog, type DialogCommon } from '@/share/common/Dialog.tsx';
+import { overlay as overlayKit } from "overlay-kit";
+import { Dialog, DialogCommon } from "@/share/components/Dialog";
 
 const confirm = (param: DialogCommon) =>
-  overlay.openAsync<boolean>(controller => (
-    <Dialog title={param.title} contents={param.contents} type="confirm" {...controller} />
+  overlayKit.openAsync<boolean>((controller) => (
+    <Dialog
+      title={param.title}
+      contents={param.contents}
+      type="confirm"
+      {...controller}
+    />
   ));
 
 const alert = (param: DialogCommon) =>
-  overlay.open(controller => <Dialog title={param.title} contents={param.contents} type="alert" {...controller} />);
+  overlayKit.open((controller) => (
+    <Dialog
+      title={param.title}
+      contents={param.contents}
+      type="alert"
+      {...controller}
+    />
+  ));
 
 export const overlay = {
   confirm,
