@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import "@/style/global.css";
 import localFont from "next/font/local";
-import { AuthProvider } from "@/contexts/AuthContext";
 import Layout from "@/share/layouts/Layout";
-import { Provider as JotaiProvider } from "jotai";
-import { OverlayProvider } from "overlay-kit";
+import Providers from "@/app/Providers";
 import { theme } from "@/style/theme.css";
 
 export const metadata: Metadata = {
@@ -28,13 +26,9 @@ export default function RootLayout({
         className={pretendard.className}
         style={{ color: theme.color.gray["800"] }}
       >
-        <JotaiProvider>
-          <AuthProvider>
-            <OverlayProvider>
-              <Layout>{children}</Layout>
-            </OverlayProvider>
-          </AuthProvider>
-        </JotaiProvider>
+        <Providers>
+          <Layout>{children}</Layout>
+        </Providers>
       </body>
     </html>
   );
