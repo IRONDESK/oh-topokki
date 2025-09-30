@@ -1,0 +1,30 @@
+import { http, isHttpError } from "@/lib/http";
+import { NaverPlaceSearchResult } from "@/service/model/naver-map";
+import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
+import { PaginationResponse } from "@/service/model/common";
+
+export const getNaverMapSearch = async (query: string) => {
+  try {
+    return await http.get<PaginationResponse<NaverPlaceSearchResult[]>>(
+      `/api/search/places?query=${encodeURIComponent(query + " 떡볶이")}`,
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const postRestaurantInfo = async (data: RestaurantFormData) => {
+  try {
+    return await http.post<NaverPlaceSearchResult>(`/api/restaurants`, {
+      json: data,
+    });
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
