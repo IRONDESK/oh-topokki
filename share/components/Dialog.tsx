@@ -1,26 +1,31 @@
-import type { ComponentProps } from 'react';
-import type { OverlayAsyncControllerComponent, OverlayControllerComponent } from 'overlay-kit';
-import { dialogStyle } from '@/share/common/css/dialog.css.ts';
-import { flexs } from '@/style/container.css.ts';
+import type { ComponentProps } from "react";
+import type {
+  OverlayAsyncControllerComponent,
+  OverlayControllerComponent,
+} from "overlay-kit";
+import { dialogStyle } from "@/share/components/css/dialog.css";
+import { flexs } from "@/style/container.css";
 
 type AlertBaseProps = ComponentProps<OverlayControllerComponent>;
-type ConfirmBaseProps = ComponentProps<OverlayAsyncControllerComponent<boolean>>;
+type ConfirmBaseProps = ComponentProps<
+  OverlayAsyncControllerComponent<boolean>
+>;
 export type DialogCommon = {
   title: string;
   contents?: string;
 };
 
 export type DialogProps =
-  | ({ type: 'alert' } & DialogCommon & AlertBaseProps)
+  | ({ type: "alert" } & DialogCommon & AlertBaseProps)
   | ({
-      type: 'confirm';
+      type: "confirm";
     } & DialogCommon &
       ConfirmBaseProps);
 
 export const Dialog = (props: DialogProps) => {
   const { type, isOpen, close, title, contents } = props;
   const handleClose = (resolve: boolean) => {
-    if (type === 'confirm') {
+    if (type === "confirm") {
       close(resolve);
     } else {
       close();
@@ -29,19 +34,22 @@ export const Dialog = (props: DialogProps) => {
 
   if (!isOpen) return null;
   return (
-    <section className={dialogStyle.dim} onClick={type === 'confirm' ? undefined : () => handleClose}>
+    <section
+      className={dialogStyle.dim}
+      onClick={type === "confirm" ? undefined : () => handleClose}
+    >
       <div className={dialogStyle.container}>
         <div className={dialogStyle.inner}>
           <p className={dialogStyle.title}>{title}</p>
           {contents && <p className={dialogStyle.contents}>{contents}</p>}
         </div>
-        <div className={flexs({ gap: '8' })}>
-          {type === 'confirm' && (
-            <button type='button' onClick={() => close(false)}>
+        <div className={flexs({ gap: "8" })}>
+          {type === "confirm" && (
+            <button type="button" onClick={() => close(false)}>
               취소
             </button>
           )}
-          <button type='button' onClick={() => handleClose(true)}>
+          <button type="button" onClick={() => handleClose(true)}>
             확인
           </button>
         </div>
