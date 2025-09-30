@@ -12,22 +12,29 @@ import { placeFields } from "@/components/restaurant/formStep/place-fields";
 import { FieldSection } from "@/components/restaurant/formStep/FieldSection";
 import { Text } from "@/share/components/Text";
 import { mainButton } from "@/share/components/css/share.css";
+import { usePostRestaurantInfo } from "@/share/hooks/naver-map";
+import { overlay } from "@/feature/overlay";
 
 type Props = {
   setStep: (step: number) => void;
-}
+};
 
-const RestaurantDetailForm = ({
-  setStep,
-}: Props) => {
+const RestaurantDetailForm = ({ setStep }: Props) => {
   const [order, setOrder] = useState(0);
-  const { watch } = useFormContext<RestaurantFormData>();
+  const { watch, handleSubmit } = useFormContext<RestaurantFormData>();
   const formData = watch();
+  const { mutate, isPending } = usePostRestaurantInfo();
 
-
+  const onSubmit = (data: RestaurantFormData) => {
+    mutate(data, {
+      onSuccess: async () => {
+        overlay.alert({ title: "저장되었습니다!" });
+      },
+    });
+  };
 
   return (
-    <section className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <div className={flexs({ justify: "spb", align: "start" })}>
         <div>
           <p className={fonts.head5.medium}>
@@ -70,8 +77,8 @@ const RestaurantDetailForm = ({
           </button>
         )}
         {order === placeFields.length - 1 && (
-          <button type="submit" disabled={submitting} className={mainButton}>
-            {submitting ? "등록 중..." : "등록하기"}
+          <button type="submit" disabled={isPending} className={mainButton}>
+            {isPending ? "등록 중..." : "등록하기"}
           </button>
         )}
         {order < placeFields.length - 1 && (
@@ -84,7 +91,7 @@ const RestaurantDetailForm = ({
           </button>
         )}
       </div>
-    </section>
+    </form>
   );
 };
 

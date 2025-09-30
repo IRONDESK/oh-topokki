@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Text } from "@/share/components/Text";
@@ -10,6 +11,8 @@ import { fixedBottom, flexs, fullwidth } from "@/style/container.css";
 import { fonts } from "@/style/typo.css";
 import * as styles from "../RestaurantForm.css";
 import { mainButton } from "@/share/components/css/share.css";
+import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
+import { useGetNaverMapSearch } from "@/share/hooks/naver-map";
 
 interface PlaceSearchResult {
   title: string;
@@ -22,48 +25,30 @@ interface PlaceSearchResult {
 }
 type Props = {
   setStep: (step: number) => void;
-}
+};
 
 const PlaceSearchForm = ({ setStep }: Props) => {
   const { setValue } = useFormContext<RestaurantFormData>();
+  const [tempQuery, setTempQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<PlaceSearchResult[]>([]);
-    
+  const { data, isLoading } = useGetNaverMapSearch(searchQuery);
 
-  const [loading, setLoading] = useState(false);
+  const handlePlaceSelect = (place: PlaceSearchResult) => {
+    const longitude = parseFloat(place.mapx) / 10000000;
+    const latitude = parseFloat(place.mapy) / 10000000;
 
-    const handlePlaceSearch = async () => {
-      if (!searchQuery.trim()) return;
-  
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `/api/search/places?query=${encodeURIComponent(searchQuery + " 떡볶이")}`,
-        );
-        if (!response.ok) throw new Error("검색 실패");
-  
-        const data = await response.json();
-        setSearchResults(data.items || []);
-      } catch (error) {
-        console.error("장소 검색 오류:", error);
-        alert("장소 검색에 실패했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setValue("name", place.title);
+    setValue("address", place.roadAddress || place.address);
+    setValue("phoneNumber", place.telephone || "");
+    setValue("latitude", latitude);
+    setValue("longitude", longitude);
 
-      const handlePlaceSelect = (place: PlaceSearchResult) => {
-        const longitude = parseFloat(place.mapx) / 10000000;
-        const latitude = parseFloat(place.mapy) / 10000000;
-    
-        setValue("name", place.title);
-        setValue("address", place.roadAddress || place.address);
-        setValue("phoneNumber", place.telephone || "");
-        setValue("latitude", latitude);
-        setValue("longitude", longitude);
-    
-        setStep(2);
-      };
+    setStep(2);
+  };
+
+  const handleSearchStart = () => {
+    setSearchQuery(tempQuery);
+  };
 
   return (
     <div
@@ -79,15 +64,15 @@ const PlaceSearchForm = ({ setStep }: Props) => {
         <InputHead
           type="text"
           placeholder="상호명을 입력해 주세요"
-          value={searchQuery}
+          value={tempQuery}
           autoFocus={true}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyUp={(e) => e.key === "Enter" && handlePlaceSearch()}
+          onChange={(e) => setTempQuery(e.target.value)}
+          onKeyUp={(e) => e.key === "Enter" && handleSearchStart()}
         />
       </div>
-      {searchResults.length > 0 && (
+      {data && data?.items.length > 0 && (
         <ul className={styles.searchResults}>
-          {searchResults.map((place, index) => (
+          {data?.items.map((place, index) => (
             <li
               key={index}
               className={clsx(
@@ -128,11 +113,11 @@ const PlaceSearchForm = ({ setStep }: Props) => {
       <div className={fixedBottom}>
         <button
           type="button"
-          onClick={handlePlaceSearch}
-          disabled={loading}
+          onClick={handleSearchStart}
+          disabled={isLoading}
           className={mainButton}
         >
-          {loading ? (
+          {isLoading ? (
             <>
               <Spinner color="gray" size={24} thick={3} /> 검색 중
             </>

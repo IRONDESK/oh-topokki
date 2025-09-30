@@ -78,7 +78,7 @@ export const searchResults = style({
   width: "calc(100% + 40px)",
   display: "flex",
   flexDirection: "column",
-  margin: "28px -20px 0",
+  margin: "20px -20px 0",
   paddingBottom: global.size.safeFixedBottom,
 });
 

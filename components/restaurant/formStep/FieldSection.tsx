@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
 import { PlaceField } from "@/components/restaurant/formStep/place-fields";
@@ -10,6 +10,7 @@ import Icons from "@/share/components/Icons";
 import { align, fonts } from "@/style/typo.css";
 import { inputStyle } from "@/share/components/css/input.css";
 import { theme } from "@/style/theme.css";
+import { buttons, label, mainButton } from "@/share/components/css/share.css";
 
 type FieldStatus = "fold-value" | "fold" | "unfold";
 interface TitleProps {
@@ -51,7 +52,8 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
     number,
     subField,
   } = props;
-  const { register, watch } = useFormContext<RestaurantFormData>();
+  const { register, watch, setValue } = useFormContext<RestaurantFormData>();
+  const textGroupInputRef = useRef<HTMLInputElement>(null);
 
   if (type === "checkbox" || type === "radio") {
     return (
@@ -232,17 +234,83 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
   }
 
   if (type === "text-group") {
+    const addFieldValue = (value: string) => {
+      setValue(name, [
+        ...((watch(name) as string[]) ?? []),
+        textGroupInputRef.current!.value,
+      ]);
+      setTimeout(() => {
+        textGroupInputRef.current!.value = "";
+      }, 1);
+    };
+
     return (
       <div className={formStyle.fieldContainer} data-fold={status !== "unfold"}>
         <FieldTitle title={title} detailTitle={detailTitle} status={status} />
-        <div className={clsx(fullwidth, inputStyle.container)}>
-          <input type="text" className={inputStyle.input} {...register(name)} />
-          <span
-            className={inputStyle.inputPlaceholder}
-            data-hide={watch(name).length > 0}
-          >
-            {placeholder}
-          </span>
+        <div
+          className={clsx(
+            fullwidth,
+            flexs({ dir: "col", align: "start", gap: "16" }),
+          )}
+          style={{ display: status !== "unfold" ? "none" : undefined }}
+        >
+          {JSON.stringify(watch(name))}
+          <div className={clsx(fullwidth, flexs({}))}>
+            <div className={clsx(fullwidth, inputStyle.container)}>
+              <input
+                ref={textGroupInputRef}
+                type={type}
+                inputMode="text"
+                autoFocus={true}
+                className={clsx(inputStyle.input, fonts.head6.medium)}
+              />
+              <span
+                className={clsx(
+                  inputStyle.inputPlaceholder,
+                  fonts.head6.medium,
+                )}
+                data-hide={watch(name).length > 0}
+              >
+                {placeholder}
+              </span>
+            </div>
+            <button
+              type="button"
+              className={buttons({
+                fill: "secondary",
+                size: "small",
+              })}
+              data-fill="secondary"
+              onClick={() => {
+                setValue(name, [
+                  ...((watch(name) as string[]) ?? []),
+                  textGroupInputRef.current!.value,
+                ]);
+                setTimeout(() => {
+                  textGroupInputRef.current!.value = "";
+                }, 1);
+              }}
+            >
+              추가
+            </button>
+          </div>
+          <div className={flexs({ dir: "col", align: "start", gap: "4" })}>
+            <p className={fonts.body4.medium}>혹시 이런 키워드는 어떠세요?</p>
+            <div className={flexs({ gap: "6" })}>
+              {["시장떡볶이", "학교앞분식", "수제튀김"].map((item) => (
+                <button
+                  type="button"
+                  key={item}
+                  className={label({ fill: "secondary", size: "small" })}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
+          {watch(name) ?? "선택되지 않음"}
         </div>
       </div>
     );

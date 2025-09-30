@@ -215,6 +215,7 @@ export const placeFields: PlaceField[] = [
     detailTitle: "이 가게만의 사이드 메뉴 혹은 특징이 있나요?",
     name: "others",
     type: "text-group",
+    placeholder: "단어로 짧게 입력해 주세요",
   },
   {
     title: "나의 한줄평",
