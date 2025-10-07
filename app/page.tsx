@@ -1,11 +1,11 @@
 'use client';
 
-import MapView from '@/app/map/MapView';
+import TopokkiMap from '@/components/map/TopokkiMap';
 
 export default function Home() {
   return (
     <>
-      <MapView />
+      <TopokkiMap />
     </>
   );
 }
