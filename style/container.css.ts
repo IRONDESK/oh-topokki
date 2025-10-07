@@ -66,7 +66,7 @@ export const fixedBottom = style({
   gap: "8px",
   width: "100vw",
   backgroundColor: theme.color.white,
-  padding: "16px 16px 24px",
+  padding: "16px 16px calc(24px + env(safe-area-inset-bottom))",
   zIndex: 100,
   boxShadow: theme.shadow.md,
   "@media": {

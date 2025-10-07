@@ -1,4 +1,6 @@
 import { styleVariants } from "@vanilla-extract/css";
+import { recipe } from "@vanilla-extract/recipes";
+import { theme } from "@/style/theme.css";
 
 export const fontSize = {
   head1: { fontSize: "6.4rem", lineHeight: "8rem" },
@@ -51,4 +53,38 @@ export const align = styleVariants({
   left: { textAlign: "left" },
   center: { textAlign: "center" },
   right: { textAlign: "right" },
+});
+
+const COLORS = [
+  "gray",
+  "success",
+  "info",
+  "warning",
+  "red",
+  "purple",
+  "magenta",
+  "primary",
+] as const;
+const COLOR_TYPES = [900, 800, 700, 600, 500, 400, 300, 200, 100, 50];
+
+export const typo = recipe({
+  variants: {
+    size: fontSize,
+    weight: fontWeight,
+    color: {
+      white: { color: theme.color.white },
+      black: { color: theme.color.black },
+      ...(Object.fromEntries(
+        COLORS.map((color) => {
+          return COLOR_TYPES.map((type) => [
+            `${color}${type}`,
+            { color: theme.color[color][type] },
+          ]);
+        }).flat(),
+      ) as Record<
+        `${(typeof COLORS)[number]}${keyof typeof theme.color.primary}`,
+        { color: string }
+      >),
+    },
+  },
 });

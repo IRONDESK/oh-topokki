@@ -26,6 +26,8 @@ function Icons(props: Props) {
           fontSize: size,
           height: size,
           color,
+          display: "inline-flex",
+          alignItems: "center",
         }}
       ></i>
     );
@@ -38,6 +40,8 @@ function Icons(props: Props) {
           fontSize: size,
           height: size,
           color,
+          display: "inline-flex",
+          alignItems: "center",
         }}
       ></i>
     );

@@ -32,7 +32,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#f1f5f9",
       50: "#f8fafc",
     },
-
     success: {
       900: "#0e633c",
       800: "#177843",
@@ -57,7 +56,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#d6ecff",
       50: "#ebf6ff",
     },
-
     warning: {
       900: "#7a3f05",
       800: "#935309",
@@ -70,7 +68,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#fff5d2",
       50: "#fff9e6",
     },
-
     red: {
       900: "#770c25",
       800: "#8f1427",
@@ -83,7 +80,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#fee8d8",
       50: "#fef3eb",
     },
-
     purple: {
       900: "#280c6a",
       800: "#3a1480",
@@ -96,7 +92,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#f2d9fd",
       50: "#f8ecfe",
     },
-
     magenta: {
       900: "#730d5b",
       800: "#8b1664",
@@ -109,7 +104,6 @@ export const theme = createGlobalTheme(":root", {
       100: "#fedbda",
       50: "#fff1f0",
     },
-
     primary: {
       900: "#7a1f0a",
       800: "#92270e",

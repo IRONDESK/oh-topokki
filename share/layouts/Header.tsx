@@ -1,18 +1,25 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { overlay } from 'overlay-kit';
-import { useAuth } from '@/contexts/AuthContext';
-import Icons from '@/share/components/Icons';
-import { headerStyle } from '@/share/layouts/layout.css';
-import RestaurantRegisterForm from '@/components/restaurant/RestaurantForm';
+import Link from "next/link";
+import { overlay } from "overlay-kit";
+import { useAuth } from "@/contexts/AuthContext";
+import Icons from "@/share/components/Icons";
+import { headerStyle } from "@/share/layouts/layout.css";
+import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
+import LoginModal from "@/components/login/LoginModal";
 
 export default function Header() {
   const { user } = useAuth();
   const openRegisterForm = () => {
-    overlay.open(controller => (
-      <RestaurantRegisterForm isOpen={controller.isOpen} close={controller.close} />
+    overlay.open((controller) => (
+      <RestaurantRegisterForm
+        isOpen={controller.isOpen}
+        close={controller.close}
+      />
     ));
+  };
+  const openLoginModal = () => {
+    overlay.open((controller) => <LoginModal {...controller} />);
   };
 
   return (
@@ -24,15 +31,22 @@ export default function Header() {
           내용
         </li>
         <li className={headerStyle.filterItem}>
-          <Icons w="bold" t="round" name="search" size={16} />
+          <Icons w="brands" name="search" size={16} />
         </li>
       </ul>
-      <Link href={user ? '/mypage' : '/login'} className={headerStyle.headerSearch}>
-        <Icons w="solid" t="round" name="user" size={20} />
-      </Link>
-      <button type="button" className={headerStyle.headerSearch} onClick={openRegisterForm}>
-        <Icons w="solid" t="round" name="pencil" size={20} />
+
+      <button className={headerStyle.headerSearch} onClick={openLoginModal}>
+        <Icons w="bold" t="round" name="sign-in-alt" size={20} />
       </button>
+      {user && (
+        <button
+          type="button"
+          className={headerStyle.headerSearch}
+          onClick={openRegisterForm}
+        >
+          <Icons w="solid" t="round" name="pencil" size={20} />
+        </button>
+      )}
     </header>
   );
 }

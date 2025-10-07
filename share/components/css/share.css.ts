@@ -104,6 +104,7 @@ export const label = recipe({
     cursor: "pointer",
     wordBreak: "keep-all",
     border: "1px solid",
+    gap: "4px",
     selectors: {
       "&:disabled": {
         cursor: "not-allowed",
@@ -125,6 +126,11 @@ export const label = recipe({
       secondary: {
         borderColor: theme.color.primary["400"],
         color: theme.color.primary["600"],
+      },
+      assistive: {
+        backgroundColor: theme.color.gray["100"],
+        borderColor: "transparent",
+        color: theme.color.gray["600"],
       },
       gray: {
         backgroundColor: theme.color.gray["50"],

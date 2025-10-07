@@ -5,6 +5,7 @@ import type {
 } from "overlay-kit";
 import { dialogStyle } from "@/share/components/css/dialog.css";
 import { flexs } from "@/style/container.css";
+import { buttons } from "@/share/components/css/share.css";
 
 type AlertBaseProps = ComponentProps<OverlayControllerComponent>;
 type ConfirmBaseProps = ComponentProps<
@@ -45,11 +46,25 @@ export const Dialog = (props: DialogProps) => {
         </div>
         <div className={flexs({ gap: "8" })}>
           {type === "confirm" && (
-            <button type="button" onClick={() => close(false)}>
+            <button
+              type="button"
+              className={buttons({
+                fill: "secondary",
+                size: "small",
+              })}
+              onClick={() => close(false)}
+            >
               취소
             </button>
           )}
-          <button type="button" onClick={() => handleClose(true)}>
+          <button
+            type="button"
+            className={buttons({
+              fill: "primary",
+              size: "small",
+            })}
+            onClick={() => handleClose(true)}
+          >
             확인
           </button>
         </div>
