@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthenticatedUser } from '@/lib/supabase-server';
 
 export async function GET(
   request: NextRequest,
@@ -39,10 +40,25 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const body = await request.json();
-    const { content, rating, authorId } = body;
+    // 쿠키에서 사용자 인증 정보 추출
+    const authUser = await getAuthenticatedUser();
 
-    if (!content || !rating || !authorId) {
+    // DB에서 사용자 정보 조회
+    const user = await prisma.user.findUnique({
+      where: { email: authUser.email! }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요." },
+        { status: 404 }
+      );
+    }
+
+    const body = await request.json();
+    const { content, rating } = body;
+
+    if (!content || !rating) {
       return NextResponse.json(
         { error: '필수 정보가 누락되었습니다.' },
         { status: 400 }
@@ -60,7 +76,7 @@ export async function POST(
       data: {
         content,
         rating: parseInt(rating),
-        authorId,
+        authorId: user.id,
         restaurantId: params.id,
       },
       include: {
@@ -94,6 +110,14 @@ export async function POST(
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
     console.error('리뷰 생성 오류:', error);
+
+    if (error instanceof Error && (error.message.includes("로그인") || error.message.includes("인증"))) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json(
       { error: '리뷰 작성에 실패했습니다.' },
       { status: 500 }

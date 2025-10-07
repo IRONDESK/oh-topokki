@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAuthenticatedUser } from "@/lib/supabase-server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,6 +79,28 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // 쿠키에서 사용자 인증 정보 추출
+    const authUser = await getAuthenticatedUser();
+
+    // DB에서 사용자 정보 조회하거나 생성
+    let user = await prisma.user.findUnique({
+      where: { email: authUser.email! }
+    });
+
+    if (!user) {
+      // 사용자가 없으면 자동 생성 (기존 로그인 사용자 대응)
+      user = await prisma.user.create({
+        data: {
+          id: authUser.id,
+          email: authUser.email!,
+          name: authUser.user_metadata?.name || authUser.user_metadata?.full_name || null,
+          avatar: authUser.user_metadata?.avatar_url || null,
+          provider: authUser.app_metadata?.provider || 'unknown',
+          providerId: authUser.id,
+        }
+      });
+    }
+
     const body = await request.json();
     const {
       name,
@@ -85,7 +108,6 @@ export async function POST(request: NextRequest) {
       latitude,
       longitude,
       phoneNumber,
-      authorId,
       topokkiType,
       price,
       riceKinds = [],
@@ -101,7 +123,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // 필수 필드 검증
-    if (!name || !address || !latitude || !longitude || !authorId) {
+    if (!name || !address || !latitude || !longitude) {
       return NextResponse.json(
         { error: "필수 정보가 누락되었습니다." },
         { status: 400 },
@@ -115,7 +137,7 @@ export async function POST(request: NextRequest) {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         phoneNumber,
-        authorId,
+        authorId: user.id,
         topokkiType,
         price: price ? parseInt(price) : null,
         sundaeType,
@@ -145,7 +167,7 @@ export async function POST(request: NextRequest) {
         data: {
           content: myComment.trim(),
           rating: 5, // 기본 5점으로 설정 (작성자가 추천하는 맛집이므로)
-          authorId,
+          authorId: user.id,
           restaurantId: restaurant.id,
         },
       });
@@ -163,8 +185,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(restaurant, { status: 201 });
   } catch (error) {
     console.error("맛집 생성 오류:", error);
+    console.error("Error details:", error instanceof Error ? error.message : String(error));
+
+    if (error instanceof Error && (error.message.includes("로그인") || error.message.includes("인증"))) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 401 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "맛집 등록에 실패했습니다." },
+      { error: "맛집 등록에 실패했습니다.", details: error instanceof Error ? error.message : String(error) },
       { status: 500 },
     );
   }
