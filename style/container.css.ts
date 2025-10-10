@@ -5,7 +5,6 @@ import { global, theme } from "@/style/theme.css";
 export const flexs = recipe({
   base: {
     display: "flex",
-    alignItems: "center",
   },
   variants: {
     flex: {
@@ -23,6 +22,7 @@ export const flexs = recipe({
       start: { alignItems: "flex-start" },
       end: { alignItems: "flex-end" },
       stretch: { alignItems: "stretch" },
+      center: { alignItems: "center" },
     },
     dir: {
       row: { flexDirection: "row" },
@@ -43,6 +43,7 @@ export const flexs = recipe({
   },
   defaultVariants: {
     justify: "center",
+    align: "center",
     dir: "row",
     gap: "0",
   },
