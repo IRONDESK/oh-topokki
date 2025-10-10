@@ -28,6 +28,10 @@ export const flexs = recipe({
       row: { flexDirection: "row" },
       col: { flexDirection: "column" },
     },
+    wrap: {
+      true: { flexWrap: "wrap" },
+      false: { flexWrap: "nowrap" },
+    },
     gap: {
       "0": { gap: "0px" },
       "2": { gap: "2px" },

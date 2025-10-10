@@ -70,7 +70,11 @@ const COLOR_TYPES = [900, 800, 700, 600, 500, 400, 300, 200, 100, 50];
 export const typo = recipe({
   variants: {
     size: fontSize,
-    weight: fontWeight,
+    weight: {
+      regular: { fontWeight: "400" },
+      medium: { fontWeight: "500" },
+      semibold: { fontWeight: "600" },
+    },
     color: {
       white: { color: theme.color.white },
       black: { color: theme.color.black },
