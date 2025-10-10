@@ -1,5 +1,6 @@
-import { mainContainer } from '@/share/layouts/layout.css';
-import Header from '@/share/layouts/Header';
+import React from "react";
+import Navigation from "@/share/layouts/Navigation";
+import { mainContainer } from "@/share/layouts/css/layout.css";
 
 export default function Layout({
   children,
@@ -8,8 +9,8 @@ export default function Layout({
 }>) {
   return (
     <main className={mainContainer}>
-      <Header />
       {children}
+      <Navigation />
     </main>
   );
 }
