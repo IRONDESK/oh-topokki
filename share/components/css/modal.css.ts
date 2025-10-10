@@ -37,7 +37,6 @@ const dim = style({
   justifyContent: "center",
   zIndex: 2000,
   padding: "20px 0",
-  backdropFilter: "blur(2px)",
 });
 
 const modal = style({

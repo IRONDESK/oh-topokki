@@ -160,4 +160,33 @@ export const label = recipe({
   },
 });
 
+export const glassContainer = style([
+  fonts.body3.medium,
+  {
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "48px",
+    height: "48px",
+    borderRadius: "32px",
+    backgroundColor: "rgba(256,256,256,0.43)",
+    boxShadow: theme.shadow.md,
+    backdropFilter: "blur(4px)",
+    borderTop: "1px solid #fff",
+    borderLeft: "1px solid #fff",
+    selectors: {
+      '&[data-flexible="true"]': {
+        padding: "0 14px",
+        minWidth: "48px",
+        width: "auto",
+      },
+      "&:hover": {
+        transition: "filter 0.2s",
+        filter: "brightness(1.1)",
+      },
+    },
+  },
+]);
+
 export const shareStyle = { rotating };
