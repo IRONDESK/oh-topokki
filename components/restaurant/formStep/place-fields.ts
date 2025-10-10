@@ -114,16 +114,16 @@ export const placeFields: PlaceField[] = [
     type: "radio",
     items: [
       { label: "순대 없음", value: "", description: null, icon: null },
-      { label: "순대만", value: "ramyeon", description: null, icon: null },
+      { label: "순대만", value: "single", description: null, icon: null },
       {
         label: "기본 내장",
-        value: "jjolmyeon",
+        value: "basic",
         description: "간, 허파 정도만",
         icon: null,
       },
       {
         label: "다양한 내장",
-        value: "chinese",
+        value: "various",
         description: "거의 모든 내장",
         icon: null,
       },

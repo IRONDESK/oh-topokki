@@ -13,7 +13,7 @@ import { FieldSection } from "@/components/restaurant/formStep/FieldSection";
 import { Text } from "@/share/components/Text";
 import { mainButton } from "@/share/components/css/share.css";
 import { usePostRestaurantInfo } from "@/share/hooks/naver-map";
-import { overlay } from "@/feature/overlay";
+import { overlay } from "@/share/components/feature/overlay";
 
 type Props = {
   setStep: (step: number) => void;

@@ -1,38 +1,25 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import MapView from "@/app/map/MapView";
 import RestaurantMarker from "./RestaurantMarker";
 import { NaverMap } from "@/types/naver-maps";
 import { useNaverMap } from "@/hooks/useNaverMap";
-import * as styles from "./map.css";
-
-interface Restaurant {
-  id: string;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  averageRating: number;
-  reviewCount: number;
-  author?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-}
+import { mapStyle } from "./map.css";
+import { ResponseRestaurant } from "@/service/model/restaurant.ts";
+import Spinner from "@/share/components/Spinner";
+import MapHeader from "@/share/layouts/headers/MapHeader";
 
 interface TteokbokkiMapProps {
-  onRestaurantClick?: (restaurant: Restaurant) => void;
   center?: {
     lat: number;
     lng: number;
   };
 }
 
-const TopokkiMap = ({ onRestaurantClick, center }: TteokbokkiMapProps) => {
+const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   const [map, setMap] = useState<NaverMap | null>(null);
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [restaurants, setRestaurants] = useState<ResponseRestaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { naver } = useNaverMap();
@@ -80,43 +67,29 @@ const TopokkiMap = ({ onRestaurantClick, center }: TteokbokkiMapProps) => {
     [center, loadRestaurants],
   );
 
-  // 마커 클릭 핸들러
-  const handleMarkerClick = useCallback(
-    (restaurant: Restaurant) => {
-      if (onRestaurantClick) {
-        onRestaurantClick(restaurant);
-      }
-    },
-    [onRestaurantClick],
-  );
-
   return (
-    <div className={styles.container}>
+    <div className={mapStyle.mapContainer}>
+      <MapHeader />
       <MapView center={center} onMapLoad={handleMapLoad} />
 
       {map && naver && restaurants.length > 0 && (
-        <RestaurantMarker
-          map={map}
-          naver={naver}
-          restaurants={restaurants}
-          onMarkerClick={handleMarkerClick}
-        />
+        <RestaurantMarker map={map} naver={naver} restaurants={restaurants} />
       )}
 
       {loading && (
-        <div className={styles.loadingOverlay}>
-          <p>맛집 정보를 불러오는 중...</p>
+        <div className={mapStyle.loadingOverlay}>
+          <Spinner size={42} thick={5} color="primary" />
         </div>
       )}
 
       {error && (
-        <div className={styles.errorOverlay}>
+        <div className={mapStyle.errorOverlay}>
           <p>오류: {error}</p>
           <button onClick={() => loadRestaurants()}>다시 시도</button>
         </div>
       )}
 
-      <div className={styles.restaurantCount}>
+      <div className={mapStyle.restaurantCount} data-loading={loading}>
         총 {restaurants.length}개의 떡볶이 맛집
       </div>
     </div>

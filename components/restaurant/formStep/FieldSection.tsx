@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
 import { PlaceField } from "@/components/restaurant/formStep/place-fields";
@@ -53,7 +53,7 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
     subField,
   } = props;
   const { register, watch, setValue } = useFormContext<RestaurantFormData>();
-  const textGroupInputRef = useRef<HTMLInputElement>(null);
+  const [textGroupInput, setTextGroupInput] = useState("");
 
   if (type === "checkbox" || type === "radio") {
     return (
@@ -235,13 +235,14 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
 
   if (type === "text-group") {
     const addFieldValue = (value: string) => {
-      setValue(name, [
-        ...((watch(name) as string[]) ?? []),
-        textGroupInputRef.current!.value,
-      ]);
-      setTimeout(() => {
-        textGroupInputRef.current!.value = "";
-      }, 1);
+      setValue(name, [...((watch(name) as string[]) ?? []), value]);
+      setTextGroupInput("");
+    };
+    const clearFieldValue = (value: string) => {
+      setValue(
+        name,
+        watch(name).filter((item) => item !== value),
+      );
     };
 
     return (
@@ -254,22 +255,22 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
           )}
           style={{ display: status !== "unfold" ? "none" : undefined }}
         >
-          {JSON.stringify(watch(name))}
           <div className={clsx(fullwidth, flexs({}))}>
             <div className={clsx(fullwidth, inputStyle.container)}>
               <input
-                ref={textGroupInputRef}
                 type={type}
                 inputMode="text"
                 autoFocus={true}
                 className={clsx(inputStyle.input, fonts.head6.medium)}
+                value={textGroupInput}
+                onChange={(e) => setTextGroupInput(e.target.value)}
               />
               <span
                 className={clsx(
                   inputStyle.inputPlaceholder,
                   fonts.head6.medium,
                 )}
-                data-hide={watch(name).length > 0}
+                data-hide={textGroupInput.length > 0}
               >
                 {placeholder}
               </span>
@@ -281,36 +282,45 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
                 size: "small",
               })}
               data-fill="secondary"
-              onClick={() => {
-                setValue(name, [
-                  ...((watch(name) as string[]) ?? []),
-                  textGroupInputRef.current!.value,
-                ]);
-                setTimeout(() => {
-                  textGroupInputRef.current!.value = "";
-                }, 1);
-              }}
+              onClick={() => addFieldValue(textGroupInput)}
             >
               추가
             </button>
           </div>
+          <div className={flexs({ gap: "8" })}>
+            {(watch(name) as string[]).map((value) => (
+              <span
+                key={value}
+                className={label({ fill: "secondary", size: "small" })}
+                onClick={() => clearFieldValue(value)}
+              >
+                {value}
+                <Icons w="bold" t="round" name="cross" size={12} />
+              </span>
+            ))}
+          </div>
           <div className={flexs({ dir: "col", align: "start", gap: "4" })}>
             <p className={fonts.body4.medium}>혹시 이런 키워드는 어떠세요?</p>
             <div className={flexs({ gap: "6" })}>
-              {["시장떡볶이", "학교앞분식", "수제튀김"].map((item) => (
-                <button
-                  type="button"
-                  key={item}
-                  className={label({ fill: "secondary", size: "small" })}
-                >
-                  {item}
-                </button>
-              ))}
+              {["시장떡볶이", "학교앞분식", "수제튀김", "수제어묵"].map(
+                (item) => (
+                  <button
+                    type="button"
+                    key={item}
+                    className={label({ fill: "assistive", size: "small" })}
+                    onClick={() => {
+                      setTextGroupInput(item);
+                    }}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
             </div>
           </div>
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
-          {watch(name) ?? "선택되지 않음"}
+          {watch(name).join(", ") ?? "선택되지 않음"}
         </div>
       </div>
     );
