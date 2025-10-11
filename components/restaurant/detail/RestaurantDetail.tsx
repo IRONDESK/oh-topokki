@@ -107,7 +107,7 @@ function RestaurantDetail(props: Props) {
       body.style.removeProperty("overflow");
       body.style.removeProperty("pointer-events");
     };
-  }, []);
+  }, [controller.isOpen]);
 
   return (
     <>

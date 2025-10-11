@@ -6,6 +6,7 @@ export class HttpError extends Error {
 
   constructor(
     public readonly status: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public readonly data?: any,
   ) {
     super(data?.message);
@@ -16,6 +17,7 @@ export class HttpError extends Error {
  * Type guard to check if an error is an HttpError
  */
 export function isHttpError(e: unknown): e is HttpError {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return typeof e === "object" && e != null && (e as any)?.name === "HttpError";
 }
 

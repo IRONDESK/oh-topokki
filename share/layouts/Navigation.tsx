@@ -16,8 +16,7 @@ function Navigation() {
   const openRegisterForm = () => {
     overlay.open((controller) => (
       <RestaurantRegisterForm
-        isOpen={controller.isOpen}
-        close={controller.close}
+          {...controller}
       />
     ));
   };

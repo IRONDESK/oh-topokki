@@ -1,7 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { flexs } from "@/style/container.css";
 import { theme } from "@/style/theme.css";
-import { fonts, fontSize, fontWeight } from "@/style/typo.css";
+import { fonts } from "@/style/typo.css";
 
 const formTitle = style([
   fonts.head5.semibold,

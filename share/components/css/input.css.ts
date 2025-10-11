@@ -1,5 +1,4 @@
 import { globalStyle, style } from "@vanilla-extract/css";
-import { flexs } from "@/style/container.css";
 import { theme } from "@/style/theme.css";
 import { fonts } from "@/style/typo.css";
 
@@ -42,7 +41,16 @@ const input = style([
     },
   },
 ]);
-const inputCssHiding = style([input, {}]);
+const inputCssHiding = style([
+  input,
+  {
+    selectors: {
+      "&:not(:placeholder-shown)": {
+        backgroundColor: "",
+      },
+    },
+  },
+]);
 globalStyle(
   `${inputCssHiding}:not(:placeholder-shown) + span.${inputPlaceholder}`,
   {

@@ -47,7 +47,16 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
 
     // 데이터 변환
-    const places = data.items.map((item: any) => ({
+    const places = data.items.map((item: {
+      title: string;
+      address: string;
+      roadAddress: string;
+      category: string;
+      telephone: string;
+      mapx: string;
+      mapy: string;
+      link: string;
+    }) => ({
       title: item.title.replace(/<[^>]*>/g, ''), // HTML 태그 제거
       address: item.address,
       roadAddress: item.roadAddress,

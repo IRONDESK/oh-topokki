@@ -1,6 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { theme } from "@/style/theme.css";
-import { fonts, fontSize, fontWeight, typo } from "@/style/typo.css";
+import { fonts, fontWeight, typo } from "@/style/typo.css";
 
 const container = style({
   position: "fixed",

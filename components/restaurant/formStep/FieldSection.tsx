@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
 import { PlaceField } from "@/components/restaurant/formStep/place-fields";
@@ -10,7 +10,7 @@ import Icons from "@/share/components/Icons";
 import { align, fonts } from "@/style/typo.css";
 import { inputStyle } from "@/share/components/css/input.css";
 import { theme } from "@/style/theme.css";
-import { buttons, label, mainButton } from "@/share/components/css/share.css";
+import { buttons, label } from "@/share/components/css/share.css";
 
 type FieldStatus = "fold-value" | "fold" | "unfold";
 interface TitleProps {
@@ -74,16 +74,17 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
               value={item.value}
               description={item.description!}
               icon={item?.icon}
-              {...register(name)}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              {...register(name as any)}
             />
           ))}
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
           {type === "radio" &&
-            (items?.find((item) => item.value === watch(name))?.label ?? "")}
+            (items?.find((item) => item.value === (watch(name as any) as unknown as string))?.label ?? "")}
           {type === "checkbox" &&
             (items
-              ?.filter((item) => watch(name).includes(item.value))
+              ?.filter((item) => (watch(name as any) as unknown as string[]).includes(item.value))
               .map((item) => item.label)
               .join(", ") ??
               "")}
@@ -105,7 +106,7 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
             inputMode={type === "number" ? "numeric" : "text"}
             autoFocus={true}
             className={inputStyle.input}
-            {...register(name, {
+            {...register(name as any, {
               valueAsNumber: type === "number",
               onChange: (e) => {
                 if (type === "number") {
@@ -120,17 +121,17 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
             className={inputStyle.inputPlaceholder}
             data-hide={
               type === "number"
-                ? Number(watch(name)) > 0
-                : watch(name).length > 0
+                ? Number(watch(name as any)) > 0
+                : (watch(name as any) as unknown as string).length > 0
             }
           >
             {placeholder}
           </span>
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
-          {type === "text" && (watch(name) ?? "선택되지 않음")}
+          {type === "text" && (watch(name as any) ?? "선택되지 않음")}
           {type === "number" &&
-            (Number.isNaN(Number(watch(name))) ? "--" : watch(name))}
+            (Number.isNaN(Number(watch(name as any))) ? "--" : watch(name as any))}
         </div>
       </div>
     );
@@ -161,37 +162,37 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={0} {...register(name)} />
+                  <input type="radio" value={0} {...register(name as any)} />
                   <span>0</span>
                 </label>
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={1} {...register(name)} />
+                  <input type="radio" value={1} {...register(name as any)} />
                   <span>1</span>
                 </label>
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={2} {...register(name)} />
+                  <input type="radio" value={2} {...register(name as any)} />
                   <span>2</span>
                 </label>
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={3} {...register(name)} />
+                  <input type="radio" value={3} {...register(name as any)} />
                   <span>3</span>
                 </label>
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={4} {...register(name)} />
+                  <input type="radio" value={4} {...register(name as any)} />
                   <span>4</span>
                 </label>
               </div>
               <div className={flexRatio["1"]}>
                 <label className={formStyle.pepperItem}>
-                  <input type="radio" value={5} {...register(name)} />
+                  <input type="radio" value={5} {...register(name as any)} />
                   <span>5</span>
                 </label>
               </div>
@@ -206,12 +207,12 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
               className={formStyle.spicyChangeLabel}
             >
               <Icons
-                w={watch(subField.name) ? "solid" : "regular"}
-                name={watch(subField.name) ? "checkbox" : "square"}
+                w={watch(subField.name as any) ? "solid" : "regular"}
+                name={watch(subField.name as any) ? "checkbox" : "square"}
                 t="round"
                 size={18}
                 color={
-                  watch(subField.name)
+                  watch(subField.name as any)
                     ? theme.color.primary["600"]
                     : theme.color.gray["400"]
                 }
@@ -221,13 +222,13 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
                 type={subField.type}
                 id={subField.name}
                 style={{ display: "none" }}
-                {...register(subField.name)}
+                {...register(subField.name as any)}
               />
             </label>
           )}
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
-          {watch(name) ? `${watch(name)}단계 수준` : ""}
+          {watch(name as any) ? `${watch(name as any)}단계 수준` : ""}
         </div>
       </div>
     );
@@ -235,13 +236,13 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
 
   if (type === "text-group") {
     const addFieldValue = (value: string) => {
-      setValue(name, [...((watch(name) as string[]) ?? []), value]);
+      setValue(name as any, [...((watch(name as any) as unknown as string[]) ?? []), value]);
       setTextGroupInput("");
     };
     const clearFieldValue = (value: string) => {
       setValue(
-        name,
-        watch(name).filter((item) => item !== value),
+        name as any,
+        (watch(name as any) as unknown as string[]).filter((item) => item !== value),
       );
     };
 
@@ -288,7 +289,7 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
             </button>
           </div>
           <div className={flexs({ gap: "8" })}>
-            {(watch(name) as string[]).map((value) => (
+            {(watch(name as any) as unknown as string[]).map((value) => (
               <span
                 key={value}
                 className={label({ fill: "secondary", size: "small" })}
@@ -320,7 +321,7 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
           </div>
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
-          {watch(name).join(", ") ?? "선택되지 않음"}
+          {(watch(name as any) as unknown as string[]).join(", ") ?? "선택되지 않음"}
         </div>
       </div>
     );
@@ -336,16 +337,16 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
           <textarea
             className={clsx(fullwidth, inputStyle.textarea)}
             maxLength={number}
-            {...register(name)}
+            {...register(name as any)}
           />
           <span
             className={inputStyle.textareaPlaceholder}
-            data-hide={watch(name).length > 0}
+            data-hide={(watch(name as any) as unknown as string).length > 0}
           >
             {placeholder}
           </span>
           <p className={clsx(fonts.body4.regular, align.right)}>
-            {watch(name).length}/{number}
+            {(watch(name as any) as unknown as string).length}/{number}
           </p>
         </div>
       </div>

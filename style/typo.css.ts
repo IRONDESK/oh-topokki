@@ -82,7 +82,7 @@ export const typo = recipe({
         COLORS.map((color) => {
           return COLOR_TYPES.map((type) => [
             `${color}${type}`,
-            { color: theme.color[color][type] },
+            { color: (theme.color as any)[color][type] },
           ]);
         }).flat(),
       ) as Record<
