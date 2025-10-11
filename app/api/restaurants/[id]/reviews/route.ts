@@ -4,12 +4,13 @@ import { getAuthenticatedUser } from '@/lib/supabase-server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const reviews = await prisma.review.findMany({
       where: {
-        restaurantId: params.id,
+        restaurantId: id,
       },
       include: {
         author: {
@@ -37,9 +38,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // 쿠키에서 사용자 인증 정보 추출
     const authUser = await getAuthenticatedUser();
 
@@ -77,7 +79,7 @@ export async function POST(
         content,
         rating: parseInt(rating),
         authorId: user.id,
-        restaurantId: params.id,
+        restaurantId: id,
       },
       include: {
         author: {
@@ -92,7 +94,7 @@ export async function POST(
 
     // 맛집의 평균 별점과 리뷰 개수 업데이트
     const reviews = await prisma.review.findMany({
-      where: { restaurantId: params.id },
+      where: { restaurantId: id },
       select: { rating: true },
     });
 
@@ -100,7 +102,7 @@ export async function POST(
     const reviewCount = reviews.length;
 
     await prisma.restaurant.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         averageRating,
         reviewCount,

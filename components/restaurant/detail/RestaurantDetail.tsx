@@ -1,4 +1,4 @@
-import { ResponseRestaurant } from "@/service/model/restaurant.ts";
+import { ResponseRestaurant } from "@/service/model/restaurant";
 import { detailStyle as style } from "@/components/restaurant/detail/detail.css";
 import { overlayStyle } from "@/share/components/css/modal.css";
 import { fonts, typo } from "@/style/typo.css";
