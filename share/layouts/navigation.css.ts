@@ -33,9 +33,9 @@ const mainButton = style([
   {
     flex: 1.7,
     height: "52px",
-    backgroundColor: "oklch(0.64 0.21 35.98 / 73%) !important",
+    backgroundColor: "rgba(245, 78, 38, 0.73) !important",
     color: theme.color.white,
-    borderColor: "oklch(0.64 0.21 35.98 / 55%) !important",
+    borderColor: "rgba(245, 78, 38, 0.55) !important",
     gap: "6px",
     letterSpacing: "-0.05rem",
   },
