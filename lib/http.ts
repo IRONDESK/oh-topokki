@@ -46,7 +46,19 @@ class Http {
   private errorHandler?: (error: HttpError) => void;
 
   constructor(baseURL?: string) {
-    this.baseURL = baseURL || "http://localhost:3000";
+    this.baseURL = baseURL || this.getBaseURL();
+  }
+
+  private getBaseURL(): string {
+    // 브라우저 환경에서는 현재 origin 사용
+    if (typeof window !== 'undefined') {
+      return window.location.origin;
+    }
+
+    // 서버 환경에서는 환경 변수 또는 localhost 사용
+    return process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
   }
 
   setErrorHandler(handler: (error: HttpError) => void) {
