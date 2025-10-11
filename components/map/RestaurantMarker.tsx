@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { overlay } from "overlay-kit";
 import { NaverMap, NaverMaps, NaverMarker } from "@/types/naver-maps";
 import { hoverStyle } from "@/components/map/map.css";
-import { ResponseRestaurant } from "@/service/model/restaurant.ts";
+import { ResponseRestaurant } from "@/service/model/restaurant";
 import RestaurantDetail from "@/components/restaurant/detail/RestaurantDetail";
 import { TOPOKKI_RICE_KINDS } from "@/constants/restaurant";
 
@@ -83,7 +83,7 @@ const RestaurantMarker = ({
             </div>
             <div class="${hoverStyle.description}">
               <span>${restaurant.address.split(" ").slice(0, 2).join(" ")}</span>
-              <span>(리뷰 +${restaurant.reviewCount})</span>
+              <span>(리뷰 ${restaurant.reviewCount})</span>
             </div>
           </div>
         `,

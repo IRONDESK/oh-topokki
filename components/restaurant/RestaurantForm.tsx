@@ -5,13 +5,10 @@ import { useFormContext } from "react-hook-form";
 import { type OverlayControllerComponent } from "overlay-kit";
 import { useAuth } from "@/contexts/AuthContext";
 
-import * as styles from "./RestaurantForm.css";
-import Icons from "@/share/components/Icons";
 import { RestaurantFormProvider } from "./RestaurantFormProvider";
 import PlaceSearchForm from "./formStep/PlaceSearchForm";
 import RestaurantDetailForm from "./formStep/RestaurantDetailForm";
 import { formStyle } from "@/components/restaurant/formStep/form.css";
-import { overlayStyle } from "@/share/components/css/share.css";
 import { Modal } from "@/share/components/Modal";
 
 export type RestaurantFormData = {
@@ -36,18 +33,19 @@ export type RestaurantFormData = {
 const RestaurantFormContent = (
   controller: ComponentProps<OverlayControllerComponent>,
 ) => {
+  const { close, ...rest } = controller;
   const { user } = useAuth();
   const { reset } = useFormContext<RestaurantFormData>();
   const [step, setStep] = useState(1);
 
   const handleClose = () => {
     setStep(1);
-    controller.close();
+    close();
     reset();
   };
 
   return (
-    <Modal isOpen={controller.isOpen} close={handleClose}>
+    <Modal close={handleClose} {...rest}>
       {step === 1 && (
         <h3 className={formStyle.formTitle}>
           {user?.user_metadata.name}님의
@@ -65,7 +63,7 @@ const RestaurantFormContent = (
 };
 
 const RestaurantRegisterForm = (
-  controller: Partial<ComponentProps<OverlayControllerComponent>>,
+  controller: ComponentProps<OverlayControllerComponent>,
 ) => {
   if (!controller.isOpen) return null;
 
