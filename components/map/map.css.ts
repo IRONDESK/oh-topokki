@@ -23,18 +23,28 @@ const loadingOverlay = style({
   zIndex: 50,
 });
 
-const errorOverlay = style({
-  position: "absolute",
-  top: "20px",
-  left: "20px",
-  right: "20px",
-  backgroundColor: "white",
-  padding: "15px",
-  borderRadius: "8px",
-  boxShadow: theme.shadow.md,
-  border: `2px solid ${theme.color.red[500]}`,
-  zIndex: 1000,
-});
+const errorOverlay = style([
+  fonts.body3.regular,
+  {
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px",
+    top: "20px",
+    left: "16px",
+    right: "16px",
+    color: theme.color.white,
+    backgroundColor: theme.color.red["500"],
+    padding: "12px 16px",
+    borderRadius: "14px",
+    boxShadow: theme.shadow.md,
+    maxWidth: "520px",
+    zIndex: 1000,
+    marginTop: "env(safe-area-inset-top)",
+    backdropFilter: "blur(5px)",
+  },
+]);
 
 const restaurantCount = style([
   fonts.body3.regular,
@@ -81,16 +91,16 @@ const container = style([
 const title = style([
   fonts.body3.semibold,
   {
-    color: theme.color.primary["600"],
+    color: theme.color.gray["700"],
   },
 ]);
 const infoTag = style([
-  fonts.body4.regular,
+  fonts.caption1.medium,
   {
     display: "inline-flex",
-    padding: "1px 5px",
-    backgroundColor: theme.color.gray["50"],
-    color: theme.color.gray["600"],
+    padding: "1px 6px",
+    backgroundColor: theme.color.primary["50"],
+    color: theme.color.primary["500"],
     borderRadius: "3px",
     gap: "2px",
     alignItems: "center",
@@ -102,6 +112,10 @@ const infoTag = style([
       },
     },
   },
+]);
+const refreshBtn = style([
+  fonts.body4.medium,
+  { cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" },
 ]);
 const description = style([
   fonts.caption1.regular,
@@ -118,5 +132,6 @@ export const mapStyle = {
   loadingOverlay,
   errorOverlay,
   restaurantCount,
+  refreshBtn,
 };
 export const hoverStyle = { container, title, description, infoTag };

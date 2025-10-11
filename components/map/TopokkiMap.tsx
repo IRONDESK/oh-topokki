@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import MapView from "@/app/map/MapView";
 import RestaurantMarker from "./RestaurantMarker";
 import { NaverMap } from "@/types/naver-maps";
 import { useNaverMap } from "@/hooks/useNaverMap";
 import { mapStyle } from "./map.css";
-import { ResponseRestaurant } from "@/service/model/restaurant.ts";
 import Spinner from "@/share/components/Spinner";
 import MapHeader from "@/share/layouts/headers/MapHeader";
+import { getRestaurantInfo } from "@/service/naver-map";
+import Icons from "@/share/components/Icons";
 
 interface TteokbokkiMapProps {
   center?: {
@@ -19,64 +21,44 @@ interface TteokbokkiMapProps {
 
 const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   const [map, setMap] = useState<NaverMap | null>(null);
-  const [restaurants, setRestaurants] = useState<ResponseRestaurant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { naver } = useNaverMap();
 
-  // 맛집 데이터 로드
-  const loadRestaurants = useCallback(async (lat?: number, lng?: number) => {
-    try {
-      setLoading(true);
-      setError(null);
+  const queryParams = {
+    lat: center?.lat,
+    lng: center?.lng,
+    radius: 10000,
+  };
 
-      let url = "/api/restaurants";
-      if (lat && lng) {
-        url += `?lat=${lat}&lng=${lng}&radius=10000`; // 10km 반경
-      }
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("맛집 데이터를 불러올 수 없습니다.");
-      }
-
-      const data = await response.json();
-      setRestaurants(data);
-    } catch (err) {
-      console.error("맛집 로딩 오류:", err);
-      setError(
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const {
+    data: restaurants,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    enabled: !!map,
+    queryKey: ["restaurants"],
+    queryFn: () => getRestaurantInfo(queryParams),
+  });
 
   // 지도 로드 시 콜백
-  const handleMapLoad = useCallback(
-    (mapInstance: NaverMap) => {
-      setMap(mapInstance);
-
-      // 초기 맛집 데이터 로드
-      if (center) {
-        loadRestaurants(center.lat, center.lng);
-      } else {
-        loadRestaurants();
-      }
-    },
-    [center, loadRestaurants],
-  );
+  const handleMapLoad = useCallback((mapInstance: NaverMap) => {
+    setMap(mapInstance);
+  }, []);
 
   return (
     <div className={mapStyle.mapContainer}>
       <MapHeader />
       <MapView center={center} onMapLoad={handleMapLoad} />
 
-      {map && naver && restaurants.length > 0 && (
-        <RestaurantMarker map={map} naver={naver} restaurants={restaurants} />
+      {map && naver && restaurants && restaurants?.length > 0 && (
+        <RestaurantMarker
+          map={map}
+          naver={naver}
+          restaurants={restaurants ?? []}
+        />
       )}
 
-      {loading && (
+      {isLoading && (
         <div className={mapStyle.loadingOverlay}>
           <Spinner size={42} thick={5} color="primary" />
         </div>
@@ -84,13 +66,16 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
 
       {error && (
         <div className={mapStyle.errorOverlay}>
-          <p>오류: {error}</p>
-          <button onClick={() => loadRestaurants()}>다시 시도</button>
+          <p>오류: {error?.message}</p>
+          <button onClick={() => refetch()} className={mapStyle.refreshBtn}>
+            <Icons name="refresh" w="bold" size={16} t="round" />
+            재시도
+          </button>
         </div>
       )}
 
-      <div className={mapStyle.restaurantCount} data-loading={loading}>
-        총 {restaurants.length}개의 떡볶이 맛집
+      <div className={mapStyle.restaurantCount} data-loading={isLoading}>
+        총 {restaurants?.length}개의 떡볶이 맛집
       </div>
     </div>
   );
