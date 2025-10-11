@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
+export const runtime = 'edge';
+
 export async function POST() {
   try {
     const authUser = await getAuthenticatedUser();
