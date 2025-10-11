@@ -4,3 +4,9 @@ export type PaginationResponse<T> = {
   start: number;
   total: number;
 };
+
+export type RequestGetRestaurantParams = {
+  lat?: number;
+  lng?: number;
+  radius: number;
+};
