@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Navigation from "@/share/layouts/Navigation";
 import { mainContainer } from "@/share/layouts/css/layout.css";
 
@@ -10,7 +10,9 @@ export default function Layout({
   return (
     <main className={mainContainer}>
       {children}
-      <Navigation />
+      <Suspense fallback={<div />}>
+        <Navigation />
+      </Suspense>
     </main>
   );
 }
