@@ -16,12 +16,10 @@ function createConnection() {
   }
 
   return postgres(process.env.DATABASE_URL, {
-    // Cloudflare Workers를 위한 설정
-    max: 1, // 연결 풀 크기 최소화
+    // 연결 풀 크기 최소화
+    max: 1,
     idle_timeout: 20,
     max_lifetime: 60 * 30,
-    // IPv4 강제 사용 (Supabase IPv6 제한 때문에)
-    host_type: 'tcp',
     ssl: { rejectUnauthorized: false },
   });
 }

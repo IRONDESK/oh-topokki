@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, real, integer, boolean, json } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, real, integer, boolean, json, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
@@ -13,7 +13,7 @@ export const users = pgTable('users', {
 });
 
 export const restaurants = pgTable('restaurants', {
-  id: text('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   address: text('address').notNull(),
   latitude: real('latitude').notNull(),
@@ -44,7 +44,7 @@ export const restaurants = pgTable('restaurants', {
 });
 
 export const reviews = pgTable('reviews', {
-  id: text('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   content: text('content').notNull(),
   rating: integer('rating').notNull(), // 1-5 별점
   createdAt: timestamp('createdAt').defaultNow().notNull(),

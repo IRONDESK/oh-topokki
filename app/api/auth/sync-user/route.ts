@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db, users } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";

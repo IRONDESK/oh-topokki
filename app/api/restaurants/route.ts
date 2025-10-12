@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db, restaurants, users } from "@/lib/drizzle";
 import { desc, eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log("GET /api/restaurants 시작 (Drizzle)");
     console.log("DATABASE_URL 존재:", !!process.env.DATABASE_URL);
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // 쿠키에서 사용자 인증 정보 추출
     const authUser = await getAuthenticatedUser();
