@@ -14,9 +14,17 @@ import Icons from "@/share/components/Icons";
 import { flexs } from "@/style/container.css";
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import { getRestaurantDetail, getRestaurantInfo } from "@/service/naver-map";
+import Spinner from "@/share/components/Spinner";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
+import { theme } from "@/style/theme.css";
 
 type Props = {
-  restaurant: ResponseRestaurant;
+  restaurantId: string;
+  restaurantName: string;
+  topokkiType: string;
+  address: string;
   controller: {
     close: () => void;
     isOpen: boolean;
@@ -25,9 +33,17 @@ type Props = {
 };
 
 function RestaurantDetail(props: Props) {
-  const { restaurant, controller } = props;
+  const { restaurantId, restaurantName, address, topokkiType, controller } =
+    props;
+  const isDesktop = useIsDesktop();
+  const { data: restaurant, isLoading } = useQuery({
+    enabled: !!restaurantId,
+    queryKey: ["restaurants", restaurantId],
+    queryFn: () => getRestaurantDetail({ restaurantId }),
+  });
+
   const [startPos, setStartPos] = useState(0);
-  const [isFull, setIsFull] = useState(false);
+  const [isFull, setIsFull] = useState(isDesktop);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
 
@@ -36,6 +52,10 @@ function RestaurantDetail(props: Props) {
   const [isSticky, setIsSticky] = useState(false);
 
   const onClose = () => {
+    if (isDesktop) {
+      controller.unmount();
+      return;
+    }
     controller.close();
     setTimeout(controller.unmount, 300);
   };
@@ -101,11 +121,11 @@ function RestaurantDetail(props: Props) {
     const body = document.querySelector("body") as HTMLElement;
     if (controller.isOpen) {
       body.style.overflow = "hidden";
-      body.style.pointerEvents = "none";
+      // body.style.pointerEvents = "none";
     }
     return () => {
       body.style.removeProperty("overflow");
-      body.style.removeProperty("pointer-events");
+      // body.style.removeProperty("pointer-events");
     };
   }, [controller.isOpen]);
 
@@ -142,7 +162,15 @@ function RestaurantDetail(props: Props) {
             WebkitOverflowScrolling: "touch", // iOS 스크롤 지원
           }}
         >
-          <div className={style.bar} ref={barRef} />
+          {isDesktop ? (
+            <div ref={barRef} className={style.closeBtn}>
+              <button type="button" onClick={onClose}>
+                <Icons name="cross" w="bold" size={20} t="round" />
+              </button>
+            </div>
+          ) : (
+            <div className={style.bar} ref={barRef} />
+          )}
           <div className={style.contents}>
             <div
               className={clsx(style.stickyArea, style.innerPadding)}
@@ -150,8 +178,8 @@ function RestaurantDetail(props: Props) {
             >
               <p className={style.topokkiType} data-sticky={isSticky}>
                 {isSticky
-                  ? TOPOKKI_TYPE_ABBR[restaurant.topokkiType]
-                  : TOPOKKI_TYPE[restaurant.topokkiType]}
+                  ? TOPOKKI_TYPE_ABBR[topokkiType]
+                  : TOPOKKI_TYPE[topokkiType]}
               </p>
               <h2
                 className={clsx({
@@ -159,7 +187,7 @@ function RestaurantDetail(props: Props) {
                   [fonts.body2.medium]: isSticky,
                 })}
               >
-                {restaurant.name}
+                {restaurantName}
               </h2>
               <p
                 className={typo({
@@ -169,12 +197,12 @@ function RestaurantDetail(props: Props) {
                 })}
                 style={{ display: isSticky ? "none" : "block" }}
               >
-                {restaurant.address}
+                {address}
               </p>
             </div>
             <p className={clsx(style.price, style.innerPadding)}>
               <span className={fonts.head6.semibold}>
-                {restaurant.price.toLocaleString()}원
+                {restaurant?.price.toLocaleString()}원
               </span>
               <span
                 className={typo({
@@ -186,71 +214,78 @@ function RestaurantDetail(props: Props) {
                 1인당, 기본
               </span>
             </p>
-            <dl className={clsx(style.detailItems, style.innerPadding)}>
-              <dt>떡 종류</dt>
-              <dd>
-                {restaurant.riceKinds.map((kind) => (
-                  <span key={kind}>{TOPOKKI_RICE_KINDS[kind]}</span>
-                ))}
-              </dd>
-              <dt>소스 종류</dt>
-              <dd>
-                {restaurant.sauceKinds.map((kind) => (
-                  <span key={kind}>{SAUCE_TYPE[kind]}</span>
-                ))}
-              </dd>
-              <dt>면 종류</dt>
-              <dd>
-                {restaurant.noodleKinds.map((kind) => (
-                  <span key={kind}>{NOODLE_TYPE[kind]}</span>
-                ))}
-              </dd>
-              <dt>매운 정도</dt>
-              <dd>
-                <p className={flexs({ gap: "4", justify: "start" })}>
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className={style.spicy}
-                      data-active={restaurant.spiciness >= index}
-                    >
-                      <Icons name="pepper" w="solid" size={18} />
+            {isLoading && <Spinner size={32} thick={3} />}
+            {restaurant && !isLoading && (
+              <dl className={clsx(style.detailItems, style.innerPadding)}>
+                <dt>떡 종류</dt>
+                <dd>
+                  {restaurant.riceKinds.map((kind) => (
+                    <span key={kind}>{TOPOKKI_RICE_KINDS[kind]}</span>
+                  ))}
+                </dd>
+                <dt>소스 종류</dt>
+                <dd>
+                  {restaurant.sauceKinds.map((kind) => (
+                    <span key={kind}>{SAUCE_TYPE[kind]}</span>
+                  ))}
+                </dd>
+                <dt>면 종류</dt>
+                <dd>
+                  {restaurant.noodleKinds.map((kind) => (
+                    <span key={kind}>{NOODLE_TYPE[kind]}</span>
+                  ))}
+                </dd>
+                <dt>매운 정도</dt>
+                <dd>
+                  <p className={flexs({ gap: "4", justify: "start" })}>
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <span
+                        key={index}
+                        className={style.spicy}
+                        data-active={restaurant.spiciness >= index}
+                      >
+                        <Icons name="pepper" w="solid" size={18} />
+                      </span>
+                    ))}
+                  </p>
+                  <p
+                    className={typo({
+                      size: "body4",
+                      weight: "medium",
+                      color: "primary500",
+                    })}
+                  >
+                    {SPICINESS_DESCRIPTION[restaurant.spiciness]}
+                  </p>
+                </dd>
+                <dt>순대</dt>
+                <dd>
+                  {restaurant.sundaeType
+                    ? SUNDAE_TYPE[restaurant.sundaeType]
+                    : "순대는 없어요"}
+                </dd>
+                <dt>사이드메뉴</dt>
+                <dd
+                  className={flexs({ gap: "6", justify: "start", wrap: true })}
+                >
+                  {restaurant.sideMenus.map((menu) => (
+                    <span key={menu} className={style.sidemenu}>
+                      {SIDE_MENU_TYPE[menu]}
                     </span>
                   ))}
-                </p>
-                <p
-                  className={typo({
-                    size: "body4",
-                    weight: "medium",
-                    color: "primary500",
-                  })}
+                </dd>
+                <dt>기타</dt>
+                <dd
+                  className={flexs({ gap: "6", justify: "start", wrap: true })}
                 >
-                  {SPICINESS_DESCRIPTION[restaurant.spiciness]}
-                </p>
-              </dd>
-              <dt>순대</dt>
-              <dd>
-                {restaurant.sundaeType
-                  ? SUNDAE_TYPE[restaurant.sundaeType]
-                  : "순대는 없어요"}
-              </dd>
-              <dt>사이드메뉴</dt>
-              <dd className={flexs({ gap: "6", justify: "start", wrap: true })}>
-                {restaurant.sideMenus.map((menu) => (
-                  <span key={menu} className={style.sidemenu}>
-                    {SIDE_MENU_TYPE[menu]}
-                  </span>
-                ))}
-              </dd>
-              <dt>기타</dt>
-              <dd className={flexs({ gap: "6", justify: "start", wrap: true })}>
-                {restaurant.others.map((menu) => (
-                  <span key={menu} className={style.sidemenu}>
-                    {menu}
-                  </span>
-                ))}
-              </dd>
-            </dl>
+                  {restaurant.others.map((menu) => (
+                    <span key={menu} className={style.sidemenu}>
+                      {menu}
+                    </span>
+                  ))}
+                </dd>
+              </dl>
+            )}
             <div className={style.divider} />
             <div
               className={clsx(
@@ -269,7 +304,7 @@ function RestaurantDetail(props: Props) {
               <div className={style.headReview}>
                 <p className={style.headReviewText}>
                   {
-                    restaurant.reviews.find(
+                    restaurant?.reviews.find(
                       (review) => review.authorId === restaurant.authorId,
                     )?.content
                   }

@@ -160,6 +160,12 @@ const bottomPosition = style({
   paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 48px)",
 });
 
+const closeBtn = style({
+  margin: "20px 0 8px",
+  color: theme.color.gray["400"],
+  textAlign: "center",
+});
+
 export const detailStyle = {
   container,
   innerPadding,
@@ -175,4 +181,5 @@ export const detailStyle = {
   headReview,
   headReviewText,
   bottomPosition,
+  closeBtn,
 };

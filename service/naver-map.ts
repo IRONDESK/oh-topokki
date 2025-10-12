@@ -45,3 +45,20 @@ export const getRestaurantInfo = async (params: RequestGetRestaurantParams) => {
     throw error;
   }
 };
+
+export const getRestaurantDetail = async ({
+  restaurantId,
+}: {
+  restaurantId: string;
+}) => {
+  try {
+    return await http.get<ResponseRestaurant>(
+      `/api/restaurants/${restaurantId}`,
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};

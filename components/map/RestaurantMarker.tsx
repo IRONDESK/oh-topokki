@@ -61,7 +61,13 @@ const RestaurantMarker = ({
         map.setZoom(17);
 
         overlay.open((controller) => (
-          <RestaurantDetail restaurant={restaurant} controller={controller} />
+          <RestaurantDetail
+            restaurantId={restaurant.id}
+            restaurantName={restaurant.name}
+            topokkiType={restaurant.topokkiType}
+            address={restaurant.address}
+            controller={controller}
+          />
         ));
       });
 
@@ -72,13 +78,13 @@ const RestaurantMarker = ({
             <h3 class="${hoverStyle.title}">${restaurant.name}</h3>
             <div class="${hoverStyle.description}">
             <span class="${hoverStyle.infoTag}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
-            ${restaurant.riceKinds.map((kind) => `<span class="${hoverStyle.infoTag}">${TOPOKKI_RICE_KINDS[kind]}</span>`)}
+            ${restaurant.riceKinds?.map((kind) => `<span class="${hoverStyle.infoTag}">${TOPOKKI_RICE_KINDS[kind]}</span>`)}
             <span class="${hoverStyle.infoTag}">
               <i class="fi fi-sr-pepper" style="height: 14px; display: inline-flex; align-items: center;"></i>
               ${restaurant.spiciness}단계</span>
               <span class="${hoverStyle.infoTag}" data-type="price">
                 <span style="font-weight: 700">₩</span>
-                ${restaurant.price.toLocaleString()}
+                ${restaurant.price?.toLocaleString()}
               </span>
             </div>
             <div class="${hoverStyle.description}">
