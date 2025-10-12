@@ -6,16 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "cf:build": "npx @opennextjs/cloudflare@latest build",
-    "cf:deploy": "npx @opennextjs/cloudflare@latest deploy",
-    "cf:dev": "npx @opennextjs/cloudflare@latest preview"
+    "lint": "eslint"
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@floating-ui/react": "^0.27.16",
     "@neondatabase/serverless": "^1.0.2",
-    "@opennextjs/cloudflare": "^1.10.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.2",
     "@tanstack/react-query": "^5.90.2",
@@ -45,7 +41,6 @@
     "eslint-config-next": "15.5.2",
     "prettier": "^3.6.2",
     "tw-animate-css": "^1.3.8",
-    "typescript": "^5",
-    "wrangler": "^4.42.2"
+    "typescript": "^5"
   }
 }

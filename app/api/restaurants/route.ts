@@ -7,8 +7,6 @@ export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   try {
-    console.log("GET /api/restaurants 시작 (Neon Serverless)");
-
     // parameter pagination
     const { searchParams } = new URL(req.url);
     const pageParam = searchParams.get("page");
@@ -18,7 +16,6 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * PAGE_SIZE;
 
     // Drizzle을 사용한 쿼리 (필요한 필드들 추가)
-    console.log("Neon Serverless로 restaurant 조회 시작");
     const restaurantList = await db
       .select({
         id: restaurants.id,
