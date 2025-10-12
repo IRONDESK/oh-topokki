@@ -14,6 +14,9 @@ importers:
       '@floating-ui/react':
         specifier: ^0.27.16
         version: 0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@neondatabase/serverless':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@supabase/ssr':
         specifier: ^0.7.0
         version: 0.7.0(@supabase/supabase-js@2.57.2(bufferutil@4.0.9))
@@ -29,15 +32,12 @@ importers:
       '@vanilla-extract/recipes':
         specifier: ^0.5.7
         version: 0.5.7(@vanilla-extract/css@1.17.4)
-      '@vercel/postgres':
-        specifier: ^0.10.0
-        version: 0.10.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       drizzle-orm:
         specifier: ^0.44.6
-        version: 0.44.6(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(@types/pg@8.15.5)(@vercel/postgres@0.10.0)(pg@8.16.3)(postgres@3.4.7)(prisma@6.17.1(typescript@5.9.2))
+        version: 0.44.6(@neondatabase/serverless@1.0.2)(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(@types/pg@8.15.5)(@vercel/postgres@0.10.0)(pg@8.16.3)(postgres@3.4.7)(prisma@6.17.1(typescript@5.9.2))
       es-hangul:
         specifier: ^2.3.6
         version: 2.3.6
@@ -722,6 +722,10 @@ packages:
   '@neondatabase/serverless@0.9.5':
     resolution: {integrity: sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==}
 
+  '@neondatabase/serverless@1.0.2':
+    resolution: {integrity: sha512-I5sbpSIAHiB+b6UttofhrN/UJXII+4tZPAq1qugzwCwLIL8EZLV7F/JyHUrEIiGgQpEXzpnjlJ+zwcEhheGvCw==}
+    engines: {node: '>=19.0.0'}
+
   '@next/env@15.5.2':
     resolution: {integrity: sha512-Qe06ew4zt12LeO6N7j8/nULSOe3fMXE4dM6xgpBQNvdzyK1sv5y4oAP3bq4LamrvGCZtmRYnW8URFCeX5nFgGg==}
 
@@ -892,6 +896,9 @@ packages:
 
   '@types/node@20.19.21':
     resolution: {integrity: sha512-CsGG2P3I5y48RPMfprQGfy4JPRZ6csfC3ltBZSRItG3ngggmNY/qs2uZKp4p9VbrpqNNSMzUZNFZKzgOGnd/VA==}
+
+  '@types/node@22.18.10':
+    resolution: {integrity: sha512-anNG/V/Efn/YZY4pRzbACnKxNKoBng2VTFydVu8RRs5hQjikP8CQfaeAV59VFSCzKNp90mXiVXW2QzV56rwMrg==}
 
   '@types/pg@8.11.6':
     resolution: {integrity: sha512-/2WmmBXHLsfRqzfHW7BNZ8SbYzE8OSk7i3WjFYvfgRHj7S1xj+16Je5fUKv3lVdVzk/zn9TXOqf+avFCFIE0yQ==}
@@ -3403,6 +3410,12 @@ snapshots:
   '@neondatabase/serverless@0.9.5':
     dependencies:
       '@types/pg': 8.11.6
+    optional: true
+
+  '@neondatabase/serverless@1.0.2':
+    dependencies:
+      '@types/node': 22.18.10
+      '@types/pg': 8.15.5
 
   '@next/env@15.5.2': {}
 
@@ -3584,18 +3597,22 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/node@22.18.10':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/pg@8.11.6':
     dependencies:
       '@types/node': 20.19.21
       pg-protocol: 1.10.3
       pg-types: 4.1.0
+    optional: true
 
   '@types/pg@8.15.5':
     dependencies:
       '@types/node': 20.19.21
       pg-protocol: 1.10.3
       pg-types: 2.2.0
-    optional: true
 
   '@types/phoenix@1.6.6': {}
 
@@ -3835,6 +3852,7 @@ snapshots:
       ws: 8.18.3(bufferutil@4.0.9)
     transitivePeerDependencies:
       - utf-8-validate
+    optional: true
 
   '@webassemblyjs/ast@1.14.1':
     dependencies:
@@ -4075,6 +4093,7 @@ snapshots:
   bufferutil@4.0.9:
     dependencies:
       node-gyp-build: 4.8.4
+    optional: true
 
   c12@3.1.0:
     dependencies:
@@ -4258,8 +4277,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.6(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(@types/pg@8.15.5)(@vercel/postgres@0.10.0)(pg@8.16.3)(postgres@3.4.7)(prisma@6.17.1(typescript@5.9.2)):
+  drizzle-orm@0.44.6(@neondatabase/serverless@1.0.2)(@prisma/client@6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2))(@types/pg@8.15.5)(@vercel/postgres@0.10.0)(pg@8.16.3)(postgres@3.4.7)(prisma@6.17.1(typescript@5.9.2)):
     optionalDependencies:
+      '@neondatabase/serverless': 1.0.2
       '@prisma/client': 6.17.1(prisma@6.17.1(typescript@5.9.2))(typescript@5.9.2)
       '@types/pg': 8.15.5
       '@vercel/postgres': 0.10.0
@@ -5151,7 +5171,8 @@ snapshots:
   node-fetch-native@1.6.7:
     optional: true
 
-  node-gyp-build@4.8.4: {}
+  node-gyp-build@4.8.4:
+    optional: true
 
   node-releases@2.0.20: {}
 
@@ -5208,7 +5229,8 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
-  obuf@1.1.2: {}
+  obuf@1.1.2:
+    optional: true
 
   ohash@2.0.11:
     optional: true
@@ -5264,7 +5286,8 @@ snapshots:
 
   pg-int8@1.0.1: {}
 
-  pg-numeric@1.0.2: {}
+  pg-numeric@1.0.2:
+    optional: true
 
   pg-pool@3.10.1(pg@8.16.3):
     dependencies:
@@ -5280,7 +5303,6 @@ snapshots:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
-    optional: true
 
   pg-types@4.1.0:
     dependencies:
@@ -5291,6 +5313,7 @@ snapshots:
       postgres-date: 2.1.0
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
+    optional: true
 
   pg@8.16.3:
     dependencies:
@@ -5341,31 +5364,32 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postgres-array@2.0.0:
+  postgres-array@2.0.0: {}
+
+  postgres-array@3.0.4:
     optional: true
 
-  postgres-array@3.0.4: {}
-
-  postgres-bytea@1.0.0:
-    optional: true
+  postgres-bytea@1.0.0: {}
 
   postgres-bytea@3.0.0:
     dependencies:
       obuf: 1.1.2
-
-  postgres-date@1.0.7:
     optional: true
 
-  postgres-date@2.1.0: {}
+  postgres-date@1.0.7: {}
+
+  postgres-date@2.1.0:
+    optional: true
 
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
+
+  postgres-interval@3.0.0:
     optional: true
 
-  postgres-interval@3.0.0: {}
-
-  postgres-range@1.1.4: {}
+  postgres-range@1.1.4:
+    optional: true
 
   postgres@3.4.7:
     optional: true
@@ -5926,8 +5950,7 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.0.9
 
-  xtend@4.0.2:
-    optional: true
+  xtend@4.0.2: {}
 
   yallist@3.1.1: {}
 
