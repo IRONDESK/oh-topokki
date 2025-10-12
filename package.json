@@ -4,31 +4,28 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma generate",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "lint": "eslint"
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@floating-ui/react": "^0.27.16",
-    "@prisma/client": "^6.15.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.2",
     "@tanstack/react-query": "^5.90.2",
     "@vanilla-extract/css": "^1.17.4",
     "@vanilla-extract/recipes": "^0.5.7",
     "clsx": "^2.1.1",
+    "drizzle-orm": "^0.44.6",
     "es-hangul": "^2.3.6",
     "es-toolkit": "^1.39.10",
     "jotai": "^2.14.0",
     "next": "15.5.2",
     "overlay-kit": "^1.8.5",
+    "pg": "^8.16.3",
     "postcss": "^8.5.6",
+    "postgres": "^3.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0"
@@ -36,13 +33,14 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
+    "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vanilla-extract/next-plugin": "^2.4.14",
+    "drizzle-kit": "^0.31.5",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "prettier": "^3.6.2",
-    "prisma": "^6.15.0",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5"
   }

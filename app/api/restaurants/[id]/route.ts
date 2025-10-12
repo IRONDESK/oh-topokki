@@ -1,68 +1,80 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-
-export const runtime = 'edge';
+import { NextRequest, NextResponse } from "next/server";
+import { db, restaurants, users, reviews } from "@/lib/drizzle";
+import { eq, desc } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    const restaurant = await prisma.restaurant.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-          },
-        },
-        reviews: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-        _count: {
-          select: {
-            reviews: true,
-          },
-        },
-      },
-    });
 
-    if (!restaurant) {
+    // 레스토랑 기본 정보 조회
+    const restaurant = await db
+      .select()
+      .from(restaurants)
+      .where(eq(restaurants.id, id))
+      .limit(1);
+
+    if (restaurant.length === 0) {
       return NextResponse.json(
-        { error: '맛집을 찾을 수 없습니다.' },
-        { status: 404 }
+        { message: "맛집을 찾을 수 없습니다." },
+        { status: 404 },
       );
     }
 
-    return NextResponse.json(restaurant);
+    // 작성자 정보 조회
+    const author = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        avatar: users.avatar,
+      })
+      .from(users)
+      .where(eq(users.id, restaurant[0].authorId))
+      .limit(1);
+
+    // 리뷰 정보 조회
+    const restaurantReviews = await db
+      .select({
+        id: reviews.id,
+        content: reviews.content,
+        rating: reviews.rating,
+        createdAt: reviews.createdAt,
+        author: {
+          id: users.id,
+          name: users.name,
+          avatar: users.avatar,
+        },
+      })
+      .from(reviews)
+      .leftJoin(users, eq(reviews.authorId, users.id))
+      .where(eq(reviews.restaurantId, id))
+      .orderBy(desc(reviews.createdAt));
+
+    // 결과 조합
+    const result = {
+      ...restaurant[0],
+      author: author[0] || null,
+      reviews: restaurantReviews,
+      _count: {
+        reviews: restaurantReviews.length,
+      },
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('맛집 조회 오류:', error);
+    console.error("맛집 조회 오류:", error);
     return NextResponse.json(
-      { error: '맛집 조회에 실패했습니다.' },
-      { status: 500 }
+      { message: "맛집 조회에 실패했습니다." },
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -87,67 +99,90 @@ export async function PUT(
     } = body;
 
     // 맛집 정보 업데이트
-    const restaurant = await prisma.restaurant.update({
-      where: {
-        id,
-      },
-      data: {
-        name,
-        address,
-        latitude: latitude ? parseFloat(latitude) : undefined,
-        longitude: longitude ? parseFloat(longitude) : undefined,
-        phoneNumber,
-        topokkiType,
-        price: price ? parseInt(price) : null,
-        sundaeType,
-        riceKinds: riceKinds,
-        sauceKinds: sauceKinds,
-        spiciness: spiciness ? parseInt(spiciness) : undefined,
-        canChangeSpicy: canChangeSpicy,
-        sideMenus: sideMenus,
-        noodleKinds: noodleKinds,
-        others: others,
-        recommend: recommend,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-          },
-        },
-      },
-    });
+    const updateData: any = {
+      name,
+      address,
+      phoneNumber,
+      topokkiType,
+      sundaeType,
+      riceKinds,
+      sauceKinds,
+      canChangeSpicy,
+      sideMenus,
+      noodleKinds,
+      others,
+      recommend,
+    };
 
-    return NextResponse.json(restaurant);
+    if (latitude) updateData.latitude = parseFloat(latitude);
+    if (longitude) updateData.longitude = parseFloat(longitude);
+    if (price) updateData.price = parseInt(price);
+    if (spiciness !== undefined) updateData.spiciness = parseInt(spiciness);
+
+    const updatedRestaurant = await db
+      .update(restaurants)
+      .set(updateData)
+      .where(eq(restaurants.id, id))
+      .returning();
+
+    if (updatedRestaurant.length === 0) {
+      return NextResponse.json(
+        { message: "맛집을 찾을 수 없습니다." },
+        { status: 404 },
+      );
+    }
+
+    // 작성자 정보 조회
+    const author = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        avatar: users.avatar,
+      })
+      .from(users)
+      .where(eq(users.id, updatedRestaurant[0].authorId))
+      .limit(1);
+
+    const result = {
+      ...updatedRestaurant[0],
+      author: author[0] || null,
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('맛집 수정 오류:', error);
+    console.error("맛집 수정 오류:", error);
     return NextResponse.json(
-      { error: '맛집 수정에 실패했습니다.' },
-      { status: 500 }
+      { message: "맛집 수정에 실패했습니다." },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    await prisma.restaurant.delete({
-      where: {
-        id,
-      },
-    });
 
-    return NextResponse.json({ message: '맛집이 삭제되었습니다.' });
+    const deletedRestaurant = await db
+      .delete(restaurants)
+      .where(eq(restaurants.id, id))
+      .returning();
+
+    if (deletedRestaurant.length === 0) {
+      return NextResponse.json(
+        { message: "맛집을 찾을 수 없습니다." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ message: "맛집이 삭제되었습니다." });
   } catch (error) {
-    console.error('맛집 삭제 오류:', error);
+    console.error("맛집 삭제 오류:", error);
     return NextResponse.json(
-      { error: '맛집 삭제에 실패했습니다.' },
-      { status: 500 }
+      { message: "맛집 삭제에 실패했습니다." },
+      { status: 500 },
     );
   }
 }
