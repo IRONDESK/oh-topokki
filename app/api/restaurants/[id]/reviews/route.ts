@@ -3,7 +3,7 @@ import { db, restaurants, users, reviews } from "@/lib/drizzle";
 import { eq, desc } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
-export const runtime = 'edge';
+export const runtime = "nodejs";
 
 export async function GET(
   request: NextRequest,

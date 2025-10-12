@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_NAVER_MAP_CLIENT_ID:
       process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID,
   },
+  output: "standalone",
 };
 
 export default withVanillaExtract(nextConfig);

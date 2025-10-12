@@ -1,15 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db, restaurants, users } from "@/lib/drizzle";
 import { desc, eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     console.log("GET /api/restaurants 시작 (Neon Serverless)");
 
-    // 테이블이 존재한다고 가정하고 바로 쿼리 실행
+    // parameter pagination
+    const { searchParams } = new URL(req.url);
+    const pageParam = searchParams.get("page");
+    const page = Math.max(parseInt(pageParam || "1", 10), 1);
+
+    const PAGE_SIZE = 10 as const;
+    const offset = (page - 1) * PAGE_SIZE;
 
     // Drizzle을 사용한 쿼리 (필요한 필드들 추가)
     console.log("Neon Serverless로 restaurant 조회 시작");
@@ -30,7 +36,8 @@ export async function GET() {
       })
       .from(restaurants)
       .orderBy(desc(restaurants.createdAt))
-      .limit(10);
+      .limit(PAGE_SIZE)
+      .offset(offset);
 
     console.log("조회된 맛집 수:", restaurantList.length);
     return NextResponse.json(restaurantList);
