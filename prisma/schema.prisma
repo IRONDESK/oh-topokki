@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id
+  email      String   @unique
+  name       String?
+  avatar     String?
+  provider   String
+  providerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  restaurants Restaurant[]
+  reviews     Review[]
+
+  @@map("users")
+}
+
+model Restaurant {
+  id            String   @id @default(uuid())
+  name          String
+  address       String
+  latitude      Float
+  longitude     Float
+  phoneNumber   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  authorId      String
+  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  topokkiType   String?
+  price         Int?
+  riceKinds     String[] @default([])
+  sauceKinds    String[] @default([])
+  spiciness     Int?
+  canChangeSpicy Boolean @default(false)
+  sideMenus     String[] @default([])
+  noodleKinds   String[] @default([])
+  sundaeType    String?
+  others        String[] @default([])
+  recommend     Json     @default("[]")
+
+  averageRating Float @default(0)
+  reviewCount   Int   @default(0)
+
+  reviews       Review[]
+
+  @@map("restaurants")
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  content      String
+  rating       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}

@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, restaurants, users } from "@/lib/drizzle";
-import { desc, eq } from "drizzle-orm";
+import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
-
-export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   try {
-    // 환경변수 디버깅
-    console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
-    console.log("DATABASE_URL preview:", process.env.DATABASE_URL?.substring(0, 20) + "...");
-
     // parameter pagination
     const { searchParams } = new URL(req.url);
     const pageParam = searchParams.get("page");
@@ -19,26 +12,28 @@ export async function GET(req: NextRequest) {
     const PAGE_SIZE = 10 as const;
     const offset = (page - 1) * PAGE_SIZE;
 
-    // Drizzle을 사용한 쿼리 (필요한 필드들 추가)
-    const restaurantList = await db
-      .select({
-        id: restaurants.id,
-        name: restaurants.name,
-        address: restaurants.address,
-        latitude: restaurants.latitude,
-        longitude: restaurants.longitude,
-        price: restaurants.price,
-        topokkiType: restaurants.topokkiType,
-        riceKinds: restaurants.riceKinds,
-        spiciness: restaurants.spiciness,
-        reviewCount: restaurants.reviewCount,
-        averageRating: restaurants.averageRating,
-        createdAt: restaurants.createdAt,
-      })
-      .from(restaurants)
-      .orderBy(desc(restaurants.createdAt))
-      .limit(PAGE_SIZE)
-      .offset(offset);
+    // Prisma를 사용한 쿼리
+    const restaurantList = await prisma.restaurant.findMany({
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        latitude: true,
+        longitude: true,
+        price: true,
+        topokkiType: true,
+        riceKinds: true,
+        spiciness: true,
+        reviewCount: true,
+        averageRating: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: PAGE_SIZE,
+      skip: offset,
+    });
 
     console.log("조회된 맛집 수:", restaurantList.length);
     return NextResponse.json(restaurantList);
@@ -79,31 +74,25 @@ export async function POST() {
     // 쿠키에서 사용자 인증 정보 추출
     const authUser = await getAuthenticatedUser();
 
-    // DB에서 사용자 정보 조회하거나 생성 (Drizzle 사용)
-    let user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, authUser.email!))
-      .limit(1);
+    // DB에서 사용자 정보 조회하거나 생성 (Prisma 사용)
+    let user = await prisma.user.findUnique({
+      where: { email: authUser.email! }
+    });
 
-    if (user.length === 0) {
+    if (!user) {
       // 사용자가 없으면 자동 생성
-      const newUser = await db
-        .insert(users)
-        .values({
+      user = await prisma.user.create({
+        data: {
           id: authUser.id,
           email: authUser.email!,
-          name:
-            authUser.user_metadata?.name ||
-            authUser.user_metadata?.full_name ||
-            null,
+          name: authUser.user_metadata?.name ||
+                authUser.user_metadata?.full_name ||
+                null,
           avatar: authUser.user_metadata?.avatar_url || null,
           provider: authUser.app_metadata?.provider || "unknown",
           providerId: authUser.id,
-        })
-        .returning();
-
-      user = newUser;
+        }
+      });
     }
 
     // POST 기능은 일단 간단하게 처리
