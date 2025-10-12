@@ -7,6 +7,10 @@ export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   try {
+    // 환경변수 디버깅
+    console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
+    console.log("DATABASE_URL preview:", process.env.DATABASE_URL?.substring(0, 20) + "...");
+
     // parameter pagination
     const { searchParams } = new URL(req.url);
     const pageParam = searchParams.get("page");
