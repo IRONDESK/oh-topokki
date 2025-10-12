@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, restaurants, users, reviews } from "@/lib/drizzle";
-import { eq, desc } from "drizzle-orm";
+import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
-
-export const runtime = "nodejs";
 
 export async function GET(
   request: NextRequest,
@@ -12,25 +9,23 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const reviewList = await db
-      .select({
-        id: reviews.id,
-        content: reviews.content,
-        rating: reviews.rating,
-        createdAt: reviews.createdAt,
-        updatedAt: reviews.updatedAt,
-        authorId: reviews.authorId,
-        restaurantId: reviews.restaurantId,
+    const reviewList = await prisma.review.findMany({
+      where: {
+        restaurantId: id,
+      },
+      include: {
         author: {
-          id: users.id,
-          name: users.name,
-          avatar: users.avatar,
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
         },
-      })
-      .from(reviews)
-      .leftJoin(users, eq(reviews.authorId, users.id))
-      .where(eq(reviews.restaurantId, id))
-      .orderBy(desc(reviews.createdAt));
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     return NextResponse.json(reviewList);
   } catch (error) {
@@ -52,13 +47,11 @@ export async function POST(
     const authUser = await getAuthenticatedUser();
 
     // DB에서 사용자 정보 조회
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, authUser.email!))
-      .limit(1);
+    const user = await prisma.user.findUnique({
+      where: { email: authUser.email! },
+    });
 
-    if (user.length === 0) {
+    if (!user) {
       return NextResponse.json(
         { message: "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요." },
         { status: 404 },
@@ -83,49 +76,47 @@ export async function POST(
     }
 
     // 리뷰 생성
-    const newReview = await db
-      .insert(reviews)
-      .values({
+    const newReview = await prisma.review.create({
+      data: {
         content,
         rating: parseInt(rating),
-        authorId: user[0].id,
+        authorId: user.id,
         restaurantId: id,
-      })
-      .returning();
+      },
+    });
 
     // 작성자 정보 조회
-    const author = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        avatar: users.avatar,
-      })
-      .from(users)
-      .where(eq(users.id, user[0].id))
-      .limit(1);
+    const author = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+      },
+    });
 
     // 맛집의 평균 별점과 리뷰 개수 업데이트
-    const allReviews = await db
-      .select({ rating: reviews.rating })
-      .from(reviews)
-      .where(eq(reviews.restaurantId, id));
+    const allReviews = await prisma.review.findMany({
+      where: { restaurantId: id },
+      select: { rating: true },
+    });
 
     const averageRating =
       allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
     const reviewCount = allReviews.length;
 
-    await db
-      .update(restaurants)
-      .set({
+    await prisma.restaurant.update({
+      where: { id },
+      data: {
         averageRating,
         reviewCount,
-      })
-      .where(eq(restaurants.id, id));
+      },
+    });
 
     // 응답 구성
     const result = {
-      ...newReview[0],
-      author: author[0] || null,
+      ...newReview,
+      author: author || null,
     };
 
     return NextResponse.json(result, { status: 201 });

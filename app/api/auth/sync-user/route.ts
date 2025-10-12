@@ -1,29 +1,23 @@
 import { NextResponse } from "next/server";
-import { db, users } from "@/lib/drizzle";
-import { eq } from "drizzle-orm";
+import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
-
-export const runtime = 'nodejs';
 
 export async function POST() {
   try {
     const authUser = await getAuthenticatedUser();
 
     // 이미 존재하는 사용자인지 확인
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, authUser.email!))
-      .limit(1);
+    const existingUser = await prisma.user.findUnique({
+      where: { email: authUser.email! },
+    });
 
-    if (existingUser.length > 0) {
-      return NextResponse.json({ user: existingUser[0] });
+    if (existingUser) {
+      return NextResponse.json({ user: existingUser });
     }
 
     // 새 사용자 생성
-    const newUser = await db
-      .insert(users)
-      .values({
+    const newUser = await prisma.user.create({
+      data: {
         id: authUser.id,
         email: authUser.email!,
         name:
@@ -33,10 +27,10 @@ export async function POST() {
         avatar: authUser.user_metadata?.avatar_url || null,
         provider: authUser.app_metadata?.provider || "unknown",
         providerId: authUser.id,
-      })
-      .returning();
+      },
+    });
 
-    return NextResponse.json({ user: newUser[0] });
+    return NextResponse.json({ user: newUser });
   } catch (error) {
     console.error("사용자 동기화 오류:", error);
 

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, restaurants, users, reviews } from "@/lib/drizzle";
-import { eq, desc } from "drizzle-orm";
-
-export const runtime = "nodejs";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -12,13 +9,11 @@ export async function GET(
     const { id } = await params;
 
     // 레스토랑 기본 정보 조회
-    const restaurant = await db
-      .select()
-      .from(restaurants)
-      .where(eq(restaurants.id, id))
-      .limit(1);
+    const restaurant = await prisma.restaurant.findUnique({
+      where: { id },
+    });
 
-    if (restaurant.length === 0) {
+    if (!restaurant) {
       return NextResponse.json(
         { message: "맛집을 찾을 수 없습니다." },
         { status: 404 },
@@ -26,38 +21,36 @@ export async function GET(
     }
 
     // 작성자 정보 조회
-    const author = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        avatar: users.avatar,
-      })
-      .from(users)
-      .where(eq(users.id, restaurant[0].authorId))
-      .limit(1);
+    const author = await prisma.user.findUnique({
+      where: { id: restaurant.authorId },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+      },
+    });
 
     // 리뷰 정보 조회
-    const restaurantReviews = await db
-      .select({
-        id: reviews.id,
-        content: reviews.content,
-        rating: reviews.rating,
-        createdAt: reviews.createdAt,
+    const restaurantReviews = await prisma.review.findMany({
+      where: { restaurantId: id },
+      include: {
         author: {
-          id: users.id,
-          name: users.name,
-          avatar: users.avatar,
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
         },
-      })
-      .from(reviews)
-      .leftJoin(users, eq(reviews.authorId, users.id))
-      .where(eq(reviews.restaurantId, id))
-      .orderBy(desc(reviews.createdAt));
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     // 결과 조합
     const result = {
-      ...restaurant[0],
-      author: author[0] || null,
+      ...restaurant,
+      author: author || null,
       reviews: restaurantReviews,
       _count: {
         reviews: restaurantReviews.length,
@@ -121,13 +114,12 @@ export async function PUT(
     if (price) updateData.price = parseInt(price);
     if (spiciness !== undefined) updateData.spiciness = parseInt(spiciness);
 
-    const updatedRestaurant = await db
-      .update(restaurants)
-      .set(updateData)
-      .where(eq(restaurants.id, id))
-      .returning();
+    const updatedRestaurant = await prisma.restaurant.update({
+      where: { id },
+      data: updateData,
+    });
 
-    if (updatedRestaurant.length === 0) {
+    if (!updatedRestaurant) {
       return NextResponse.json(
         { message: "맛집을 찾을 수 없습니다." },
         { status: 404 },
@@ -135,19 +127,18 @@ export async function PUT(
     }
 
     // 작성자 정보 조회
-    const author = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        avatar: users.avatar,
-      })
-      .from(users)
-      .where(eq(users.id, updatedRestaurant[0].authorId))
-      .limit(1);
+    const author = await prisma.user.findUnique({
+      where: { id: updatedRestaurant.authorId },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+      },
+    });
 
     const result = {
-      ...updatedRestaurant[0],
-      author: author[0] || null,
+      ...updatedRestaurant,
+      author: author || null,
     };
 
     return NextResponse.json(result);
@@ -167,12 +158,11 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const deletedRestaurant = await db
-      .delete(restaurants)
-      .where(eq(restaurants.id, id))
-      .returning();
+    const deletedRestaurant = await prisma.restaurant.delete({
+      where: { id },
+    });
 
-    if (deletedRestaurant.length === 0) {
+    if (!deletedRestaurant) {
       return NextResponse.json(
         { message: "맛집을 찾을 수 없습니다." },
         { status: 404 },
