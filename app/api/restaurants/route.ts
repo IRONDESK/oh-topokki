@@ -3,18 +3,11 @@ import { db, restaurants, users } from "@/lib/drizzle";
 import { desc, eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export async function GET() {
   try {
     console.log("GET /api/restaurants 시작 (Vercel Postgres)");
-
-    // 환경변수 상태 확인
-    console.log("DB 환경변수 상태:", {
-      POSTGRES_URL: !!process.env.POSTGRES_URL,
-      POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
-      DATABASE_URL: !!process.env.DATABASE_URL,
-    });
 
     // Drizzle을 사용한 쿼리 (필요한 필드들 추가)
     console.log("Vercel Postgres로 restaurant 조회 시작");
@@ -51,7 +44,7 @@ export async function GET() {
     );
 
     // 환경변수 관련 오류인지 확인
-    if (error instanceof Error && error.message.includes('POSTGRES_URL')) {
+    if (error instanceof Error && error.message.includes("POSTGRES_URL")) {
       return NextResponse.json(
         {
           message: "데이터베이스 연결 설정이 필요합니다.",
