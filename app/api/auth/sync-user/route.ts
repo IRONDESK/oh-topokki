@@ -3,6 +3,8 @@ import { db, users } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
+export const runtime = 'edge';
+
 export async function POST() {
   try {
     const authUser = await getAuthenticatedUser();

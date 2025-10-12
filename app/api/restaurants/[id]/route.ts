@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, restaurants, users, reviews } from "@/lib/drizzle";
 import { eq, desc } from "drizzle-orm";
 
+export const runtime = 'edge';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

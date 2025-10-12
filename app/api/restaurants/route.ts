@@ -3,6 +3,8 @@ import { db, restaurants, users } from "@/lib/drizzle";
 import { desc, eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/supabase-server";
 
+export const runtime = 'edge';
+
 export async function GET() {
   try {
     console.log("GET /api/restaurants 시작 (Drizzle)");
