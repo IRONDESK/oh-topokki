@@ -132,6 +132,7 @@ option {
   border-radius: 0;
   font: inherit;
   text-decoration: none;
+  text-align: left;
 }
 
 blockquote:before,
