@@ -91,6 +91,14 @@ export const buttons = recipe({
           gap: "4px",
         },
       ],
+      medium: [
+        fonts.body3.medium,
+        {
+          borderRadius: "8px",
+          padding: "8px 16px",
+          gap: "4px",
+        },
+      ],
     },
   },
 });

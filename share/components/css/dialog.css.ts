@@ -16,12 +16,12 @@ const dim = style({
   zIndex: 2000,
 });
 const container = style([
-  flexs({ dir: "col", gap: "32" }),
+  flexs({ dir: "col", gap: "20" }),
   {
     minWidth: "350px",
     borderRadius: "20px",
     backgroundColor: theme.color.white,
-    padding: "20px",
+    padding: "24px 20px",
     alignItems: "stretch",
   },
 ]);

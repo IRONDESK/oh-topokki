@@ -50,7 +50,7 @@ export const Dialog = (props: DialogProps) => {
               type="button"
               className={buttons({
                 fill: "secondary",
-                size: "small",
+                size: "medium",
               })}
               onClick={() => close(false)}
             >
@@ -61,7 +61,7 @@ export const Dialog = (props: DialogProps) => {
             type="button"
             className={buttons({
               fill: "primary",
-              size: "small",
+              size: "medium",
             })}
             onClick={() => handleClose(true)}
           >
