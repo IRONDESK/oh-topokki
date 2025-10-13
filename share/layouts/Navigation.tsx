@@ -2,23 +2,28 @@
 
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
+import { overlay } from "overlay-kit";
+import { useAuth } from "@/contexts/AuthContext";
 
 import Icons from "@/share/components/Icons";
-import { navigationStyle as style } from "@/share/layouts/navigation.css";
 import { glassContainer } from "@/share/components/css/share.css";
-import { overlay } from "overlay-kit";
+import { navigationStyle as style } from "@/share/layouts/navigation.css";
 import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
+import LoginModal from "@/components/login/LoginModal";
 
 function Navigation() {
   const params = useSearchParams();
   const tab = params.get("tab");
+  const { user } = useAuth();
 
   const openRegisterForm = () => {
-    overlay.open((controller) => (
-      <RestaurantRegisterForm
-          {...controller}
-      />
-    ));
+    if (user) {
+      overlay.open((controller) => <RestaurantRegisterForm {...controller} />);
+    } else {
+      overlay.open((controller) => (
+        <LoginModal message="로그인 후에 작성할 수 있어요" {...controller} />
+      ));
+    }
   };
 
   return (

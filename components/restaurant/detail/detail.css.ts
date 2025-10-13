@@ -168,8 +168,10 @@ const closeBtn = style({
 });
 
 const loadingContainer = style({
-  margin: "20px auto"
-})
+  display: "flex",
+  justifyContent: "center",
+  margin: "48px auto",
+});
 
 export const detailStyle = {
   container,

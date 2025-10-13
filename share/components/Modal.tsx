@@ -25,6 +25,7 @@ export const Modal = (props: Props) => {
           className={overlayStyle.header}
           style={{ backgroundColor: headerBgColor }}
         >
+          <div></div>
           <button
             className={overlayStyle.closeButton}
             onClick={handleClose}
