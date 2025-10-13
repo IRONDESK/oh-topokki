@@ -31,7 +31,7 @@ const LoginModal = (props: Props) => {
         </div>
         {message && (
           <div className={loginStyle.message}>
-            <Icons name="triangle-warning" t="round" w="solid" size={22} />
+            <Icons name="triangle-warning" t="round" w="solid" size={20} />
             {message}
           </div>
         )}

@@ -33,7 +33,7 @@ globalStyle(`${logoBox} > svg`, {
 });
 
 const message = style([
-  fonts.body2.medium,
+  fonts.body3.medium,
   {
     width: "max-content",
     display: "inline-flex",
@@ -41,8 +41,8 @@ const message = style([
     justifyContent: "center",
     gap: "6px",
     margin: "0 auto 160px",
-    padding: "20px 16px",
-    minWidth: "60%",
+    padding: "20px",
+    minWidth: "55%",
     backgroundColor: theme.color.primary["50"],
     borderRadius: "8px",
     border: `1px solid ${theme.color.primary["100"]}`,
