@@ -14,6 +14,8 @@ const label = style([
     borderRadius: "8px",
     padding: "12px",
     alignItems: "stretch",
+    wordBreak: "keep-all",
+    textAlign: "center",
     selectors: {
       "&:has(input:checked)": {
         backgroundColor: theme.color.primary[50],

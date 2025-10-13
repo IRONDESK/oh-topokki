@@ -54,7 +54,7 @@ const fieldValue = style([
 ]);
 
 const pepperItems = style([
-  flexs({ justify: "spb", flex: 2 }),
+  flexs({ justify: "spb", flex: 2, gap: "4" }),
   {
     width: "100%",
     color: theme.color.primary["600"],
@@ -68,6 +68,7 @@ const spicyLabel = style([
     flex: 1,
     color: theme.color.gray["500"],
     marginBottom: "10px",
+    wordBreak: "keep-all",
   },
 ]);
 const pepperItem = style([
