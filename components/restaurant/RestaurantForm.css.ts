@@ -50,6 +50,15 @@ export const backBtn = style([
   },
 ]);
 
+export const fieldWrapper = style({
+  margin: "0 -20px",
+  padding: "0 20px",
+  selectors: {
+    "&[data-show='true']": {
+      boxShadow: theme.shadow["xl"],
+    },
+  },
+});
 export const section = style([
   flexs({ dir: "col", gap: "4", align: "start" }),
   { width: "100%" },

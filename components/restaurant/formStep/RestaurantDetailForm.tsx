@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { josa } from "es-hangul";
 
 import * as styles from "../RestaurantForm.css";
 import { RestaurantFormData } from "../RestaurantForm";
@@ -38,8 +39,10 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
       <div className={flexs({ justify: "spb", align: "start" })}>
         <div>
           <p className={fonts.head5.medium}>
-            <Text color="primary-500">{formData.name}</Text>에 대해
-            <br />몇 가지 여쭤볼게요
+            <Text color="primary-500">{formData.name}</Text>
+            {josa(formData.name, "은/는").slice(-1)}
+            <br />
+            어떤 맛집인가요?
           </p>
         </div>
         <button
@@ -55,7 +58,11 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
         {placeFields.map((field, index) => {
           const isPrevStatus = index < order ? "fold-value" : "fold";
           return (
-            <li key={field.name}>
+            <li
+              key={field.name}
+              className={styles.fieldWrapper}
+              data-show={order === index}
+            >
               <FieldSection
                 status={order === index ? "unfold" : isPrevStatus}
                 {...field}
