@@ -240,12 +240,16 @@ function RestaurantDetail(props: Props) {
                     <span key={kind}>{SAUCE_TYPE[kind]}</span>
                   ))}
                 </dd>
-                <dt>면 종류</dt>
-                <dd>
-                  {restaurant.noodleKinds.map((kind) => (
-                    <span key={kind}>{NOODLE_TYPE[kind]}</span>
-                  ))}
-                </dd>
+                {restaurant.noodleKinds.length > 0 && (
+                  <>
+                    <dt>면 종류</dt>
+                    <dd>
+                      {restaurant.noodleKinds.map((kind) => (
+                        <span key={kind}>{NOODLE_TYPE[kind]}</span>
+                      ))}
+                    </dd>
+                  </>
+                )}
                 <dt>매운 정도</dt>
                 <dd>
                   <p className={flexs({ gap: "4", justify: "start" })}>
