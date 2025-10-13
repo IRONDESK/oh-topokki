@@ -8,10 +8,10 @@ const container = style([
   fonts.body3.regular,
   {
     position: "fixed",
-    top: "16px",
+    top: 0,
     width: "calc(min(1280px, 100vw))",
-    height: "48px",
-    padding: "0 0 0 16px",
+    minHeight: "48px",
+    padding: "calc(env(safe-area-inset-top) + 16px) 0 0 16px",
     zIndex: 1000,
   },
 ]);
