@@ -11,7 +11,7 @@ const container = style([
     top: 0,
     width: "calc(min(1280px, 100vw))",
     minHeight: "48px",
-    padding: "env(safe-area-inset-top, 16px) 0 0 16px",
+    padding: "env(safe-area-inset-top, 16px) 0 0 10px",
     zIndex: 1000,
   },
 ]);
@@ -61,9 +61,26 @@ const filterItem = style([
   },
 ]);
 
+const menu = style({
+  cursor: "pointer",
+  width: "36px",
+  height: "32px",
+  borderRadius: "6px",
+  backgroundColor: theme.color.primary["500"],
+  color: theme.color.white,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  borderLeft: "1px solid rgba(245, 78, 38, 0.55)",
+  borderTop: "1px solid rgba(245, 78, 38, 0.55)",
+  borderRight: "1px solid transparent",
+  borderBottom: "1px solid transparent",
+});
+
 export const mapHeaderStyle = {
   container,
   headerLogo,
   filterList,
   filterItem,
+  menu,
 };

@@ -1,24 +1,27 @@
 "use client";
 
 import { overlay } from "overlay-kit";
-import { useAuth } from "@/contexts/AuthContext";
 import Icons from "@/share/components/Icons";
-import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
-import LoginModal from "@/components/login/LoginModal";
 import Logo from "@/assets/Logo";
 import { mapHeaderStyle as style } from "../css/mapHeader.css";
 
-export default function MapHeader() {
-  const { user } = useAuth();
+import { flexs } from "@/style/container.css";
+import FloatingMenu from "@/components/FloatingMenu";
 
-  const openLoginModal = () => {
-    overlay.open((controller) => <LoginModal {...controller} />);
+export default function MapHeader() {
+  const openMenuFloat = () => {
+    overlay.open((controller) => <FloatingMenu {...controller} />);
   };
 
   return (
     <header className={style.container}>
-      <div className={style.headerLogo}>
-        <Logo />
+      <div className={flexs({ gap: "4" })}>
+        <button type="button" className={style.menu} onClick={openMenuFloat}>
+          <Icons name="menu-burger" t="round" w="regular" size={18} />
+        </button>
+        <div className={style.headerLogo}>
+          <Logo />
+        </div>
       </div>
       <ul className={style.filterList}>
         <li className={style.filterItem}>즉떡</li>
