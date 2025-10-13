@@ -43,7 +43,7 @@ function RestaurantDetail(props: Props) {
   });
 
   const [startPos, setStartPos] = useState(0);
-  const [isFull, setIsFull] = useState(isDesktop);
+  const [isFull, setIsFull] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
 
@@ -120,6 +120,7 @@ function RestaurantDetail(props: Props) {
   useEffect(() => {
     const body = document.querySelector("body") as HTMLElement;
     if (controller.isOpen) {
+      setIsFull(isDesktop);
       body.style.overflow = "hidden";
       // body.style.pointerEvents = "none";
     }

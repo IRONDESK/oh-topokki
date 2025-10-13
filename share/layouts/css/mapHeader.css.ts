@@ -11,7 +11,7 @@ const container = style([
     top: 0,
     width: "calc(min(1280px, 100vw))",
     minHeight: "48px",
-    padding: "calc(env(safe-area-inset-top) + 16px) 0 0 16px",
+    padding: "env(safe-area-inset-top, 16px) 0 0 16px",
     zIndex: 1000,
   },
 ]);

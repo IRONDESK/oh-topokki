@@ -26,6 +26,7 @@ const container = style({
     },
     "&[data-full='true']": {
       transform: "translate3d(-50%, 0, 0)",
+      padding: "calc(env(safe-area-inset-top) + 12px) 0 32px",
       borderRadius: 0,
       opacity: 1,
       overflowY: "auto",
