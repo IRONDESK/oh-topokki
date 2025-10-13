@@ -65,6 +65,7 @@ const RestaurantMarker = ({
             restaurantId={restaurant.id}
             restaurantName={restaurant.name}
             topokkiType={restaurant.topokkiType}
+            price={restaurant.price}
             address={restaurant.address}
             controller={controller}
           />

@@ -15,15 +15,15 @@ import { flexs } from "@/style/container.css";
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
-import { getRestaurantDetail, getRestaurantInfo } from "@/service/naver-map";
+import { getRestaurantDetail } from "@/service/naver-map";
 import Spinner from "@/share/components/Spinner";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
-import { theme } from "@/style/theme.css";
 
 type Props = {
   restaurantId: string;
   restaurantName: string;
   topokkiType: string;
+  price: number;
   address: string;
   controller: {
     close: () => void;
@@ -33,8 +33,14 @@ type Props = {
 };
 
 function RestaurantDetail(props: Props) {
-  const { restaurantId, restaurantName, address, topokkiType, controller } =
-    props;
+  const {
+    restaurantId,
+    restaurantName,
+    price,
+    address,
+    topokkiType,
+    controller,
+  } = props;
   const isDesktop = useIsDesktop();
   const { data: restaurant, isLoading } = useQuery({
     enabled: !!restaurantId,
@@ -203,7 +209,7 @@ function RestaurantDetail(props: Props) {
             </div>
             <p className={clsx(style.price, style.innerPadding)}>
               <span className={fonts.head6.semibold}>
-                {restaurant?.price.toLocaleString()}원
+                {price?.toLocaleString()}원
               </span>
               <span
                 className={typo({
@@ -215,11 +221,11 @@ function RestaurantDetail(props: Props) {
                 1인당, 기본
               </span>
             </p>
-            {isLoading && 
-              (<div className={style.loadingContainer}>
+            {isLoading && (
+              <div className={style.loadingContainer}>
                 <Spinner size={32} thick={3} />
-              </div>)
-            }
+              </div>
+            )}
             {restaurant && !isLoading && (
               <dl className={clsx(style.detailItems, style.innerPadding)}>
                 <dt>떡 종류</dt>
