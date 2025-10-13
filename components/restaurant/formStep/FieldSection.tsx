@@ -81,10 +81,18 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
           {type === "radio" &&
-            (items?.find((item) => item.value === (watch(name as any) as unknown as string))?.label ?? "")}
+            (items?.find(
+              (item) =>
+                item.value === (watch(name as any) as unknown as string),
+            )?.label ??
+              "")}
           {type === "checkbox" &&
             (items
-              ?.filter((item) => (watch(name as any) as unknown as string[]).includes(item.value))
+              ?.filter((item) =>
+                (watch(name as any) as unknown as string[]).includes(
+                  item.value,
+                ),
+              )
               .map((item) => item.label)
               .join(", ") ??
               "")}
@@ -131,7 +139,9 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
           {type === "text" && (watch(name as any) ?? "선택되지 않음")}
           {type === "number" &&
-            (Number.isNaN(Number(watch(name as any))) ? "--" : watch(name as any))}
+            (Number.isNaN(Number(watch(name as any)))
+              ? "--"
+              : watch(name as any))}
         </div>
       </div>
     );
@@ -151,7 +161,7 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
               <span className={formStyle.spicyLabel}>외국인도{"\n"}누구나</span>
               <span className={formStyle.spicyLabel}>진라면</span>
               <span className={formStyle.spicyLabel}>신라면</span>
-              <span className={formStyle.spicyLabel}></span>
+              <span className={formStyle.spicyLabel}>신라면{"\n"}이상</span>
               <span className={formStyle.spicyLabel}>불닭</span>
               <span className={formStyle.spicyLabel}>불닭보다{"\n"}매워요</span>
               <span className={formStyle.spicyLabel}></span>
@@ -236,13 +246,18 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
 
   if (type === "text-group") {
     const addFieldValue = (value: string) => {
-      setValue(name as any, [...((watch(name as any) as unknown as string[]) ?? []), value]);
+      setValue(name as any, [
+        ...((watch(name as any) as unknown as string[]) ?? []),
+        value,
+      ]);
       setTextGroupInput("");
     };
     const clearFieldValue = (value: string) => {
       setValue(
         name as any,
-        (watch(name as any) as unknown as string[]).filter((item) => item !== value),
+        (watch(name as any) as unknown as string[]).filter(
+          (item) => item !== value,
+        ),
       );
     };
 
@@ -321,7 +336,8 @@ export const FieldSection = (props: PlaceField & { status?: FieldStatus }) => {
           </div>
         </div>
         <div className={formStyle.fieldValue} data-hide={status === "unfold"}>
-          {(watch(name as any) as unknown as string[]).join(", ") ?? "선택되지 않음"}
+          {(watch(name as any) as unknown as string[]).join(", ") ??
+            "선택되지 않음"}
         </div>
       </div>
     );

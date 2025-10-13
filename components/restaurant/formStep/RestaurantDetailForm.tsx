@@ -29,7 +29,10 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
   const onSubmit = (data: RestaurantFormData) => {
     mutate(data, {
       onSuccess: async () => {
-        overlay.alert({ title: "저장되었습니다!" });
+        overlay.alert({ title: "새 맛집을 등록했어요" });
+      },
+      onError: async (error) => {
+        overlay.alert({ title: "등록에 실패했어요", contents: error.message });
       },
     });
   };
