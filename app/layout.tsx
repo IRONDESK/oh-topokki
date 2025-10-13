@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   initialScale: 1.0,
   maximumScale: 1.0,
   userScalable: false,
-  viewportFit: "contain",
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f7fafc" },
     { media: "(prefers-color-scheme: dark)", color: "#111012" },
@@ -33,6 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+       <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      </head>
       <body
         className={pretendard.className}
         style={{ color: theme.color.gray["800"] }}
