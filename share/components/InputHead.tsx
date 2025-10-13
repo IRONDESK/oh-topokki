@@ -24,7 +24,11 @@ export const InputHead = (
         className={inputStyle.inputCssHiding}
         {...rest}
       />
-      <span className={inputStyle.inputPlaceholder} style={{ ...rest.style }}>
+      <span
+        className={inputStyle.inputPlaceholder}
+        style={{ ...rest.style }}
+        data-hide={(props?.value as string)?.length > 0}
+      >
         {placeholder ?? "입력해 주세요"}
       </span>
     </div>
