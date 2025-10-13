@@ -42,6 +42,7 @@ const dim = style({
 const modal = style({
   backgroundColor: theme.color.white,
   overflow: "hidden",
+  padding: "0 0 env(safe-area-inset-bottom, 20px)",
   display: "flex",
   flexDirection: "column",
   zIndex: 20,
@@ -54,6 +55,7 @@ const modal = style({
     "(min-width: 1280px)": {
       width: "100%",
       maxWidth: global.size.overlayMaxWidth,
+      padding: 0,
       minHeight: "95vh",
       height: "95vh",
       borderRadius: "32px",
