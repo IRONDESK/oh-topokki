@@ -13,7 +13,7 @@ const container = style({
   width: "100%",
   maxWidth: "520px",
   transform: "translate3d(-50%, 98vh, 0)",
-  transition: "transform 0.25s, opacity 0.3s, border-radius 0.3s",
+  transition: "transform 0.25s, opacity 0.3s, border-radius 0.3s, padding: 0.3s",
   color: theme.color.gray["700"],
   opacity: 0,
   zIndex: 2005,
@@ -26,7 +26,7 @@ const container = style({
     },
     "&[data-full='true']": {
       transform: "translate3d(-50%, 0, 0)",
-      padding: "calc(env(safe-area-inset-top) + 12px) 0 32px",
+      padding: "env(safe-area-inset-top, 4px) 0 32px",
       borderRadius: 0,
       opacity: 1,
       overflowY: "auto",
@@ -45,7 +45,7 @@ const stickyArea = style({
       display: "flex",
       gap: "4px",
       alignItems: "center",
-      padding: "calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px",
+      padding: "10px 16px 12px",
       boxShadow: theme.shadow.lg,
       zIndex: 10,
     },
@@ -94,7 +94,7 @@ globalStyle(`${detailItems} > dt`, {
 });
 const price = style({
   margin: "16px 0",
-  paddingTop: "10px",
+  paddingTop: "16px",
   display: "flex",
   alignItems: "center",
   gap: "6px",
@@ -158,7 +158,7 @@ const headReviewText = style([
   },
 ]);
 const bottomPosition = style({
-  paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 48px)",
+  paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 72px)",
 });
 
 const closeBtn = style({
@@ -166,6 +166,10 @@ const closeBtn = style({
   color: theme.color.gray["400"],
   textAlign: "center",
 });
+
+const loadingContainer = style({
+  margin: "20px auto"
+})
 
 export const detailStyle = {
   container,
@@ -182,5 +186,6 @@ export const detailStyle = {
   headReview,
   headReviewText,
   bottomPosition,
+  loadingContainer,
   closeBtn,
 };

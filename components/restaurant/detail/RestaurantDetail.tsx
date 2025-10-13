@@ -215,7 +215,11 @@ function RestaurantDetail(props: Props) {
                 1인당, 기본
               </span>
             </p>
-            {isLoading && <Spinner size={32} thick={3} />}
+            {isLoading && 
+              (<div className={style.loadingContainer}>
+                <Spinner size={32} thick={3} />
+              </div>)
+            }
             {restaurant && !isLoading && (
               <dl className={clsx(style.detailItems, style.innerPadding)}>
                 <dt>떡 종류</dt>
