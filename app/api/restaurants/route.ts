@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
         createdAt: true,
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: "desc",
       },
       take: PAGE_SIZE,
       skip: offset,
@@ -69,14 +69,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     // 쿠키에서 사용자 인증 정보 추출
     const authUser = await getAuthenticatedUser();
 
     // DB에서 사용자 정보 조회하거나 생성 (Prisma 사용)
     let user = await prisma.user.findUnique({
-      where: { email: authUser.email! }
+      where: { email: authUser.email! },
     });
 
     if (!user) {
@@ -85,21 +85,99 @@ export async function POST() {
         data: {
           id: authUser.id,
           email: authUser.email!,
-          name: authUser.user_metadata?.name ||
-                authUser.user_metadata?.full_name ||
-                null,
+          name:
+            authUser.user_metadata?.name ||
+            authUser.user_metadata?.full_name ||
+            null,
           avatar: authUser.user_metadata?.avatar_url || null,
           provider: authUser.app_metadata?.provider || "unknown",
           providerId: authUser.id,
-        }
+        },
       });
     }
 
-    // POST 기능은 일단 간단하게 처리
-    return NextResponse.json(
-      { error: "POST 기능은 아직 구현 중입니다." },
-      { status: 501 },
-    );
+    const body = await request.json();
+    const {
+      name,
+      address,
+      latitude,
+      longitude,
+      phoneNumber,
+      topokkiType,
+      price,
+      riceKinds = [],
+      sauceKinds = [],
+      spiciness,
+      canChangeSpicy = false,
+      sideMenus = [],
+      noodleKinds = [],
+      sundaeType,
+      others = [],
+      recommend = [],
+      myComment,
+    } = body;
+
+    // 필수 필드 검증
+    if (!name || !address || !latitude || !longitude) {
+      return NextResponse.json(
+        { error: "필수 정보가 누락되었습니다." },
+        { status: 400 },
+      );
+    }
+
+    const restaurant = await prisma.restaurant.create({
+      data: {
+        name,
+        address,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        phoneNumber,
+        authorId: user.id,
+        topokkiType,
+        price: price ? parseInt(price) : null,
+        sundaeType,
+        riceKinds: riceKinds,
+        sauceKinds: sauceKinds,
+        spiciness: spiciness ? parseInt(spiciness) : null,
+        canChangeSpicy,
+        sideMenus: sideMenus,
+        noodleKinds: noodleKinds,
+        others: others,
+        recommend: recommend,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // 나의 한마디가 있으면 첫 번째 리뷰로 등록
+    if (myComment && myComment.trim()) {
+      await prisma.review.create({
+        data: {
+          content: myComment.trim(),
+          rating: 5, // 기본 5점으로 설정 (작성자가 추천하는 맛집이므로)
+          authorId: user.id,
+          restaurantId: restaurant.id,
+        },
+      });
+
+      // 평점 업데이트
+      await prisma.restaurant.update({
+        where: { id: restaurant.id },
+        data: {
+          averageRating: 5,
+          reviewCount: 1,
+        },
+      });
+    }
+
+    return NextResponse.json(restaurant, { status: 201 });
   } catch (error) {
     console.error("맛집 생성 오류:", error);
     console.error(
@@ -111,12 +189,12 @@ export async function POST() {
       error instanceof Error &&
       (error.message.includes("로그인") || error.message.includes("인증"))
     ) {
-      return NextResponse.json({ message: error.message }, { status: 401 });
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
     return NextResponse.json(
       {
-        message: "맛집 등록에 실패했습니다.",
+        error: "맛집 등록에 실패했습니다.",
         details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
