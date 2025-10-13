@@ -52,7 +52,7 @@ function Navigation() {
         data-flexible={true}
         style={{ paddingTop: "2px" }}
       >
-        <Icons name="star" t="round" w="solid" size={20} />
+        <Icons name="star" t="round" w="bold" size={20} />
         <span className={style.btnText}>즐겨찾기</span>
       </button>
     </div>

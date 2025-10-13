@@ -8,7 +8,7 @@ const container = style({
   bottom: 0,
   left: "50%",
   transform: "translateX(-50%)",
-  marginBottom: "env(safe-area-inset-bottom, 16px)",
+  marginBottom: "calc(env(safe-area-inset-bottom, 16px) - 4px)",
   display: "flex",
   gap: "8px",
   alignItems: "center",
@@ -46,4 +46,9 @@ const btnText = style([
   { color: theme.color.gray["600"] },
 ]);
 
-export const navigationStyle = { container, mainButton, button, btnText };
+export const navigationStyle = {
+  container,
+  mainButton,
+  button,
+  btnText,
+};
