@@ -71,4 +71,57 @@ const content = style([
   },
 ]);
 
-export const overlayStyle = { dim, modal, content, closeButton, header };
+const bottomSheetContainer = style({
+  position: "fixed",
+  left: "50%",
+  top: 0,
+  backgroundColor: theme.color.white,
+  borderRadius: "20px 20px 0 0",
+  padding: "0 0 32px",
+  minHeight: "100vh",
+  width: "100%",
+  maxWidth: "520px",
+  transform: "translate3d(-50%, 98vh, 0)",
+  transition: "transform 0.25s, opacity 0.3s, border-radius 0.3s, padding 0.3s",
+  color: theme.color.gray["700"],
+  opacity: 0,
+  zIndex: 2005,
+  overscrollBehavior: "contain",
+  selectors: {
+    "&[data-open='true']": {
+      transform: "translate3d(-50%, 35vh, 0)",
+      opacity: 1,
+      boxShadow: theme.shadow.md,
+    },
+    "&[data-full='true']": {
+      transform: "translate3d(-50%, 0, 0)",
+      padding: "env(safe-area-inset-top, 4px) 0 32px",
+      borderRadius: 0,
+      opacity: 1,
+      overflowY: "auto",
+    },
+  },
+});
+
+const topDragger = style({
+  width: "15%",
+  height: "4px",
+  borderRadius: "99px",
+  backgroundColor: theme.color.gray["200"],
+  margin: "18px auto 12px",
+});
+const closeBtn = style({
+  margin: "20px 0 8px",
+  color: theme.color.gray["400"],
+  textAlign: "center",
+});
+
+export const overlayStyle = {
+  dim,
+  modal,
+  content,
+  closeButton,
+  header,
+  bottomSheetContainer,
+  topDragger,
+};
