@@ -10,12 +10,16 @@ import { glassContainer } from "@/share/components/css/share.css";
 import { navigationStyle as style } from "@/share/layouts/navigation.css";
 import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
 import LoginModal from "@/components/login/LoginModal";
+import SearchModal from "@/components/search/SearchModal";
 
 function Navigation() {
   const params = useSearchParams();
   const tab = params.get("tab");
   const { user } = useAuth();
 
+  const openSearch = () => {
+    overlay.open((controller) => <SearchModal controller={controller} />);
+  };
   const openRegisterForm = () => {
     if (user) {
       overlay.open((controller) => <RestaurantRegisterForm {...controller} />);
@@ -33,6 +37,7 @@ function Navigation() {
         className={clsx(glassContainer, style.button)}
         data-flexible={true}
         style={{ paddingTop: "2px" }}
+        onClick={openSearch}
       >
         <Icons name="search" t="round" w="bold" size={20} />
         <span className={style.btnText}>검색</span>
