@@ -87,6 +87,7 @@ const bottomSheetContainer = style({
   opacity: 0,
   zIndex: 2005,
   overscrollBehavior: "contain",
+  willChange: 'transform',
   selectors: {
     "&[data-open='true']": {
       transform: "translate3d(-50%, 35vh, 0)",
