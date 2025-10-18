@@ -8,13 +8,13 @@ type InputBaseProp = Omit<
   "ref" | "type" | "className"
 > & {
   type: "text" | "number";
-  small?: boolean;
+  fontSize?: "body1" | "body3";
 };
 
 export const InputHead = (
   props: InputBaseProp & { ref?: React.Ref<HTMLInputElement> },
 ) => {
-  const { placeholder, small = false, ...rest } = props;
+  const { placeholder, fontSize, ...rest } = props;
   const internalRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
 
@@ -25,20 +25,14 @@ export const InputHead = (
         placeholder={" "}
         className={clsx(
           inputStyle.inputCssHiding,
-          small &&
-            typo({
-              size: "body1",
-            }),
+          fontSize && typo({ size: fontSize }),
         )}
         {...rest}
       />
       <span
         className={clsx(
           inputStyle.inputPlaceholder,
-          small &&
-            typo({
-              size: "body1",
-            }),
+          fontSize && typo({ size: fontSize }),
         )}
         style={{ ...rest.style }}
         data-hide={(props?.value as string)?.length > 0}

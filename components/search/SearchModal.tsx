@@ -77,7 +77,7 @@ function SearchModal({ controller }: Props) {
             <InputHead
               type="text"
               placeholder="상호명이나 메뉴를 입력해 주세요"
-              small={true}
+              fontSize='body1'
               value={input}
               onChange={(e) => setInput(e.target.value)}
               autoFocus={true}
