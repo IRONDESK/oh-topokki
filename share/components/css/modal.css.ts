@@ -87,7 +87,7 @@ const bottomSheetContainer = style({
   opacity: 0,
   zIndex: 2005,
   overscrollBehavior: "contain",
-  willChange: 'transform',
+  willChange: "transform",
   selectors: {
     "&[data-open='true']": {
       transform: "translate3d(-50%, 35vh, 0)",
@@ -111,10 +111,11 @@ const topDragger = style({
   backgroundColor: theme.color.gray["200"],
   margin: "18px auto 12px",
 });
-const closeBtn = style({
-  margin: "20px 0 8px",
-  color: theme.color.gray["400"],
-  textAlign: "center",
+
+const desktopHeader = style({
+  padding: "12px 12px 0 16px",
+  display: "flex",
+  justifyContent: "flex-end",
 });
 
 export const overlayStyle = {
@@ -124,5 +125,6 @@ export const overlayStyle = {
   closeButton,
   header,
   bottomSheetContainer,
+  desktopHeader,
   topDragger,
 };

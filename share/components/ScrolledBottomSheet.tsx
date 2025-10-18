@@ -97,7 +97,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
       ([entry]) => {
         setIsSticky(!entry.isIntersecting);
       },
-      { threshold: [1] }
+      { threshold: [1] },
     );
 
     const currentBarRef = barRef.current;
@@ -146,8 +146,12 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           }}
         >
           {isDesktop ? (
-            <div ref={barRef} className={overlayStyle.closeButton}>
-              <button type="button" onClick={onClose}>
+            <div ref={barRef} className={overlayStyle.desktopHeader}>
+              <button
+                type="button"
+                className={overlayStyle.closeButton}
+                onClick={onClose}
+              >
                 <Icons name="cross" w="bold" size={20} t="round" />
               </button>
             </div>
