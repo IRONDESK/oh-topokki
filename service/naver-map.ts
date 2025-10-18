@@ -2,6 +2,7 @@ import { http, isHttpError } from "@/lib/http";
 import { NaverPlaceSearchResult } from "@/service/model/naver-map";
 import { RestaurantFormData } from "@/components/restaurant/RestaurantForm";
 import {
+  PaginationDetailResponse,
   PaginationResponse,
   RequestGetRestaurantParams,
 } from "@/service/model/common";
@@ -54,6 +55,25 @@ export const getRestaurantDetail = async ({
   try {
     return await http.get<ResponseRestaurant>(
       `/api/restaurants/${restaurantId}`,
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const getRestaurantSearch = async (params: {
+  query: string;
+  page?: number;
+}) => {
+  try {
+    return await http.get<PaginationDetailResponse<ResponseRestaurant[]>>(
+      `/api/restaurants/search`,
+      {
+        searchParams: params,
+      },
     );
   } catch (error) {
     if (isHttpError(error)) {
