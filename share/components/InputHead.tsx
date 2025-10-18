@@ -1,18 +1,20 @@
+import clsx from "clsx";
 import React, { useImperativeHandle, useRef } from "react";
-import { formStyle } from "@/components/restaurant/formStep/form.css";
 import { inputStyle } from "@/share/components/css/input.css";
+import { typo } from "@/style/typo.css";
 
 type InputBaseProp = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "ref" | "type" | "className"
 > & {
   type: "text" | "number";
+  small?: boolean;
 };
 
 export const InputHead = (
   props: InputBaseProp & { ref?: React.Ref<HTMLInputElement> },
 ) => {
-  const { placeholder, ...rest } = props;
+  const { placeholder, small = false, ...rest } = props;
   const internalRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
 
@@ -21,11 +23,23 @@ export const InputHead = (
       <input
         ref={internalRef}
         placeholder={" "}
-        className={inputStyle.inputCssHiding}
+        className={clsx(
+          inputStyle.inputCssHiding,
+          small &&
+            typo({
+              size: "body1",
+            }),
+        )}
         {...rest}
       />
       <span
-        className={inputStyle.inputPlaceholder}
+        className={clsx(
+          inputStyle.inputPlaceholder,
+          small &&
+            typo({
+              size: "body1",
+            }),
+        )}
         style={{ ...rest.style }}
         data-hide={(props?.value as string)?.length > 0}
       >
