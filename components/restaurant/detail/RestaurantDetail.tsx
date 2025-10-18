@@ -254,8 +254,6 @@ function RestaurantDetail(props: Props) {
               <li>리뷰 테스트</li>
               <li>리뷰테스트</li>
             </ul>
-            <div className={style.bottomPosition} />
-
             <div className={style.reviewInputContainer}>
               <div className={style.reviewInputBox}>
                 <InputHead
