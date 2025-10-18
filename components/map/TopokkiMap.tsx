@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import MapView from "@/app/map/MapView";
-import RestaurantMarker from "./RestaurantMarker";
+import { useAtom } from "jotai";
 import { NaverMap } from "@/types/naver-maps";
 import { useNaverMap } from "@/hooks/useNaverMap";
+import { getRestaurantInfo } from "@/service/naver-map";
+
+import MapView from "@/app/map/MapView";
 import { mapStyle } from "./map.css";
+import RestaurantMarker from "./RestaurantMarker";
 import Spinner from "@/share/components/Spinner";
 import MapHeader from "@/share/layouts/headers/MapHeader";
-import { getRestaurantInfo } from "@/service/naver-map";
 import Icons from "@/share/components/Icons";
+import { naverMapAtom } from "@/store/locationStore";
 
 interface TteokbokkiMapProps {
   center?: {
@@ -20,7 +23,7 @@ interface TteokbokkiMapProps {
 }
 
 const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
-  const [map, setMap] = useState<NaverMap | null>(null);
+  const [map, setMap] = useAtom(naverMapAtom);
   const { naver } = useNaverMap();
 
   const queryParams = {
