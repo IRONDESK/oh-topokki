@@ -1,6 +1,7 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { theme } from "@/style/theme.css";
 import { fonts, fontWeight, typo } from "@/style/typo.css";
+import { flexs } from "@/style/container.css";
 
 const container = style({
   position: "fixed",
@@ -79,6 +80,8 @@ const bar = style({
 });
 const contents = style({
   height: "100%",
+  display: "flex",
+  flexDirection: "column",
 });
 const detailItems = style([
   fonts.body3.regular,
@@ -121,6 +124,7 @@ const sidemenu = style([
 ]);
 
 const divider = style({
+  flexShrink: 0,
   margin: "16px 0 12px",
   width: "100%",
   height: "9px",
@@ -158,7 +162,7 @@ const headReviewText = style([
   },
 ]);
 const bottomPosition = style({
-  paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 72px)",
+  paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 20px)",
 });
 
 const closeBtn = style({
@@ -171,6 +175,43 @@ const loadingContainer = style({
   display: "flex",
   justifyContent: "center",
   margin: "48px auto",
+});
+
+const reviewContainer = style([
+  {
+    flex: 1,
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+]);
+const reviewInputContainer = style({
+  position: "sticky",
+  left: 0,
+  bottom: 0,
+  margin: "0 -4px",
+  width: "calc(100% + 8px)",
+  minHeight: "60px",
+  padding: "0 0 env(safe-area-inset-bottom, 16px)",
+});
+const reviewInputBox = style({
+  display: "flex",
+  alignItems: "center",
+  backgroundColor: "rgba(256,256,256,0.75)",
+  borderRadius: "32px",
+  width: "100%",
+  height: "48px",
+  padding: "0 10px 0 16px",
+  boxShadow: theme.shadow.md,
+  backdropFilter: "blur(2px)",
+  transition: "border 0.2s",
+  border: "1px solid transparent",
+  selectors: {
+    "&:has(input:focus)": {
+      border: `1px solid ${theme.color.primary["300"]}`,
+    },
+  },
 });
 
 export const detailStyle = {
@@ -190,4 +231,7 @@ export const detailStyle = {
   bottomPosition,
   loadingContainer,
   closeBtn,
+  reviewContainer,
+  reviewInputContainer,
+  reviewInputBox,
 };
