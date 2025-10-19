@@ -141,9 +141,6 @@ const headReviewText = style([
     weight: "semibold",
   }),
 ]);
-const bottomPosition = style({
-  paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 20px)",
-});
 
 const closeBtn = style({
   margin: "20px 0 8px",
@@ -169,11 +166,10 @@ const reviewContainer = style([
 const reviewInputContainer = style({
   position: "sticky",
   left: 0,
-  bottom: 0,
+  bottom: "calc(env(safe-area-inset-bottom, 16px) + 10px)",
   margin: "0 -4px",
   width: "calc(100% + 8px)",
   minHeight: "60px",
-  padding: "0 0 env(safe-area-inset-bottom, 16px)",
 });
 const reviewInputBox = style({
   display: "flex",
@@ -214,7 +210,7 @@ const reviews = style([
     display: "flex",
     flexDirection: "column",
     gap: "32px",
-    margin: "6px 0 32px",
+    margin: "6px 0 calc(env(safe-area-inset-bottom) + 32px)",
     paddingTop: "24px",
     color: theme.color.gray["700"],
     borderTop: `1px solid ${theme.color.gray["200"]}`,
@@ -260,7 +256,6 @@ export const detailStyle = {
   divider,
   headReview,
   headReviewText,
-  bottomPosition,
   loadingContainer,
   closeBtn,
   reviewContainer,
