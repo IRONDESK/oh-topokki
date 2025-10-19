@@ -13,7 +13,7 @@ const dim = style({
   alignItems: "center",
   justifyContent: "center",
   background: "rgba(0, 0, 0, 0.5)",
-  zIndex: 2000,
+  zIndex: 2500,
 });
 const container = style([
   flexs({ dir: "col", gap: "20" }),

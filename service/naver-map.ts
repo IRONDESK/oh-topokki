@@ -87,6 +87,19 @@ export const getRestaurantSearch = async (params: {
   }
 };
 
+export const getRestaurantReview = async (restaurantId: string) => {
+  try {
+    return await http.get<ResponseReview[]>(
+      `/api/restaurants/${restaurantId}/reviews`,
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
 export const postRestaurantReview = async (data: RequestNewReview) => {
   try {
     return await http.post<ResponseReview>(

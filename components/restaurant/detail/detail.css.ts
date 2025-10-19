@@ -124,7 +124,7 @@ const sidemenu = style([
 
 const divider = style({
   flexShrink: 0,
-  margin: "16px 0 12px",
+  margin: "24px 0 18px",
   width: "100%",
   height: "9px",
   backgroundColor: theme.color.gray["100"],
@@ -213,10 +213,38 @@ const reviews = style([
   {
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
-    margin: "12px 0",
+    gap: "32px",
+    margin: "6px 0 32px",
+    paddingTop: "24px",
+    color: theme.color.gray["700"],
+    borderTop: `1px solid ${theme.color.gray["200"]}`,
   },
 ]);
+const reviewItem = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "4px",
+});
+const ratingLabel = style([
+  fonts.caption1.medium,
+  {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "3px",
+    borderRadius: "4px",
+    padding: "1px 4px",
+    backgroundColor: theme.color.primary["50"],
+    color: theme.color.primary["600"],
+  },
+]);
+const bullet = style({
+  flexShrink: 0,
+  display: "inline-block",
+  width: "3px",
+  height: "3px",
+  borderRadius: "50%",
+  backgroundColor: theme.color.gray["300"],
+});
 
 export const detailStyle = {
   container,
@@ -239,5 +267,8 @@ export const detailStyle = {
   reviewInputContainer,
   reviewInputBox,
   reviews,
+  reviewItem,
   emptyReview,
+  ratingLabel,
+  bullet,
 };

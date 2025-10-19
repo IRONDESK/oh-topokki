@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { format, getYear, isSameDay, isThisYear } from "date-fns";
 
 import Icons from "@/share/components/Icons";
 import { typo } from "@/style/typo.css";
@@ -9,22 +10,30 @@ import { InputHead } from "@/share/components/InputHead";
 import { theme } from "@/style/theme.css";
 import { detailStyle as style } from "@/components/restaurant/detail/detail.css";
 import { ResponseReview } from "@/service/model/restaurant";
-import { postRestaurantReview } from "@/service/naver-map";
+import { getRestaurantReview, postRestaurantReview } from "@/service/naver-map";
 import { overlay } from "@/share/components/feature/overlay";
 import Spinner from "@/share/components/Spinner";
+import { flexs } from "@/style/container.css";
 
 type Props = {
-  reviews: ResponseReview[];
-  initialAuthorId: string;
+  initialReviews: ResponseReview[];
   restaurantId: string;
+  initial: { createAt: string; authorId: string };
 };
-function RestaurantReview({ reviews, restaurantId, initialAuthorId }: Props) {
+function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   const [reviewInput, setReviewInput] = useState("");
   const { user } = useAuth();
-  const initialReview = reviews.find(
-    (review) => review.authorId === initialAuthorId,
+  const initialReview = initialReviews.find(
+    (review) =>
+      isSameDay(review.createdAt, initial.createAt) &&
+      review.authorId === initial.authorId,
   )?.content;
 
+  const { data: reviews, refetch } = useQuery({
+    queryKey: ["getReviews", restaurantId],
+    queryFn: () => getRestaurantReview(restaurantId),
+    initialData: initialReviews,
+  });
   const { mutate, isPending } = useMutation({
     mutationFn: postRestaurantReview,
   });
@@ -40,6 +49,7 @@ function RestaurantReview({ reviews, restaurantId, initialAuthorId }: Props) {
       },
       {
         onSuccess: async () => {
+          await refetch();
           overlay.alert({ title: "리뷰를 추가했습니다." });
         },
       },
@@ -63,7 +73,7 @@ function RestaurantReview({ reviews, restaurantId, initialAuthorId }: Props) {
             color: "gray500",
           })}
         >
-          이 가게를 처음으로 소개한 작성자는
+          이 가게를 처음으로 소개한 사람은
         </p>
         <p className={style.headReviewText}>{initialReview}</p>
         <p
@@ -85,7 +95,71 @@ function RestaurantReview({ reviews, restaurantId, initialAuthorId }: Props) {
       {reviews.length - 1 > 0 && (
         <ul className={style.reviews}>
           {reviews.map((review) => (
-            <li key={review.id}>{review.content}</li>
+            <li key={review.id} className={style.reviewItem}>
+              <p
+                className={flexs({
+                  justify: "spb",
+                })}
+              >
+                <span
+                  className={flexs({
+                    align: "center",
+                    gap: "4",
+                  })}
+                >
+                  <span
+                    className={typo({
+                      weight: "medium",
+                      color: "gray500",
+                    })}
+                  >
+                    {review.author.name}님
+                  </span>
+                  <span className={style.bullet} />
+                  <span
+                    className={typo({
+                      weight: "regular",
+                      color: "gray400",
+                    })}
+                  >
+                    {!isThisYear(review.createdAt) &&
+                      getYear(review.createdAt) + "년 "}
+                    {format(review.createdAt, "M월 d일 HH:mm")}
+                  </span>
+                  {review.authorId === initial.authorId && (
+                    <>
+                      <span className={style.bullet} />
+                      <span
+                        className={typo({
+                          weight: "medium",
+                          color: "primary400",
+                        })}
+                      >
+                        소개한 사람
+                      </span>
+                    </>
+                  )}
+                </span>
+              </p>
+              <p
+                className={typo({
+                  size: "body3",
+                })}
+              >
+                {review.content}
+              </p>
+              <p style={{ marginTop: "4px" }}>
+                <span className={style.ratingLabel}>
+                  <Icons
+                    name="social-network"
+                    w="solid"
+                    t="straight"
+                    size={14}
+                  />
+                  {RATING_MESSAGE[review.rating]}
+                </span>
+              </p>
+            </li>
           ))}
         </ul>
       )}
@@ -128,5 +202,13 @@ function RestaurantReview({ reviews, restaurantId, initialAuthorId }: Props) {
     </div>
   );
 }
+
+const RATING_MESSAGE: Record<number, string> = {
+  1: "아쉬워요",
+  2: "평범해요",
+  3: "근처라면 가볼만 해요",
+  4: "시간내서 꼭 가보세요",
+  5: "멀어도 꼭 가보세요",
+};
 
 export default RestaurantReview;

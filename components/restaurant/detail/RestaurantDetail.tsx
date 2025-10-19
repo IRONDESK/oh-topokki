@@ -174,8 +174,11 @@ function RestaurantDetail(props: Props) {
           {restaurant && (
             <RestaurantReview
               restaurantId={restaurant?.id}
-              reviews={restaurant?.reviews}
-              initialAuthorId={restaurant?.authorId}
+              initialReviews={restaurant?.reviews}
+              initial={{
+                createAt: restaurant.createdAt,
+                authorId: restaurant.authorId,
+              }}
             />
           )}
         </div>
