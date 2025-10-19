@@ -28,7 +28,7 @@ export type ResponseRestaurant = {
   };
 };
 
-type ResponseReview = {
+export type ResponseReview = {
   id: string;
   content: string;
   rating: number;
@@ -43,4 +43,12 @@ type ResponseAuthor = {
   id: string;
   name: string;
   avatar: string;
+};
+
+export type RequestNewReview = {
+  restaurantId: string;
+  json: {
+    content: string;
+    rating: number;
+  };
 };

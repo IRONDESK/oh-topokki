@@ -1,7 +1,6 @@
 import { globalStyle, style } from "@vanilla-extract/css";
 import { theme } from "@/style/theme.css";
 import { fonts, fontWeight, typo } from "@/style/typo.css";
-import { flexs } from "@/style/container.css";
 
 const container = style({
   position: "fixed",
@@ -132,34 +131,15 @@ const divider = style({
 });
 
 const headReview = style({
-  position: "relative",
-  margin: "0 auto",
   color: theme.color.gray["600"],
   borderRadius: "10px",
-  textAlign: "center",
-
-  selectors: {
-    "&::before": {
-      position: "absolute",
-      content: "❝",
-      left: "-10px",
-      top: "-2px",
-      fontSize: "2.8rem",
-      color: theme.color.gray["300"],
-      opacity: 0.6,
-    },
-  },
+  whiteSpace: "pre-wrap",
 });
 const headReviewText = style([
   typo({
-    size: "body3",
+    size: "body1",
     weight: "semibold",
   }),
-  {
-    position: "relative",
-    zIndex: 1,
-    paddingTop: "4px",
-  },
 ]);
 const bottomPosition = style({
   paddingBottom: "calc(env(safe-area-inset-bottom, 32px) + 20px)",
@@ -211,8 +191,32 @@ const reviewInputBox = style({
     "&:has(input:focus)": {
       border: `1px solid ${theme.color.primary["300"]}`,
     },
+    "&:has(input:disabled)": {
+      backgroundColor: theme.color.gray["100"],
+    },
   },
 });
+
+const emptyReview = style([
+  fonts.body3.medium,
+  {
+    margin: "40px auto 64px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "8px",
+    color: theme.color.gray["500"],
+  },
+]);
+const reviews = style([
+  fonts.body4.regular,
+  {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    margin: "12px 0",
+  },
+]);
 
 export const detailStyle = {
   container,
@@ -234,4 +238,6 @@ export const detailStyle = {
   reviewContainer,
   reviewInputContainer,
   reviewInputBox,
+  reviews,
+  emptyReview,
 };

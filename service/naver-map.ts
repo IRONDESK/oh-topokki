@@ -6,7 +6,11 @@ import {
   PaginationResponse,
   RequestGetRestaurantParams,
 } from "@/service/model/common";
-import { ResponseRestaurant } from "@/service/model/restaurant";
+import {
+  RequestNewReview,
+  ResponseRestaurant,
+  ResponseReview,
+} from "@/service/model/restaurant";
 
 export const getNaverMapSearch = async (query: string) => {
   try {
@@ -74,6 +78,20 @@ export const getRestaurantSearch = async (params: {
       {
         searchParams: params,
       },
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const postRestaurantReview = async (data: RequestNewReview) => {
+  try {
+    return await http.post<ResponseReview>(
+      `/api/restaurants/${data.restaurantId}/reviews`,
+      { json: data.json },
     );
   } catch (error) {
     if (isHttpError(error)) {
