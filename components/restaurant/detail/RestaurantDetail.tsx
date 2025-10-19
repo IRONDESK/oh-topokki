@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,8 +17,7 @@ import { flexs } from "@/style/container.css";
 import { getRestaurantDetail } from "@/service/naver-map";
 import Spinner from "@/share/components/Spinner";
 import ScrolledBottomSheet from "@/share/components/ScrolledBottomSheet";
-import { InputHead } from "@/share/components/InputHead";
-import { theme } from "@/style/theme.css";
+import RestaurantReview from "@/components/restaurant/detail/RestaurantReview";
 
 type Props = {
   restaurantId: string;
@@ -43,7 +42,6 @@ function RestaurantDetail(props: Props) {
     controller,
   } = props;
 
-  const [reviewInput, setReviewInput] = useState("");
   const { data: restaurant, isLoading } = useQuery({
     enabled: !!restaurantId,
     queryKey: ["restaurants", restaurantId],
@@ -173,108 +171,13 @@ function RestaurantDetail(props: Props) {
             </dl>
           )}
           <div className={style.divider} />
-          <div className={clsx(style.innerPadding, style.reviewContainer)}>
-            <h3
-              className={typo({
-                size: "body1",
-                weight: "semibold",
-              })}
-            >
-              리뷰
-            </h3>
-            <div className={style.headReview}>
-              <p className={style.headReviewText}>
-                {
-                  restaurant?.reviews.find(
-                    (review) => review.authorId === restaurant.authorId,
-                  )?.content
-                }
-              </p>
-              <p
-                className={typo({
-                  size: "caption1",
-                  color: "gray500",
-                })}
-              >
-                작성자의 한줄평
-              </p>
-            </div>
-
-            <ul>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li> <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li> <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li> <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li> <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-              <li>리뷰 테스트</li>
-              <li>리뷰테스트</li>
-            </ul>
-            <div className={style.reviewInputContainer}>
-              <div className={style.reviewInputBox}>
-                <InputHead
-                  type="text"
-                  placeholder="300자 이내의 리뷰를 남겨주세요"
-                  fontSize="body3"
-                  value={reviewInput}
-                  onChange={(e) => setReviewInput(e.target.value)}
-                />
-                <button type="button">
-                  <Icons
-                    name="arrow-circle-up"
-                    t="round"
-                    w="solid"
-                    color={theme.color.primary["500"]}
-                    size={28}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
+          {restaurant && (
+            <RestaurantReview
+              restaurantId={restaurant?.id}
+              reviews={restaurant?.reviews}
+              initialAuthorId={restaurant?.authorId}
+            />
+          )}
         </div>
       )}
     </ScrolledBottomSheet>
