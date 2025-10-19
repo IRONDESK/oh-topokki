@@ -140,6 +140,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
         <div
           ref={innerRef}
           style={{
+            paddingBottom: "env(safe-area-inset-bottom, 16px)",
             overflowY: isFull ? "auto" : "visible",
             height: isFull ? "99.9dvh" : "auto",
             WebkitOverflowScrolling: "touch",
