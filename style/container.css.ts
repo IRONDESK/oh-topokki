@@ -11,6 +11,7 @@ export const flexs = recipe({
       1: { flex: 1 },
       2: { flex: 2 },
       3: { flex: 3 },
+      fullwidth: { width: "100%" },
     },
     justify: {
       center: { justifyContent: "center" },

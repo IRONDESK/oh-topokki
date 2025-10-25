@@ -51,6 +51,8 @@ export const buttons = recipe({
     justifyContent: "center",
     cursor: "pointer",
     wordBreak: "keep-all",
+    border: "1px solid transparent",
+    transition: "background-color 0.2s, transform 0.2s",
     selectors: {
       "&:disabled": {
         cursor: "not-allowed",
@@ -72,6 +74,25 @@ export const buttons = recipe({
         backgroundColor: theme.color.primary["100"],
         color: theme.color.primary["600"],
       },
+      outlined: {
+        borderColor: theme.color.primary["300"],
+        color: theme.color.primary["600"],
+        selectors: {
+          "&:active": {
+            backgroundColor: theme.color.primary["50"],
+          },
+        },
+      },
+      assistive: {
+        backgroundColor: "transparent",
+        borderColor: theme.color.gray["300"],
+        color: theme.color.gray["600"],
+        selectors: {
+          "&:active": {
+            backgroundColor: theme.color.gray["50"],
+          },
+        },
+      },
     },
     size: {
       large: [
@@ -92,10 +113,10 @@ export const buttons = recipe({
         },
       ],
       medium: [
-        fonts.body3.medium,
+        fonts.body4.regular,
         {
           borderRadius: "8px",
-          padding: "8px 16px",
+          padding: "10px 16px",
           gap: "4px",
         },
       ],
