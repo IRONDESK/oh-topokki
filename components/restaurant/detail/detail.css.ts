@@ -38,6 +38,7 @@ const innerPadding = style({
 });
 const stickyArea = style({
   position: "sticky",
+  padding: "0 16px 16px",
   backgroundColor: theme.color.white,
   top: 0,
   selectors: {
@@ -48,6 +49,9 @@ const stickyArea = style({
       padding: "10px 16px 12px",
       boxShadow: theme.shadow.lg,
       zIndex: 10,
+    },
+    "&[data-desktop='true']": {
+      padding: "14px 16px 16px",
     },
   },
 });
@@ -95,7 +99,7 @@ globalStyle(`${detailItems} > dt`, {
   color: theme.color.gray["600"],
 });
 const price = style({
-  margin: "16px 0",
+  margin: "0 0 16px",
   paddingTop: "16px",
   display: "flex",
   alignItems: "center",
@@ -166,7 +170,7 @@ const reviewContainer = style([
 const reviewInputContainer = style({
   position: "sticky",
   left: 0,
-  bottom: "calc(env(safe-area-inset-bottom, 16px) + 10px)",
+  bottom: "calc(env(safe-area-inset-bottom, 16px) + 12px)",
   margin: "0 -4px",
   width: "calc(100% + 8px)",
   minHeight: "60px",
@@ -211,7 +215,7 @@ const reviews = style([
     flexDirection: "column",
     gap: "32px",
     margin: "6px 0 calc(env(safe-area-inset-bottom) + 32px)",
-    paddingTop: "24px",
+    padding: "24px 0 16px",
     color: theme.color.gray["700"],
     borderTop: `1px solid ${theme.color.gray["200"]}`,
   },

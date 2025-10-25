@@ -99,7 +99,11 @@ const bottomSheetContainer = style({
       padding: "env(safe-area-inset-top, 4px) 0 32px",
       borderRadius: 0,
       opacity: 1,
+    },
+    "&[data-desktop='true']": {
       overflowY: "auto",
+      maxHeight: "70vh",
+      minHeight: "70vh",
     },
   },
 });

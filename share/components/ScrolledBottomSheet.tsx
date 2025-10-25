@@ -32,7 +32,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
   const [dragOffset, setDragOffset] = useState(0);
 
   const onClose = () => {
-    if (isDesktop) {
+    if (isDesktop && isFull) {
       controller.unmount();
       return;
     }
@@ -84,7 +84,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
   useEffect(() => {
     const body = document.querySelector("body") as HTMLElement;
     if (controller.isOpen) {
-      setIsFull(isDesktop);
+      // setIsFull(isDesktop);
       body.style.overflow = "hidden";
     }
     return () => {
@@ -101,7 +101,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
     );
 
     const currentBarRef = barRef.current;
-    if (currentBarRef && isFull) {
+    if (currentBarRef) {
       observer.observe(currentBarRef);
     }
 
@@ -110,7 +110,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
         observer.unobserve(currentBarRef);
       }
     };
-  }, [isFull]);
+  }, []);
 
   return (
     <>
@@ -122,6 +122,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
       <section
         className={overlayStyle.bottomSheetContainer}
         data-open={controller.isOpen}
+        data-desktop={isDesktop}
         data-full={isFull}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
