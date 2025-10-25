@@ -20,6 +20,7 @@ model User {
 
   restaurants Restaurant[]
   reviews     Review[]
+  favorites   Favorite[]
 
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Restaurant {
   reviewCount   Int   @default(0)
 
   reviews       Review[]
+  favorites     Favorite[]
 
   @@map("restaurants")
 }
@@ -71,4 +73,20 @@ model Review {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
+}
+
+model Favorite {
+  id           String   @id @default(uuid())
+  memo         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, restaurantId])
+  @@map("favorites")
 }
