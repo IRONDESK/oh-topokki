@@ -51,7 +51,13 @@ const stickyArea = style({
       zIndex: 10,
     },
     "&[data-desktop='true']": {
-      padding: "14px 16px 16px",
+      padding: "0 16px 16px",
+    },
+    "&[data-desktop='true'][data-sticky='true']": {
+      padding: "16px 16px 24px",
+      boxShadow: "none",
+      background:
+        "linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0) 100%)",
     },
   },
 });
