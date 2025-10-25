@@ -1,7 +1,7 @@
 import { style } from "@vanilla-extract/css";
 import { theme } from "@/style/theme.css";
 import { fonts } from "@/style/typo.css";
-import { flexs, fullwidth } from "@/style/container.css";
+import { flexs } from "@/style/container.css";
 
 const container = style({
   padding: "0 16px",
@@ -45,7 +45,7 @@ const inputContainer = style({
 });
 
 const resultItem = style([
-  flexs({ gap: "12", justify: "start" }),
+  flexs({ dir: "col", gap: "12" }),
   {
     cursor: "pointer",
     width: "100%",
@@ -54,6 +54,15 @@ const resultItem = style([
         paddingTop: "10px",
       },
     },
+  },
+]);
+const resultItemButton = style([
+  flexs({
+    gap: "8",
+    flex: "fullwidth",
+  }),
+  {
+    paddingLeft: "32px",
   },
 ]);
 
@@ -73,4 +82,5 @@ export const searchStyle = {
   inputContainer,
   resultItem,
   matchedKeyword,
+  resultItemButton,
 };

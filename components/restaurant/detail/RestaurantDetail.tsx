@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
+import { useNaverMap } from "@/hooks/useNaverMap";
 import { useQuery } from "@tanstack/react-query";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 import { detailStyle as style } from "@/components/restaurant/detail/detail.css";
 import { fonts, typo } from "@/style/typo.css";
@@ -18,13 +21,14 @@ import { getRestaurantDetail } from "@/service/naver-map";
 import Spinner from "@/share/components/Spinner";
 import ScrolledBottomSheet from "@/share/components/ScrolledBottomSheet";
 import RestaurantReview from "@/components/restaurant/detail/RestaurantReview";
+import { naverMapAtom } from "@/store/locationStore";
 
 type Props = {
   restaurantId: string;
-  restaurantName: string;
-  topokkiType: string;
-  price: number;
-  address: string;
+  restaurantName?: string;
+  topokkiType?: string;
+  price?: number;
+  address?: string;
   controller: {
     close: () => void;
     isOpen: boolean;
@@ -42,11 +46,27 @@ function RestaurantDetail(props: Props) {
     controller,
   } = props;
 
+  const { naver } = useNaverMap();
+  const map = useAtomValue(naverMapAtom);
+  const isDesktop = useIsDesktop();
+
   const { data: restaurant, isLoading } = useQuery({
     enabled: !!restaurantId,
     queryKey: ["restaurants", restaurantId],
     queryFn: () => getRestaurantDetail({ restaurantId }),
   });
+
+  useEffect(() => {
+    if (!map || !naver || !restaurant) return;
+    const offsetLat = 0.00195;
+    const adjustedPosition = new naver.LatLng(
+      restaurant.latitude - offsetLat,
+      restaurant.longitude,
+    );
+
+    map.setCenter(adjustedPosition);
+    map.setZoom(17);
+  }, [restaurant]);
 
   return (
     <ScrolledBottomSheet controller={controller}>
@@ -55,11 +75,14 @@ function RestaurantDetail(props: Props) {
           <div
             className={clsx(style.stickyArea, style.innerPadding)}
             data-sticky={isSticky}
+            data-desktop={isDesktop}
           >
             <p className={style.topokkiType} data-sticky={isSticky}>
               {isSticky
-                ? TOPOKKI_TYPE_ABBR[topokkiType]
-                : TOPOKKI_TYPE[topokkiType]}
+                ? TOPOKKI_TYPE_ABBR[
+                    topokkiType || (restaurant?.topokkiType ?? "")
+                  ]
+                : TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
             </p>
             <h2
               className={clsx({
@@ -67,7 +90,7 @@ function RestaurantDetail(props: Props) {
                 [fonts.body2.medium]: isSticky,
               })}
             >
-              {restaurantName}
+              {restaurantName || restaurant?.name}
             </h2>
             <p
               className={typo({
@@ -77,12 +100,15 @@ function RestaurantDetail(props: Props) {
               })}
               style={{ display: isSticky ? "none" : "block" }}
             >
-              {address}
+              {address || restaurant?.address}
             </p>
           </div>
           <p className={clsx(style.price, style.innerPadding)}>
             <span className={fonts.head6.semibold}>
-              {price?.toLocaleString()}원
+              {price
+                ? price?.toLocaleString()
+                : restaurant?.price.toLocaleString()}
+              원
             </span>
             <span
               className={typo({
