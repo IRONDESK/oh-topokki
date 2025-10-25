@@ -1,16 +1,40 @@
 "use client";
 
 import { overlay } from "overlay-kit";
-import Icons from "@/share/components/Icons";
-import Logo from "@/assets/Logo";
-import { mapHeaderStyle as style } from "../css/mapHeader.css";
+import { useAtom } from "jotai";
 
-import { flexs } from "@/style/container.css";
+import Logo from "@/assets/Logo";
+import Icons from "@/share/components/Icons";
 import FloatingMenu from "@/components/FloatingMenu";
+import { flexs } from "@/style/container.css";
+import { mapHeaderStyle as style } from "../css/mapHeader.css";
+import { mapFilterAtom } from "@/store/filterStore";
 
 export default function MapHeader() {
+  const [filters, setFilter] = useAtom(mapFilterAtom);
+  const filterValues = Object.values(filters).filter((v) => v !== null);
+
   const openMenuFloat = () => {
     overlay.open((controller) => <FloatingMenu {...controller} />);
+  };
+
+  const FILTERS = [
+    { name: "즉떡", key: "topokkiType", value: "ontable" },
+    { name: "밀떡", key: "topokkiType", value: "flour" },
+    { name: "로제", key: "noodleType", value: "rose" },
+    { name: "쫄면", key: "noodleType", value: "jolmyun" },
+    { name: "순대", key: "sundaeType", value: "sundae" },
+    { name: "5000원", key: "maxPrice", value: 5000 },
+  ];
+
+  const handleFilterClick = (filter: { key: string; value: any }) => {
+    setFilter((prev) => ({
+      ...prev,
+      [filter.key]:
+        prev[filter.key as keyof typeof prev] === filter.value
+          ? null
+          : filter.value,
+    }));
   };
 
   return (
@@ -24,14 +48,16 @@ export default function MapHeader() {
         </div>
       </div>
       <ul className={style.filterList}>
-        <li className={style.filterItem}>즉떡</li>
-        <li className={style.filterItem} data-selected={true}>
-          밀떡
-        </li>
-        <li className={style.filterItem}>로제</li>
-        <li className={style.filterItem}>쫄면</li>
-        <li className={style.filterItem}>순대</li>
-        <li className={style.filterItem}>5000원</li>
+        {FILTERS.map((filter) => (
+          <li
+            key={filter.name}
+            className={style.filterItem}
+            data-selected={filterValues.includes(filter.value)}
+            onClick={() => handleFilterClick(filter)}
+          >
+            {filter.name}
+          </li>
+        ))}
       </ul>
     </header>
   );

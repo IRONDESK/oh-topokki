@@ -14,6 +14,7 @@ import Spinner from "@/share/components/Spinner";
 import MapHeader from "@/share/layouts/headers/MapHeader";
 import Icons from "@/share/components/Icons";
 import { naverMapAtom } from "@/store/locationStore";
+import { mapFilterAtom } from "@/store/filterStore";
 
 interface TteokbokkiMapProps {
   center?: {
@@ -24,24 +25,25 @@ interface TteokbokkiMapProps {
 
 const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   const [map, setMap] = useAtom(naverMapAtom);
+  const [filters] = useAtom(mapFilterAtom);
   const { naver } = useNaverMap();
 
   const queryParams = {
     lat: center?.lat,
     lng: center?.lng,
     radius: 10000,
+    ...filters,
   };
 
-  const {
-    data: restaurants,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const getRestaurantsQuery = useQuery({
     enabled: !!map,
-    queryKey: ["restaurants"],
+    queryKey: [
+      "restaurants",
+      ...Object.values(filters).filter((v) => v !== null),
+    ],
     queryFn: () => getRestaurantInfo(queryParams),
   });
+  const { data: restaurants, isLoading, error, refetch } = getRestaurantsQuery;
 
   // 지도 로드 시 콜백
   const handleMapLoad = useCallback((mapInstance: NaverMap) => {

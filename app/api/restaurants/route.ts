@@ -7,13 +7,61 @@ export async function GET(req: NextRequest) {
     // parameter pagination
     const { searchParams } = new URL(req.url);
     const pageParam = searchParams.get("page");
+    const topokkiTypeParam = searchParams.get("topokkiType");
+    const riceTypeParam = searchParams.get("riceType");
+    const sundaeTypeParam = searchParams.get("sundaeType");
+    const noodleTypeParam = searchParams.get("noodleType");
+    const maxPriceParam = searchParams.get("maxPrice");
+    const sideMenuParam = searchParams.getAll("side");
+
     const page = Math.max(parseInt(pageParam || "1", 10), 1);
 
     const PAGE_SIZE = 10 as const;
     const offset = (page - 1) * PAGE_SIZE;
 
+    // 필터링 조건 구성
+    const where: any = {};
+
+    if (topokkiTypeParam) {
+      where.topokkiType = topokkiTypeParam;
+    }
+
+    if (riceTypeParam) {
+      where.riceKinds = {
+        has: riceTypeParam,
+      };
+    }
+
+    if (sundaeTypeParam) {
+      where.sundaeType = {
+        has: sundaeTypeParam,
+      };
+    }
+
+    if (noodleTypeParam) {
+      where.noodleKinds = {
+        has: noodleTypeParam,
+      };
+    }
+
+    if (maxPriceParam) {
+      const maxPrice = parseInt(maxPriceParam, 10);
+      if (!isNaN(maxPrice)) {
+        where.price = {
+          lte: maxPrice,
+        };
+      }
+    }
+
+    if (sideMenuParam.length > 0) {
+      where.sideMenus = {
+        hasEvery: sideMenuParam,
+      };
+    }
+
     // Prisma를 사용한 쿼리
     const restaurantList = await prisma.restaurant.findMany({
+      where,
       select: {
         id: true,
         name: true,

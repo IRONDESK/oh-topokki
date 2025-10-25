@@ -32,13 +32,13 @@ const filterList = style({
   paddingRight: "16px",
 });
 const filterItem = style([
-  fonts.body4.medium,
+  fonts.body3.medium,
   {
     flexShrink: 0,
     userSelect: "none",
     cursor: "pointer",
     minWidth: "54px",
-    padding: "5px 8px",
+    padding: "5px 14px",
     borderRadius: "32px",
     backgroundColor: "rgba(256,256,256,0.65)",
     backdropFilter: "blur(4px)",
@@ -47,6 +47,7 @@ const filterItem = style([
     borderColor: theme.color.white,
     textAlign: "center",
     color: theme.color.gray["600"],
+    boxShadow: theme.shadow.sm,
     selectors: {
       "&:hover": {
         filter: "brightness(1.05)",
