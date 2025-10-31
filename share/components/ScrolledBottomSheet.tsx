@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { overlayStyle } from "./css/modal.css";
 import Icons from "./Icons";
+import { useOverlayData } from "overlay-kit";
 
 type BottomSheetProps = {
   controller: {
@@ -22,6 +23,8 @@ type BottomSheetProps = {
 export default function ScrolledBottomSheet(props: BottomSheetProps) {
   const { controller, children, dragMultiplier = 0.15 } = props;
   const isDesktop = useIsDesktop();
+  const overlays = useOverlayData();
+  const hasOverlays = Object.values(overlays).length > 0;
   const innerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +69,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
 
   const onTouchEnd = (event: React.TouchEvent) => {
     if (!isDragging) return;
+    if (dragOffset < 0 && isFull) return;
     setIsDragging(false);
     setDragOffset(0);
 
@@ -83,14 +87,13 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
 
   useEffect(() => {
     const body = document.querySelector("body") as HTMLElement;
-    if (controller.isOpen) {
-      // setIsFull(isDesktop);
+    if (hasOverlays) {
       body.style.overflow = "hidden";
     }
     return () => {
       body.style.removeProperty("overflow");
     };
-  }, [controller.isOpen, isDesktop]);
+  }, [hasOverlays, isDesktop]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -131,9 +134,9 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           transform: isDragging
             ? `translate3d(-50%, ${
                 isFull
-                  ? Math.max(0, dragOffset * dragMultiplier)
-                  : Math.max(0, Math.min(35 + dragOffset * dragMultiplier, 98))
-              }vh, 0)`
+                  ? `${Math.max(dragOffset, 0)}px`
+                  : `max(calc(35vh + ${dragOffset}px), 1vh)`
+              }, 0)`
             : undefined,
           transition: isDragging ? "none" : undefined,
         }}
