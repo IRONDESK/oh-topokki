@@ -23,6 +23,8 @@ export type ResponseRestaurant = {
   reviewCount: number;
   author: ResponseAuthor;
   reviews: ResponseReview[];
+  isFavorite: boolean | null;
+  favoriteCnt: number;
   _count: {
     reviews: number;
   };

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAuthenticatedUser } from "@/lib/supabase-server";
 
 export async function GET(
   request: NextRequest,
@@ -47,11 +48,44 @@ export async function GET(
       },
     });
 
+    // 즐겨찾기 총 개수 조회
+    const favoriteCnt = await prisma.favorite.count({
+      where: { restaurantId: id },
+    });
+
+    // 로그인 사용자의 즐겨찾기 여부 확인
+    let isFavorite: boolean | null = null;
+    try {
+      const authUser = await getAuthenticatedUser();
+      if (authUser?.email) {
+        const user = await prisma.user.findUnique({
+          where: { email: authUser.email },
+        });
+
+        if (user) {
+          const userFavorite = await prisma.favorite.findUnique({
+            where: {
+              userId_restaurantId: {
+                userId: user.id,
+                restaurantId: id,
+              },
+            },
+          });
+          isFavorite = !!userFavorite;
+        }
+      }
+    } catch (authError) {
+      // 인증 오류 시 isFavorite은 null로 유지
+      isFavorite = null;
+    }
+
     // 결과 조합
     const result = {
       ...restaurant,
       author: author || null,
       reviews: restaurantReviews,
+      isFavorite,
+      favoriteCnt,
       _count: {
         reviews: restaurantReviews.length,
       },
