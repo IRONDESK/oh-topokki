@@ -22,6 +22,7 @@ import Spinner from "@/share/components/Spinner";
 import ScrolledBottomSheet from "@/share/components/ScrolledBottomSheet";
 import RestaurantReview from "@/components/restaurant/detail/RestaurantReview";
 import { naverMapAtom } from "@/store/locationStore";
+import { useFavorite } from "@/hooks/useFavorite";
 
 type Props = {
   restaurantId: string;
@@ -55,6 +56,12 @@ function RestaurantDetail(props: Props) {
     queryKey: ["restaurants", restaurantId],
     queryFn: () => getRestaurantDetail({ restaurantId }),
   });
+  const { addFavorite } = useFavorite();
+
+  const onClickFav = async () => {
+    await addFavorite(restaurantId);
+  };
+  const onClickShare = () => {};
 
   useEffect(() => {
     if (!map || !naver || !restaurant) return;
@@ -77,31 +84,51 @@ function RestaurantDetail(props: Props) {
             data-sticky={isSticky}
             data-desktop={isDesktop}
           >
-            <p className={style.topokkiType} data-sticky={isSticky}>
-              {isSticky
-                ? TOPOKKI_TYPE_ABBR[
-                    topokkiType || (restaurant?.topokkiType ?? "")
-                  ]
-                : TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
-            </p>
-            <h2
-              className={clsx({
-                [fonts.body1.semibold]: !isSticky,
-                [fonts.body2.medium]: isSticky,
-              })}
-            >
-              {restaurantName || restaurant?.name}
-            </h2>
-            <p
-              className={typo({
-                size: "caption1",
-                weight: "regular",
-                color: "gray400",
-              })}
-              style={{ display: isSticky ? "none" : "block" }}
-            >
-              {address || restaurant?.address}
-            </p>
+            <div style={{ flex: 1 }}>
+              <p className={flexs({ align: "center", justify: "start" })}>
+                <span className={style.topokkiType} data-sticky={isSticky}>
+                  {TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
+                </span>
+                <span className={style.stickyAddress} data-sticky={isSticky}>
+                  {((address || restaurant?.address) as string)
+                    .split(" ")
+                    .slice(0, 3)
+                    .join(" ")}
+                </span>
+              </p>
+              <h2
+                style={{ transition: "font-size 0.3s" }}
+                className={clsx({
+                  [fonts.body1.semibold]: !isSticky,
+                  [fonts.body2.medium]: isSticky,
+                })}
+              >
+                {restaurantName || restaurant?.name}
+              </h2>
+              <p
+                className={typo({
+                  size: "caption1",
+                  weight: "regular",
+                  color: "gray400",
+                })}
+                style={{ display: isSticky ? "none" : "block" }}
+              >
+                {address || restaurant?.address}
+              </p>
+            </div>
+            <div className={flexs({ gap: "12" })}>
+              <button
+                type="button"
+                className={style.favoriteBtn}
+                data-favorite={true}
+                onClick={onClickFav}
+              >
+                <Icons name="star" w="regular" t="round" size={24} />
+              </button>
+              <button type="button">
+                <Icons name="share" w="regular" t="round" size={24} />
+              </button>
+            </div>
           </div>
           <p className={clsx(style.price, style.innerPadding)}>
             <span className={fonts.head6.semibold}>

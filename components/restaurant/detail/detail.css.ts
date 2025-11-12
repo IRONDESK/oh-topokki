@@ -38,6 +38,8 @@ const innerPadding = style({
 });
 const stickyArea = style({
   position: "sticky",
+  display: "flex",
+  alignItems: "center",
   padding: "0 16px 16px",
   backgroundColor: theme.color.white,
   top: 0,
@@ -54,7 +56,7 @@ const stickyArea = style({
       padding: "0 16px 16px",
     },
     "&[data-desktop='true'][data-sticky='true']": {
-      padding: "16px 16px 24px",
+      padding: "16px 16px 36px",
       boxShadow: "none",
       background:
         "linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0) 100%)",
@@ -68,13 +70,26 @@ const topokkiType = style([
     color: "primary500",
   }),
   {
+    display: "inline-flex",
     selectors: {
       "&[data-sticky='true']": {
-        backgroundColor: theme.color.primary["100"],
         color: theme.color.primary["600"],
-        padding: "0 4px",
-        borderRadius: "4px",
-        fontWeight: fontWeight.semibold,
+      },
+    },
+  },
+]);
+const stickyAddress = style([
+  typo({ size: "caption1", weight: "regular", color: "gray400" }),
+  {
+    opacity: 0,
+    display: "inline-flex",
+    marginLeft: "4px",
+    transform: "translateX(-16px)",
+    transition: "opacity 0.2s, transform 0.3s",
+    selectors: {
+      "&[data-sticky='true']": {
+        opacity: 1,
+        transform: "translateX(0px)",
       },
     },
   },
@@ -252,12 +267,23 @@ const bullet = style({
   backgroundColor: theme.color.gray["300"],
 });
 
+const favoriteBtn = style({
+  cursor: "pointer",
+  selectors: {
+    "&[data-favorite='true']": {
+      color: theme.color.primary["600"],
+    },
+  },
+});
+
 export const detailStyle = {
   container,
   innerPadding,
   stickyArea,
   bar,
   topokkiType,
+  stickyAddress,
+  favoriteBtn,
   contents,
   detailItems,
   price,

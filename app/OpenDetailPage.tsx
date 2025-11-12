@@ -13,22 +13,25 @@ export default function OpenDetailPage(props: { restaurantId: string }) {
   useEffect(() => {
     if (restaurantId) {
       overlay.unmountAll();
-      overlay.open((controller) => {
-        const newController = {
-          ...controller,
-          unmount() {
-            router.replace("/");
-            controller.unmount();
-          },
-        };
+      overlay.open(
+        (controller) => {
+          const newController = {
+            ...controller,
+            unmount() {
+              router.replace("/");
+              controller.unmount();
+            },
+          };
 
-        return (
-          <RestaurantDetail
-            restaurantId={restaurantId}
-            controller={newController}
-          />
-        );
-      });
+          return (
+            <RestaurantDetail
+              restaurantId={restaurantId}
+              controller={newController}
+            />
+          );
+        },
+        { overlayId: "restaurant-detail" },
+      );
     }
 
     return () => {

@@ -60,16 +60,19 @@ const RestaurantMarker = ({
         map.setCenter(adjustedPosition);
         map.setZoom(17);
 
-        overlay.open((controller) => (
-          <RestaurantDetail
-            restaurantId={restaurant.id}
-            restaurantName={restaurant.name}
-            topokkiType={restaurant.topokkiType}
-            price={restaurant.price}
-            address={restaurant.address}
-            controller={controller}
-          />
-        ));
+        overlay.open(
+          (controller) => (
+            <RestaurantDetail
+              restaurantId={restaurant.id}
+              restaurantName={restaurant.name}
+              topokkiType={restaurant.topokkiType}
+              price={restaurant.price}
+              address={restaurant.address}
+              controller={controller}
+            />
+          ),
+          { overlayId: "restaurant-detail" },
+        );
       });
 
       // 정보창 생성
