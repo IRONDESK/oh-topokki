@@ -82,7 +82,7 @@ const bottomSheetContainer = style({
   width: "100%",
   maxWidth: "520px",
   transform: "translate3d(-50%, 98vh, 0)",
-  transition: "transform 0.25s, opacity 0.3s, border-radius 0.3s, padding 0.3s",
+  transition: "transform 0.25s, opacity 0.3s, border-radius 0.3s",
   color: theme.color.gray["700"],
   opacity: 0,
   zIndex: 2005,

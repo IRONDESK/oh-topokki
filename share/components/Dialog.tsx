@@ -17,14 +17,14 @@ export type DialogCommon = {
 };
 
 export type DialogProps =
-  | ({ type: "alert" } & DialogCommon & AlertBaseProps)
+  | ({ type: "alert" } & DialogCommon & AlertBaseProps & { btnText?: string })
   | ({
       type: "confirm";
     } & DialogCommon &
-      ConfirmBaseProps);
+      ConfirmBaseProps & { btnText?: { confirm?: string; cancel?: string } });
 
 export const Dialog = (props: DialogProps) => {
-  const { type, isOpen, close, title, contents } = props;
+  const { type, isOpen, close, title, contents, btnText } = props;
   const handleClose = (resolve: boolean) => {
     if (type === "confirm") {
       close(resolve);
@@ -54,7 +54,7 @@ export const Dialog = (props: DialogProps) => {
               })}
               onClick={() => close(false)}
             >
-              취소
+              {btnText?.cancel ?? "취소"}
             </button>
           )}
           <button
@@ -65,7 +65,8 @@ export const Dialog = (props: DialogProps) => {
             })}
             onClick={() => handleClose(true)}
           >
-            확인
+            {(typeof btnText === "string" ? btnText : btnText?.confirm) ??
+              "확인"}
           </button>
         </div>
       </div>

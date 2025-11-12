@@ -18,11 +18,13 @@ const dim = style({
 const container = style([
   flexs({ dir: "col", gap: "20" }),
   {
-    minWidth: "350px",
+    maxWidth: "360px",
     borderRadius: "20px",
     backgroundColor: theme.color.white,
     padding: "24px 20px",
+    margin: "0 16px",
     alignItems: "stretch",
+    whiteSpace: "pre-wrap",
   },
 ]);
 const inner = style([
