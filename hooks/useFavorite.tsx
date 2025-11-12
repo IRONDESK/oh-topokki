@@ -2,9 +2,15 @@ import { overlay as overlayKit } from "overlay-kit";
 import { useAuth } from "@/contexts/AuthContext";
 import { overlay } from "@/share/components/feature/overlay";
 import LoginModal from "@/components/login/LoginModal";
+import { useMutation } from "@tanstack/react-query";
+import { postAddFavorite } from "@/service/restaurant";
 
 export function useFavorite() {
   const { user } = useAuth();
+  const { mutateAsync: addFavAsync } = useMutation({
+    mutationFn: postAddFavorite,
+  });
+
   const localFavList = JSON.parse(
     localStorage.getItem("favorite") || "[]",
   ) as string[];
@@ -12,6 +18,11 @@ export function useFavorite() {
   const addFavorite = async (restaurantId: string) => {
     if (!user) {
       await addLocalStorage(restaurantId);
+    } else {
+      await addFavAsync({
+        restaurantId,
+        memo: "",
+      });
     }
   };
 

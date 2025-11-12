@@ -54,3 +54,8 @@ export type RequestNewReview = {
     rating: number;
   };
 };
+
+export type RequestAddFavorite = {
+  restaurantId: string;
+  memo?: string;
+};
