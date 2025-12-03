@@ -66,26 +66,28 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
       >
         리뷰
       </h3>
-      <div className={style.headReview}>
-        <p
-          className={typo({
-            size: "body4",
-            color: "gray500",
-          })}
-        >
-          이 가게를 처음으로 소개한 사람은
-        </p>
-        <p className={style.headReviewText}>{initialReview}</p>
-        <p
-          className={typo({
-            size: "body4",
-            color: "gray500",
-          })}
-        >
-          라고 이 가게를 평했어요.
-        </p>
-      </div>
-      {reviews.length - 1 === 0 && (
+      {initialReview && (
+        <div className={style.headReview}>
+          <p
+            className={typo({
+              size: "body4",
+              color: "gray500",
+            })}
+          >
+            이 가게를 처음으로 소개한 사람은
+          </p>
+          <p className={style.headReviewText}>{initialReview}</p>
+          <p
+            className={typo({
+              size: "body4",
+              color: "gray500",
+            })}
+          >
+            라고 이 가게를 평했어요.
+          </p>
+        </div>
+      )}
+      {reviews.length - 1 <= 0 && (
         <div className={style.emptyReview}>
           <Icons name="drawer-empty" size={36} w="bold" t="round" />
           <p>작성된 리뷰가 없어요</p>

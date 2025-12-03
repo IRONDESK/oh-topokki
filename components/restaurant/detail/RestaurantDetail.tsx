@@ -91,7 +91,7 @@ function RestaurantDetail(props: Props) {
                 </span>
                 <span className={style.stickyAddress} data-sticky={isSticky}>
                   {((address || restaurant?.address) as string)
-                    .split(" ")
+                    ?.split(" ")
                     .slice(0, 3)
                     .join(" ")}
                 </span>
@@ -247,12 +247,6 @@ const SPICINESS_DESCRIPTION: Record<string, string> = {
   3: "신라면보다 약간 더 매워요",
   4: "불닭볶음면 정도로 매워요",
   5: "불닭보다 훨씬 매워요",
-};
-
-const TOPOKKI_TYPE_ABBR: Record<string, string> = {
-  ontable: "즉떡",
-  pan: "판떡",
-  soup: "국물",
 };
 
 export default RestaurantDetail;
