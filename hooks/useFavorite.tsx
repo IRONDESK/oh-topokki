@@ -1,39 +1,41 @@
 import { overlay as overlayKit } from "overlay-kit";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { overlay } from "@/share/components/feature/overlay";
-import LoginModal from "@/components/login/LoginModal";
-import { useMutation } from "@tanstack/react-query";
+
 import { postAddFavorite } from "@/service/restaurant";
+import LoginModal from "@/components/login/LoginModal";
 
 export function useFavorite() {
   const { user } = useAuth();
-  const { mutateAsync: addFavAsync } = useMutation({
+  const { mutate: mutateAddFav } = useMutation({
     mutationFn: postAddFavorite,
   });
 
-  const localFavList = JSON.parse(
-    localStorage.getItem("favorite") || "[]",
-  ) as string[];
-
   const addFavorite = async (restaurantId: string) => {
     if (!user) {
-      await addLocalStorage(restaurantId);
-    } else {
-      await addFavAsync({
-        restaurantId,
-        memo: "",
-      });
+      await addLocalStorage();
+      return;
     }
+
+    mutateAddFav(
+      { restaurantId, memo: "" },
+      {
+        onSuccess: () => {
+          console.log("complete!");
+        },
+      },
+    );
   };
 
   return { addFavorite };
 }
 
-const addLocalStorage = async (restaurantId: string) => {
+const addLocalStorage = async () => {
   const confirm = await overlay.confirm({
     title: "로그인을 하지 않았어요",
     contents:
-      "로그아웃 상태에서는 기기 직접 저장으로 최대 3개까지 즐겨찾기되며,\n다른 브라우저나 디바이스에서 즐겨찾기를 볼 수 없어요.",
+      "즐겨찾기 추가는 로그인 후 이용할 수 있어요.\n로그인 과정을 진행할까요?",
     btnText: {
       confirm: "로그인 하기",
     },
@@ -44,8 +46,5 @@ const addLocalStorage = async (restaurantId: string) => {
     overlayKit.open((controller) => (
       <LoginModal message="로그인 후에 작성할 수 있어요" {...controller} />
     ));
-  } else {
-    localStorage.setItem("favorite", JSON.stringify(restaurantId));
-    window.alert(`완료  ${restaurantId}`);
   }
 };
