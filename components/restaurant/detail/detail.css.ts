@@ -191,7 +191,7 @@ const reviewContainer = style([
 const reviewInputContainer = style({
   position: "sticky",
   left: 0,
-  bottom: "calc(env(safe-area-inset-bottom, 16px) + 12px)",
+  bottom: "calc(env(safe-area-inset-bottom) + 20px)",
   margin: "0 -4px",
   width: "calc(100% + 8px)",
   minHeight: "60px",
@@ -236,9 +236,8 @@ const reviews = style([
     flexDirection: "column",
     gap: "32px",
     margin: "6px 0 calc(env(safe-area-inset-bottom) + 32px)",
-    padding: "24px 0 16px",
+    padding: "0 0 16px",
     color: theme.color.gray["700"],
-    borderTop: `1px solid ${theme.color.gray["200"]}`,
   },
 ]);
 const reviewItem = style({

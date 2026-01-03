@@ -4,6 +4,8 @@ import { useAtomValue } from "jotai";
 import { useNaverMap } from "@/hooks/useNaverMap";
 import { useQuery } from "@tanstack/react-query";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
+import { useFavorite } from "@/hooks/useFavorite";
+import { useNativeShare } from "@/hooks/useNativeShare";
 
 import { detailStyle as style } from "@/components/restaurant/detail/detail.css";
 import { fonts, typo } from "@/style/typo.css";
@@ -22,7 +24,6 @@ import Spinner from "@/share/components/Spinner";
 import ScrolledBottomSheet from "@/share/components/ScrolledBottomSheet";
 import RestaurantReview from "@/components/restaurant/detail/RestaurantReview";
 import { naverMapAtom } from "@/store/locationStore";
-import { useFavorite } from "@/hooks/useFavorite";
 
 type Props = {
   restaurantId: string;
@@ -57,11 +58,21 @@ function RestaurantDetail(props: Props) {
     queryFn: () => getRestaurantDetail({ restaurantId }),
   });
   const { addFavorite } = useFavorite();
+  const { share } = useNativeShare();
 
   const onClickFav = async () => {
     await addFavorite(restaurantId);
   };
-  const onClickShare = () => {};
+
+  const onClickShare = async () => {
+    const shareData = {
+      title: `${restaurantName || restaurant?.name} - 오늘의떡볶이`,
+      text: `${restaurantName || restaurant?.name}의 떡볶이 정보를 확인해보세요!`,
+      url: window.location.href,
+    };
+
+    await share(shareData);
+  };
 
   useEffect(() => {
     if (!map || !naver || !restaurant) return;
@@ -125,7 +136,7 @@ function RestaurantDetail(props: Props) {
               >
                 <Icons name="star" w="regular" t="round" size={24} />
               </button>
-              <button type="button">
+              <button type="button" onClick={onClickShare}>
                 <Icons name="share" w="regular" t="round" size={24} />
               </button>
             </div>
@@ -156,23 +167,23 @@ function RestaurantDetail(props: Props) {
             <dl className={clsx(style.detailItems, style.innerPadding)}>
               <dt>떡 종류</dt>
               <dd>
-                {restaurant.riceKinds.map((kind) => (
-                  <span key={kind}>{TOPOKKI_RICE_KINDS[kind]}</span>
-                ))}
+                {restaurant.riceKinds
+                  .map((kind) => TOPOKKI_RICE_KINDS[kind])
+                  .join(", ")}
               </dd>
               <dt>소스 종류</dt>
               <dd>
-                {restaurant.sauceKinds.map((kind) => (
-                  <span key={kind}>{SAUCE_TYPE[kind]}</span>
-                ))}
+                {restaurant.sauceKinds
+                  .map((kind) => SAUCE_TYPE[kind])
+                  .join(", ")}
               </dd>
               {restaurant.noodleKinds.length > 0 && (
                 <>
                   <dt>면 종류</dt>
                   <dd>
-                    {restaurant.noodleKinds.map((kind) => (
-                      <span key={kind}>{NOODLE_TYPE[kind]}</span>
-                    ))}
+                    {restaurant.noodleKinds
+                      .map((kind) => NOODLE_TYPE[kind])
+                      .join(", ")}
                   </dd>
                 </>
               )}

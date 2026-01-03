@@ -101,6 +101,7 @@ export const buttons = recipe({
           borderRadius: "20px",
           padding: "12px 24px",
           gap: "8px",
+          height: "52px",
         },
       ],
       small: [
@@ -110,6 +111,7 @@ export const buttons = recipe({
           borderRadius: "10px",
           padding: "8px 10px",
           gap: "4px",
+          height: "38px",
         },
       ],
       medium: [
@@ -118,6 +120,7 @@ export const buttons = recipe({
           borderRadius: "8px",
           padding: "10px 16px",
           gap: "4px",
+          height: "46px",
         },
       ],
     },
