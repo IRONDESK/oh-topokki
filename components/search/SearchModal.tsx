@@ -143,7 +143,7 @@ function SearchModal({ controller }: Props) {
                     className={flexs({ gap: "12" })}
                     style={{ width: "100%" }}
                   >
-                    <div className={style.resultPin}>{index + 1}</div>
+                    {/*<div className={style.resultPin}>{index + 1}</div>*/}
                     <div className={flexRatio["1"]}>
                       <p
                         className={flexs({
@@ -260,8 +260,8 @@ function SearchModal({ controller }: Props) {
                         <Image
                           src={NaverMapIcon}
                           alt=""
-                          width={24}
-                          height={24}
+                          width={26}
+                          height={26}
                         />
                         지도앱
                       </button>

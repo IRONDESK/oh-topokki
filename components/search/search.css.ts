@@ -61,9 +61,7 @@ const resultItemButton = style([
     gap: "8",
     flex: "fullwidth",
   }),
-  {
-    paddingLeft: "32px",
-  },
+  { marginBottom: "8px" },
 ]);
 
 const matchedKeyword = style([
