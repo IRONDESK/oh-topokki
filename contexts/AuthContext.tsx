@@ -1,89 +1,89 @@
-'use client'
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { createContext, useContext, useEffect, useState } from "react";
+import { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import { Provider } from "@supabase/auth-js";
 
 interface AuthContextType {
-  user: User | null
-  session: Session | null
-  loading: boolean
-  signInWithOAuth: (provider: 'kakao' | 'naver') => Promise<void>
-  signOut: () => Promise<void>
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  signInWithOAuth: (provider: Provider) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
 
-    getSession()
+    getSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const signInWithOAuth = async (provider: 'kakao' | 'naver') => {
+  const signInWithOAuth = async (provider: Provider) => {
+    const isEnvDev = process.env.NODE_ENV === "development";
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider as any,
+        provider: provider,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`
-        }
-      })
-      if (error) throw error
+          redirectTo: `${isEnvDev ? "http://localhost:3000" : process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
     } catch (error) {
-      console.error('OAuth sign in error:', error)
-      throw error
+      console.error("OAuth sign in error:", error);
+      throw error;
     }
-  }
+  };
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     } catch (error) {
-      console.error('Sign out error:', error)
-      throw error
+      console.error("Sign out error:", error);
+      throw error;
     }
-  }
+  };
 
   const value = {
     user,
     session,
     loading,
     signInWithOAuth,
-    signOut
-  }
+    signOut,
+  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
+  return context;
 }

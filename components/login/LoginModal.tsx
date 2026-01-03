@@ -46,7 +46,7 @@ const LoginModal = (props: Props) => {
           }}
         >
           <LoginButton provider="kakao">카카오로 시작</LoginButton>
-          <LoginButton provider="naver">네이버로 시작</LoginButton>
+          {/*<LoginButton provider="naver">네이버로 시작</LoginButton>*/}
         </div>
       </div>
     </Modal>
