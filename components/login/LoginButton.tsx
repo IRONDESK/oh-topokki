@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { loginStyle } from "@/components/login/login.css";
-import { Provider } from "@supabase/auth-js";
+import { Provider } from "@supabase/supabase-js";
 
 interface LoginButtonProps {
   provider: Provider;
