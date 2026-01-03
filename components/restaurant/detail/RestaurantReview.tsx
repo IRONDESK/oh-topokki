@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import clsx from "clsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { format, getYear, isSameDay, isThisYear } from "date-fns";
+import { format, getYear, isThisYear } from "date-fns";
 
 import Icons from "@/share/components/Icons";
 import { typo } from "@/style/typo.css";
@@ -23,12 +23,6 @@ type Props = {
 function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   const [reviewInput, setReviewInput] = useState("");
   const { user } = useAuth();
-  const initialReview = initialReviews.find(
-    (review) =>
-      isSameDay(review.createdAt, initial.createAt) &&
-      review.authorId === initial.authorId,
-  )?.content;
-
   const { data: reviews, refetch } = useQuery({
     queryKey: ["getReviews", restaurantId],
     queryFn: () => getRestaurantReview(restaurantId),
@@ -66,35 +60,14 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
       >
         리뷰
       </h3>
-      {initialReview && (
-        <div className={style.headReview}>
-          <p
-            className={typo({
-              size: "body4",
-              color: "gray500",
-            })}
-          >
-            이 가게를 처음으로 소개한 사람은
-          </p>
-          <p className={style.headReviewText}>{initialReview}</p>
-          <p
-            className={typo({
-              size: "body4",
-              color: "gray500",
-            })}
-          >
-            라고 이 가게를 평했어요.
-          </p>
-        </div>
-      )}
-      {reviews.length - 1 <= 0 && (
+      {reviews.length === 0 && (
         <div className={style.emptyReview}>
           <Icons name="drawer-empty" size={36} w="bold" t="round" />
           <p>작성된 리뷰가 없어요</p>
         </div>
       )}
 
-      {reviews.length - 1 > 0 && (
+      {reviews.length > 0 && (
         <ul className={style.reviews}>
           {reviews.map((review) => (
             <li key={review.id} className={style.reviewItem}>
@@ -150,17 +123,19 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
               >
                 {review.content}
               </p>
-              <p style={{ marginTop: "4px" }}>
-                <span className={style.ratingLabel}>
-                  <Icons
-                    name="social-network"
-                    w="solid"
-                    t="straight"
-                    size={14}
-                  />
-                  {RATING_MESSAGE[review.rating]}
-                </span>
-              </p>
+              {review.authorId !== initial.authorId && (
+                <p style={{ marginTop: "4px" }}>
+                  <span className={style.ratingLabel}>
+                    <Icons
+                      name="social-network"
+                      w="solid"
+                      t="straight"
+                      size={14}
+                    />
+                    {RATING_MESSAGE[review.rating]}
+                  </span>
+                </p>
+              )}
             </li>
           ))}
         </ul>
