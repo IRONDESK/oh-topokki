@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { toast } from "sonner";
+import { useCallback } from "react";
 
 export interface ShareData {
   title: string;
@@ -14,7 +15,7 @@ export interface UseNativeShareOptions {
 
 export function useNativeShare(options: UseNativeShareOptions = {}) {
   const {
-    fallbackMessage = '링크가 클립보드에 복사되었습니다!',
+    fallbackMessage = "링크를 복사했습니다",
     onSuccess,
     onError,
   } = options;
@@ -26,23 +27,26 @@ export function useNativeShare(options: UseNativeShareOptions = {}) {
           await navigator.clipboard.writeText(shareData.url);
         } else {
           // Fallback for older browsers
-          const textarea = document.createElement('textarea');
+          const textarea = document.createElement("textarea");
           textarea.value = shareData.url;
           document.body.appendChild(textarea);
           textarea.select();
-          document.execCommand('copy');
+          document.execCommand("copy");
           document.body.removeChild(textarea);
         }
 
-        alert(fallbackMessage);
+        toast.success(fallbackMessage);
         onSuccess?.();
       } catch (error) {
-        const errorMessage = error instanceof Error ? error : new Error('Failed to copy to clipboard');
+        const errorMessage =
+          error instanceof Error
+            ? error
+            : new Error("Failed to copy to clipboard");
         onError?.(errorMessage);
         throw errorMessage;
       }
     },
-    [fallbackMessage, onSuccess, onError]
+    [fallbackMessage, onSuccess, onError],
   );
 
   const share = useCallback(
@@ -61,7 +65,7 @@ export function useNativeShare(options: UseNativeShareOptions = {}) {
         }
       } catch (error) {
         // If user cancels share (AbortError), don't show error
-        if (error instanceof Error && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === "AbortError") {
           return;
         }
 
@@ -69,21 +73,24 @@ export function useNativeShare(options: UseNativeShareOptions = {}) {
         try {
           await fallbackShare(shareData);
         } catch (fallbackError) {
-          const finalError = fallbackError instanceof Error ? fallbackError : new Error('Share failed');
+          const finalError =
+            fallbackError instanceof Error
+              ? fallbackError
+              : new Error("Share failed");
           onError?.(finalError);
           throw finalError;
         }
       }
     },
-    [fallbackShare, onSuccess, onError]
+    [fallbackShare, onSuccess, onError],
   );
 
   const isShareSupported = useCallback(() => {
-    return 'share' in navigator;
+    return "share" in navigator;
   }, []);
 
   const isClipboardSupported = useCallback(() => {
-    return 'clipboard' in navigator || document.queryCommandSupported?.('copy');
+    return "clipboard" in navigator || document.queryCommandSupported?.("copy");
   }, []);
 
   return {
