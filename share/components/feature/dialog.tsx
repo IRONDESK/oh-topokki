@@ -25,7 +25,7 @@ const alert = (props: DialogCommon & { btnText?: string }) =>
     />
   ));
 
-export const overlay = {
+export const dialog = {
   confirm,
   alert,
 };

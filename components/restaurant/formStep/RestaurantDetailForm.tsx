@@ -14,7 +14,7 @@ import { FieldSection } from "@/components/restaurant/formStep/FieldSection";
 import { Text } from "@/share/components/Text";
 import { mainButton } from "@/share/components/css/share.css";
 import { usePostRestaurantInfo } from "@/share/hooks/naver-map";
-import { overlay } from "@/share/components/feature/overlay";
+import { dialog } from "@/share/components/feature/dialog";
 
 type Props = {
   setStep: (step: number) => void;
@@ -29,10 +29,10 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
   const onSubmit = (data: RestaurantFormData) => {
     mutate(data, {
       onSuccess: async () => {
-        overlay.alert({ title: "새 맛집을 등록했어요" });
+        dialog.alert({ title: "새 맛집을 등록했어요" });
       },
       onError: async (error) => {
-        overlay.alert({ title: "등록에 실패했어요", contents: error.message });
+        dialog.alert({ title: "등록에 실패했어요", contents: error.message });
       },
     });
   };

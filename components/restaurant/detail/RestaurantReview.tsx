@@ -11,7 +11,7 @@ import { theme } from "@/style/theme.css";
 import { detailStyle as style } from "@/components/restaurant/detail/detail.css";
 import { ResponseReview } from "@/service/model/restaurant";
 import { getRestaurantReview, postRestaurantReview } from "@/service/naver-map";
-import { overlay } from "@/share/components/feature/overlay";
+import { dialog } from "@/share/components/feature/dialog";
 import Spinner from "@/share/components/Spinner";
 import { flexs } from "@/style/container.css";
 
@@ -44,7 +44,7 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
       {
         onSuccess: async () => {
           await refetch();
-          overlay.alert({ title: "리뷰를 추가했습니다." });
+          dialog.alert({ title: "리뷰를 추가했습니다." });
         },
       },
     );
