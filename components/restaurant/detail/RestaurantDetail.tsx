@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useNaverMap } from "@/hooks/useNaverMap";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { useFavorite } from "@/hooks/useFavorite";
 import { useNativeShare } from "@/hooks/useNativeShare";
@@ -24,6 +24,7 @@ import Spinner from "@/share/components/Spinner";
 import ScrolledBottomSheet from "@/share/components/ScrolledBottomSheet";
 import RestaurantReview from "@/components/restaurant/detail/RestaurantReview";
 import { naverMapAtom } from "@/store/locationStore";
+import { ResponseRestaurant } from "@/service/model/restaurant";
 
 type Props = {
   restaurantId: string;
@@ -49,6 +50,7 @@ function RestaurantDetail(props: Props) {
   } = props;
 
   const { naver } = useNaverMap();
+  const queryClient = useQueryClient();
   const map = useAtomValue(naverMapAtom);
   const isDesktop = useIsDesktop();
 
@@ -57,11 +59,20 @@ function RestaurantDetail(props: Props) {
     queryKey: ["restaurants", restaurantId],
     queryFn: () => getRestaurantDetail({ restaurantId }),
   });
-  const { addFavorite } = useFavorite();
+  const { handleFavorite } = useFavorite();
   const { share } = useNativeShare();
 
   const onClickFav = async () => {
-    await addFavorite(restaurantId);
+    const result = await handleFavorite(restaurantId);
+    if (result.isSuccess) {
+      queryClient.setQueryData(
+        ["restaurants", restaurantId],
+        (data: ResponseRestaurant) => ({
+          ...data,
+          isFavorite: result.isFavorite,
+        }),
+      );
+    }
   };
 
   const onClickShare = async () => {
@@ -134,7 +145,12 @@ function RestaurantDetail(props: Props) {
                 data-favorite={true}
                 onClick={onClickFav}
               >
-                <Icons name="star" w="regular" t="round" size={24} />
+                <Icons
+                  name="star"
+                  w={restaurant?.isFavorite ? "solid" : "regular"}
+                  t="round"
+                  size={24}
+                />
               </button>
               <button type="button" onClick={onClickShare}>
                 <Icons name="share" w="regular" t="round" size={24} />
