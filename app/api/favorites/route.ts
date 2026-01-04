@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -32,10 +32,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { createdAt: "desc" },
-        { restaurant: { name: "asc" } },
-      ],
+      orderBy: [{ createdAt: "desc" }, { restaurant: { name: "asc" } }],
     });
 
     const formattedFavorites = favorites.map((favorite) => ({
@@ -63,7 +60,7 @@ export async function GET(req: NextRequest) {
         error: "즐겨찾기 조회에 실패했습니다.",
         details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,7 +78,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -91,7 +88,7 @@ export async function POST(req: NextRequest) {
     if (!restaurantId) {
       return NextResponse.json(
         { error: "식당 ID가 필요합니다." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +103,7 @@ export async function POST(req: NextRequest) {
     if (!restaurant) {
       return NextResponse.json(
         { error: "존재하지 않는 식당입니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -121,9 +118,17 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingFavorite) {
+      await prisma.favorite.delete({
+        where: {
+          userId_restaurantId: {
+            userId: user.id,
+            restaurantId: restaurantId,
+          },
+        },
+      });
       return NextResponse.json(
-        { error: "이미 즐겨찾기에 추가된 식당입니다." },
-        { status: 409 }
+        { message: "즐겨찾기에서 해제했습니다." },
+        { status: 201 },
       );
     }
 
@@ -146,17 +151,20 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      message: "즐겨찾기에 추가되었습니다.",
-      favorite: {
-        id: favorite.restaurant.id,
-        name: favorite.restaurant.name,
-        topokkiType: favorite.restaurant.topokkiType,
-        riceType: favorite.restaurant.riceKinds,
-        addedAt: favorite.createdAt,
-        memo: favorite.memo,
+    return NextResponse.json(
+      {
+        message: "즐겨찾기에 추가했습니다.",
+        favorite: {
+          id: favorite.restaurant.id,
+          name: favorite.restaurant.name,
+          topokkiType: favorite.restaurant.topokkiType,
+          riceType: favorite.restaurant.riceKinds,
+          addedAt: favorite.createdAt,
+          memo: favorite.memo,
+        },
       },
-    }, { status: 201 });
+      { status: 201 },
+    );
   } catch (error) {
     console.error("즐겨찾기 추가 오류:", error);
 
@@ -172,7 +180,7 @@ export async function POST(req: NextRequest) {
         error: "즐겨찾기 추가에 실패했습니다.",
         details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -190,7 +198,7 @@ export async function DELETE(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -200,7 +208,7 @@ export async function DELETE(req: NextRequest) {
     if (!restaurantId) {
       return NextResponse.json(
         { error: "식당 ID가 필요합니다." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -228,10 +236,13 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Prisma의 RecordNotFound 에러 처리
-    if (error instanceof Error && error.message.includes("Record to delete does not exist")) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Record to delete does not exist")
+    ) {
       return NextResponse.json(
         { error: "즐겨찾기에 추가되지 않은 식당입니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -240,7 +251,7 @@ export async function DELETE(req: NextRequest) {
         error: "즐겨찾기 삭제에 실패했습니다.",
         details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

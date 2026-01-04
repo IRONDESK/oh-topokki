@@ -1,10 +1,14 @@
-import { RequestAddFavorite, ResponseReview } from "@/service/model/restaurant";
+import {
+  RequestAddFavorite,
+  ResponseAddFavorite,
+} from "@/service/model/restaurant";
 import { http, isHttpError } from "@/lib/http";
+import { BaseResponse } from "@/service/model/common";
 
 export const postAddFavorite = async (data: RequestAddFavorite) => {
   try {
-    return await http.post<ResponseReview>(
-      `/api/restaurants?restaurantId=${data.restaurantId}`,
+    return await http.post<BaseResponse<ResponseAddFavorite>>(
+      `/api/favorites?restaurantId=${data.restaurantId}`,
       { json: { memo: data.memo } },
     );
   } catch (error) {

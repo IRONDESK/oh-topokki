@@ -21,3 +21,7 @@ export type RequestGetRestaurantParams = {
   lng?: number;
   radius: number;
 };
+
+export type BaseResponse<T = undefined> = {
+  message: string;
+} & T;

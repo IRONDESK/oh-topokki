@@ -1,7 +1,8 @@
 import { overlay as overlayKit } from "overlay-kit";
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { overlay } from "@/share/components/feature/overlay";
+import { dialog } from "@/share/components/feature/dialog";
 
 import { postAddFavorite } from "@/service/restaurant";
 import LoginModal from "@/components/login/LoginModal";
@@ -12,27 +13,47 @@ export function useFavorite() {
     mutationFn: postAddFavorite,
   });
 
-  const addFavorite = async (restaurantId: string) => {
-    if (!user) {
-      await addLocalStorage();
-      return;
-    }
+  const handleFavorite = (restaurantId: string): Promise<HandleFavoriteType> =>
+    new Promise(async (resolve, reject) => {
+      if (!user) {
+        await handleLogoutFavorite();
+        return;
+      }
 
-    mutateAddFav(
-      { restaurantId, memo: "" },
-      {
-        onSuccess: () => {
-          console.log("complete!");
+      mutateAddFav(
+        { restaurantId, memo: "" },
+        {
+          onSuccess: (response) => {
+            if (response.favorite) {
+              toast.success("즐겨찾기에 추가했어요");
+              resolve({ isFavorite: true, isSuccess: true });
+            } else {
+              toast.success("즐겨찾기를 해제했어요");
+              resolve({ isFavorite: false, isSuccess: true });
+            }
+          },
+          onError: (error) => {
+            reject({
+              isFavorite: null,
+              isSuccess: false,
+              message: error.message,
+            });
+          },
         },
-      },
-    );
-  };
+      );
+    });
 
-  return { addFavorite };
+  return { handleFavorite };
 }
 
-const addLocalStorage = async () => {
-  const confirm = await overlay.confirm({
+type HandleFavoriteType = {
+  isFavorite: boolean | null;
+  isSuccess: boolean;
+  message?: string;
+};
+
+const handleLogoutFavorite = async () => {
+  const confirm = await dialog.confirm({
     title: "로그인을 하지 않았어요",
     contents:
       "즐겨찾기 추가는 로그인 후 이용할 수 있어요.\n로그인 과정을 진행할까요?",

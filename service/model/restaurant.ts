@@ -59,3 +59,14 @@ export type RequestAddFavorite = {
   restaurantId: string;
   memo?: string;
 };
+
+export type ResponseAddFavorite = {
+  favorite: {
+    addedAt: string;
+    id: string;
+    memo: string | null;
+    name: string;
+    riceType: string[];
+    topokkiType: string;
+  };
+};
