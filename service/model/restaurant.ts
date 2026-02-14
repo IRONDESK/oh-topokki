@@ -55,6 +55,19 @@ export type RequestNewReview = {
   };
 };
 
+export type ResponseFavorite = {
+  id: string;
+  name: string;
+  topokkiType: "ontable" | "pan" | "soup";
+  riceType: string[];
+  address: string;
+  latitude: number;
+  longitude: number;
+  price: number;
+  addedAt: string;
+  memo: string | null;
+};
+
 export type RequestAddFavorite = {
   restaurantId: string;
   memo?: string;

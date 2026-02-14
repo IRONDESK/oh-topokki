@@ -11,6 +11,7 @@ import { navigationStyle as style } from "@/share/layouts/navigation.css";
 import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
 import LoginModal from "@/components/login/LoginModal";
 import SearchModal from "@/components/search/SearchModal";
+import FavoritesList from "@/components/favorite/FavoritesList";
 
 function Navigation() {
   const params = useSearchParams();
@@ -19,6 +20,15 @@ function Navigation() {
 
   const openSearch = () => {
     overlay.open((controller) => <SearchModal controller={controller} />);
+  };
+  const openFavorites = () => {
+    if (user) {
+      overlay.open((controller) => <FavoritesList controller={controller} />);
+    } else {
+      overlay.open((controller) => (
+        <LoginModal message="로그인 후에 확인할 수 있어요" {...controller} />
+      ));
+    }
   };
   const openRegisterForm = () => {
     if (user) {
@@ -56,6 +66,7 @@ function Navigation() {
         className={clsx(glassContainer, style.button)}
         data-flexible={true}
         style={{ paddingTop: "2px" }}
+        onClick={openFavorites}
       >
         <Icons name="star" t="round" w="bold" size={20} />
         <span className={style.btnText}>즐겨찾기</span>
