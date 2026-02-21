@@ -48,7 +48,7 @@ function SearchModal({ controller }: Props) {
   useEffect(() => {
     const debounced = debounce(() => {
       setDebounced(input);
-    }, 150);
+    }, 300);
     debounced();
     return () => {
       debounced.cancel?.();
