@@ -115,7 +115,7 @@ export const buttons = recipe({
         },
       ],
       medium: [
-        fonts.body4.regular,
+        fonts.body3.regular,
         {
           borderRadius: "8px",
           padding: "10px 16px",

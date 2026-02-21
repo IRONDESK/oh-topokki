@@ -12,6 +12,7 @@ import RestaurantRegisterForm from "@/components/restaurant/RestaurantForm";
 import LoginModal from "@/components/login/LoginModal";
 import SearchModal from "@/components/search/SearchModal";
 import FavoritesList from "@/components/favorite/FavoritesList";
+import { dialog } from "@/share/components/feature/dialog";
 
 function Navigation() {
   const params = useSearchParams();
@@ -21,13 +22,19 @@ function Navigation() {
   const openSearch = () => {
     overlay.open((controller) => <SearchModal controller={controller} />);
   };
-  const openFavorites = () => {
+  const openFavorites = async () => {
     if (user) {
       overlay.open((controller) => <FavoritesList controller={controller} />);
     } else {
-      overlay.open((controller) => (
-        <LoginModal message="로그인 후에 확인할 수 있어요" {...controller} />
-      ));
+      const confirm = await dialog.confirm({
+        title: "로그인이 필요해요",
+        contents: "로그인 화면으로 이동할까요?",
+      });
+      if (confirm) {
+        overlay.open((controller) => (
+          <LoginModal message="로그인 후에 확인할 수 있어요" {...controller} />
+        ));
+      }
     }
   };
   const openRegisterForm = () => {

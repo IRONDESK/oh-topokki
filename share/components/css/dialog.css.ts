@@ -18,29 +18,30 @@ const dim = style({
 const container = style([
   flexs({ dir: "col", gap: "20" }),
   {
+    minWidth: "320px",
     maxWidth: "360px",
     borderRadius: "20px",
     backgroundColor: theme.color.white,
-    padding: "24px 20px",
+    padding: "20px 16px",
     margin: "0 16px",
     alignItems: "stretch",
     whiteSpace: "pre-wrap",
   },
 ]);
 const inner = style([
-  flexs({ dir: "col", gap: "12", justify: "start", align: "start" }),
+  flexs({ dir: "col", gap: "8", justify: "start", align: "start" }),
   { padding: "0 8px" },
 ]);
 const title = style([
-  fonts.body2.semibold,
+  fonts.body1.semibold,
   {
     color: theme.color.gray["700"],
   },
 ]);
 const contents = style([
-  fonts.body4.regular,
+  fonts.body3.regular,
   {
-    color: theme.color.gray["700"],
+    color: theme.color.gray["600"],
   },
 ]);
 
