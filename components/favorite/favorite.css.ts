@@ -1,6 +1,5 @@
 import { style } from "@vanilla-extract/css";
 import { theme } from "@/style/theme.css";
-import { flexs } from "@/style/container.css";
 
 const container = style({
   padding: "0 16px",
@@ -13,7 +12,6 @@ const header = style({
 });
 
 const item = style([
-  flexs({ dir: "col", gap: "4" }),
   {
     cursor: "pointer",
     width: "100%",

@@ -128,7 +128,7 @@ function FavoritesList({ controller }: Props) {
                     className={typo({
                       size: "caption1",
                       weight: "medium",
-                      color: "primary500",
+                      color: "primary400",
                     })}
                   >
                     {TOPOKKI_TYPE[item.topokkiType]}
@@ -138,7 +138,7 @@ function FavoritesList({ controller }: Props) {
                   className={flexs({
                     justify: "spb",
                     align: "center",
-                    gap: "2",
+                    gap: "4",
                   })}
                 >
                   <span
@@ -148,17 +148,18 @@ function FavoritesList({ controller }: Props) {
                       color: "gray500",
                     })}
                   >
-                    {item.riceType
-                      .map((kind) => RICE_KINDS[kind] || kind)
-                      .join(", ")}
+                    {item.address.split(" ").slice(0, 2).join(" ")}
                   </span>
                   <span
                     className={typo({
                       size: "body4",
                       weight: "regular",
-                      color: "gray500",
+                      color: "primary500",
                     })}
                   >
+                    {item.riceType
+                      .map((kind) => RICE_KINDS[kind] || kind)
+                      .join(", ")}{" "}
                     {item.price?.toLocaleString()}원
                   </span>
                 </p>
