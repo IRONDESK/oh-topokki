@@ -3,8 +3,8 @@
 import { ComponentProps } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { overlay } from "overlay-kit";
 import type { OverlayControllerComponent } from "overlay-kit";
+import { overlay } from "overlay-kit";
 
 import { naverMapAtom } from "@/store/locationStore";
 import { useNaverMap } from "@/hooks/useNaverMap";
@@ -101,7 +101,7 @@ function FavoritesList({ controller }: Props) {
             </div>
           )}
 
-          <div className={flexs({ dir: "col" })}>
+          <div>
             {favorites?.map((item) => (
               <div
                 key={item.id}
@@ -112,6 +112,7 @@ function FavoritesList({ controller }: Props) {
                   className={flexs({
                     justify: "spb",
                     align: "center",
+                    gap: "4",
                   })}
                 >
                   <span
@@ -125,9 +126,9 @@ function FavoritesList({ controller }: Props) {
                   </span>
                   <span
                     className={typo({
-                      size: "body4",
-                      weight: "regular",
-                      color: "gray600",
+                      size: "caption1",
+                      weight: "medium",
+                      color: "primary500",
                     })}
                   >
                     {TOPOKKI_TYPE[item.topokkiType]}
@@ -137,11 +138,12 @@ function FavoritesList({ controller }: Props) {
                   className={flexs({
                     justify: "spb",
                     align: "center",
+                    gap: "2",
                   })}
                 >
                   <span
                     className={typo({
-                      size: "caption1",
+                      size: "body4",
                       weight: "regular",
                       color: "gray500",
                     })}
@@ -152,7 +154,7 @@ function FavoritesList({ controller }: Props) {
                   </span>
                   <span
                     className={typo({
-                      size: "caption1",
+                      size: "body4",
                       weight: "regular",
                       color: "gray500",
                     })}
