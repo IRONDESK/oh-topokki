@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { josa } from "es-hangul";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 import * as styles from "../RestaurantForm.css";
 import { RestaurantFormData } from "../RestaurantForm";
@@ -25,11 +27,15 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
   const { watch, handleSubmit } = useFormContext<RestaurantFormData>();
   const formData = watch();
   const { mutate, isPending } = usePostRestaurantInfo();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const onSubmit = (data: RestaurantFormData) => {
     mutate(data, {
-      onSuccess: async () => {
-        dialog.alert({ title: "새 맛집을 등록했어요" });
+      onSuccess: async (restaurant) => {
+        await queryClient.refetchQueries({ queryKey: ["restaurants"] });
+        await dialog.alert({ title: "새 맛집을 등록했어요" });
+        router.replace(`/?restaurant=${restaurant.id}`);
       },
       onError: async (error) => {
         dialog.alert({ title: "등록에 실패했어요", contents: error.message });

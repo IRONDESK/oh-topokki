@@ -27,7 +27,7 @@ export const getNaverMapSearch = async (query: string) => {
 
 export const postRestaurantInfo = async (data: RestaurantFormData) => {
   try {
-    return await http.post<NaverPlaceSearchResult>(`/api/restaurants`, {
+    return await http.post<ResponseRestaurant>(`/api/restaurants`, {
       json: data,
     });
   } catch (error) {
