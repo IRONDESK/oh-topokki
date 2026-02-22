@@ -20,7 +20,7 @@ export default function MapHeader() {
 
   const FILTERS = [
     { name: "즉떡", key: "topokkiType", value: "ontable" },
-    { name: "밀떡", key: "topokkiType", value: "flour" },
+    { name: "밀떡", key: "riceKinds", value: "flour" },
     { name: "로제", key: "noodleType", value: "rose" },
     { name: "쫄면", key: "noodleType", value: "jolmyun" },
     { name: "순대", key: "sundaeType", value: "sundae" },
