@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { overlayStyle } from "@/share/components/css/modal.css";
-import Spinner from "@/share/components/Spinner";
+import { supabase } from "@/shared/lib/supabase";
+import { overlayStyle } from "@/shared/ui/css/modal.css";
+import Spinner from "@/shared/ui/Spinner";
 
 export default function AuthCallback() {
   const router = useRouter();

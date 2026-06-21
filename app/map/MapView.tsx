@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useNaverMap } from '@/hooks/useNaverMap';
+import { useNaverMap } from '@/shared/hooks/useNaverMap';
 import * as styles from './MapView.css';
-import { NaverMap } from '@/types/naver-maps';
+import { NaverMap } from '@/shared/types/naver-maps';
 
 interface MapViewProps {
   center?: {

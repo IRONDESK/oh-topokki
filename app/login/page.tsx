@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import Spinner from "@/share/components/Spinner";
-import { fonts } from "@/style/typo.css";
-import { flexs } from "@/style/container.css";
+import { useAuth } from "@/shared/context/AuthContext";
+import Spinner from "@/shared/ui/Spinner";
+import { fonts } from "@/shared/style/typo.css";
+import { flexs } from "@/shared/style/container.css";
 
 export default function LoginPage() {
   const { user, loading } = useAuth();

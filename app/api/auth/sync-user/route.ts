@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getAuthenticatedUser } from "@/lib/supabase-server";
+import { prisma } from "@/shared/lib/prisma";
+import { getAuthenticatedUser } from "@/shared/lib/supabase-server";
 
 export async function POST() {
   try {

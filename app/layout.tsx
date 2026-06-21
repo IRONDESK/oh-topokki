@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import "@/style/global.css";
+import "@/shared/style/global.css";
 import localFont from "next/font/local";
-import Layout from "@/share/layouts/Layout";
+import Layout from "@/shared/layouts/Layout";
 import Providers from "@/app/Providers";
-import { theme } from "@/style/theme.css";
+import { theme } from "@/shared/style/theme.css";
 
 export const metadata: Metadata = {
   title: "오떠끼 - 오늘의 떡볶이를 찾아보세요",

@@ -1,10 +1,10 @@
 "use client";
 
 import { Suspense } from "react";
-import { useMapLocation } from "@/hooks/useMapLocation";
+import { useMapLocation } from "@/shared/hooks/useMapLocation";
 import { useSearchParams } from "next/navigation";
 
-import TopokkiMap from "@/components/map/TopokkiMap";
+import TopokkiMap from "@/widgets/map/ui/TopokkiMap";
 import OpenDetailPage from "@/app/OpenDetailPage";
 
 function HomeContent() {

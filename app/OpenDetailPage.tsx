@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { overlay } from "overlay-kit";
 
-import RestaurantDetail from "@/components/restaurant/detail/RestaurantDetail";
+import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
 
 export default function OpenDetailPage(props: { restaurantId: string }) {
   const { restaurantId } = props;
