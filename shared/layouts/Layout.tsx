@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import Navigation from "@/shared/layouts/Navigation";
-import { mainContainer } from "@/shared/layouts/css/layout.css";
 
 export default function Layout({
   children,
@@ -8,7 +7,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className={mainContainer}>
+    <main className="w-full h-[calc(100vh-1px)] bg-white mx-auto overflow-hidden">
       {children}
       <Suspense fallback={<div />}>
         <Navigation />

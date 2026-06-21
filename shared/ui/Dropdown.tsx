@@ -1,5 +1,4 @@
 import React, { useImperativeHandle, useRef, useState } from "react";
-import { selectStyle } from "@/shared/ui/css/select.css";
 import Icons from "@/shared/ui/Icons";
 import {
   useFloating,
@@ -43,20 +42,19 @@ export const Dropdown = (
 
   return (
     <div
-      className={selectStyle.label}
       ref={refs.setReference}
       onClick={() => setOpen((prev) => !prev)}
+      className="relative flex justify-center items-stretch cursor-pointer w-full border border-gray-200 rounded-lg p-3 break-keep text-center"
     >
       <div
-        className={selectStyle.dropdownBox}
         data-placeholder={displayValue === null}
+        className="flex flex-1 gap-1 justify-between items-center text-base font-normal data-[placeholder=true]:text-gray-500"
       >
         {displayValue ?? placeholder ?? "선택해 주세요"}
         <Icons w="regular" t="round" name="angle-small-down" size={24} />
       </div>
       <input
         ref={internalRef}
-        className={""}
         readOnly={true}
         style={{ display: "none" }}
         {...rest}
@@ -65,16 +63,16 @@ export const Dropdown = (
         <ul
           ref={refs.setFloating}
           role="dialog"
-          className={selectStyle.dropdownItems}
           style={{ ...floatingStyles, zIndex: 10 }}
+          className="select-none flex flex-col w-full py-2.5 border border-gray-200 rounded-lg bg-white"
           {...getFloatingProps()}
         >
           {items.map((item) => (
             <li
               key={item.value}
-              className={selectStyle.dropdownItem}
               onClick={() => updateInputValue(item.value, item.label)}
               data-active={displayValue === item.label}
+              className="text-base font-normal px-4 py-2.5 hover:bg-primary-50 active:bg-primary-100 data-[active=true]:bg-primary-50 data-[active=true]:text-primary-600"
             >
               {item.label}
             </li>

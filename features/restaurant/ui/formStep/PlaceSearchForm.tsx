@@ -7,10 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { Text } from "@/shared/ui/Text";
 import { InputHead } from "@/shared/ui/InputHead";
 import Spinner from "@/shared/ui/Spinner";
-import { fixedBottom, flexs, fullwidth } from "@/shared/style/container.css";
-import { fonts } from "@/shared/style/typo.css";
-import * as styles from "../RestaurantForm.css";
-import { mainButton } from "@/shared/ui/css/share.css";
+import { fixedBottom, mainButton } from "@/shared/style/variants";
 import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
 import { useNaverPlaceSearch } from "@/features/search/api/use-place-search";
 
@@ -52,15 +49,10 @@ const PlaceSearchForm = ({ setStep }: Props) => {
 
   return (
     <div
-      className={flexs({
-        dir: "col",
-        gap: "8",
-        justify: "start",
-        align: "start",
-      })}
+      className="flex flex-col gap-2 justify-start items-start"
       style={{ flex: 1, width: "100%", height: "100%" }}
     >
-      <div className={fullwidth}>
+      <div className="w-full">
         <InputHead
           type="text"
           placeholder="상호명을 입력해 주세요"
@@ -71,36 +63,34 @@ const PlaceSearchForm = ({ setStep }: Props) => {
         />
       </div>
       {data && data?.items.length > 0 && (
-        <ul className={styles.searchResults}>
+        <ul className="flex-1 w-[calc(100%+40px)] flex flex-col -mx-5 mt-5 pb-[calc(env(safe-area-inset-bottom,0)+88px)]">
           {data?.items.map((place, index) => (
             <li
               key={index}
-              className={clsx(
-                flexs({
-                  dir: "col",
-                  gap: "6",
-                  justify: "start",
-                  align: "start",
-                }),
-                styles.searchResult,
-              )}
               onClick={() => handlePlaceSelect(place)}
+              className={clsx(
+                "flex flex-col gap-1.5 justify-start items-start",
+                "p-4 px-[22px] cursor-pointer hover:border-primary-300 hover:bg-primary-50",
+              )}
             >
               <div>
                 <Text
                   display="block"
                   color="primary-600"
-                  className={fonts.body2.medium}
+                  className="text-lg font-medium"
                 >
                   {place.title}
                 </Text>
-                <span className={fonts.body3.regular}>
+                <span className="text-base font-normal">
                   {place.roadAddress || place.address}
                 </span>
               </div>
-              <p className={clsx(flexs({ gap: "2", justify: "start" }))}>
+              <p className="flex gap-0.5 justify-start">
                 {place.category.split(">").map((text) => (
-                  <span key={text} className={styles.category}>
+                  <span
+                    key={text}
+                    className="bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-[4px] text-xs font-normal"
+                  >
                     {text}
                   </span>
                 ))}

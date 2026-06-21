@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/shared/lib/supabase";
-import { overlayStyle } from "@/shared/ui/css/modal.css";
 import Spinner from "@/shared/ui/Spinner";
 
 export default function AuthCallback() {
@@ -43,7 +42,7 @@ export default function AuthCallback() {
   }, [router]);
 
   return (
-    <div className={overlayStyle.dim}>
+    <div className="fixed inset-0 bg-black/25 flex items-center justify-center z-[2000] py-5">
       <Spinner size={32} thick={2} />
     </div>
   );

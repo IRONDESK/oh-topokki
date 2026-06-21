@@ -3,7 +3,6 @@ import "@/shared/style/global.css";
 import localFont from "next/font/local";
 import Layout from "@/shared/layouts/Layout";
 import Providers from "@/app/Providers";
-import { theme } from "@/shared/style/theme.css";
 
 export const metadata: Metadata = {
   title: "오떠끼 - 오늘의 떡볶이를 찾아보세요",
@@ -41,8 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={pretendard.className}
-        style={{ color: theme.color.gray["800"] }}
+        className={`${pretendard.className} text-gray-800`}
       >
         <Providers>
           <Layout>{children}</Layout>

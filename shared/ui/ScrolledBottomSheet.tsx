@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useIsDesktop } from "@/shared/hooks/useIsDesktop";
-import { overlayStyle } from "./css/modal.css";
 import Icons from "./Icons";
 import { useOverlayData } from "overlay-kit";
 
@@ -118,12 +117,11 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
   return (
     <>
       <div
-        className={overlayStyle.dim}
         onClick={onClose}
         style={{ overflow: "hidden", backgroundColor: "transparent" }}
+        className="fixed inset-0 flex items-center justify-center z-[2000] py-5"
       />
       <section
-        className={overlayStyle.bottomSheetContainer}
         data-open={controller.isOpen}
         data-desktop={isDesktop}
         data-full={isFull}
@@ -140,6 +138,14 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
             : undefined,
           transition: isDragging ? "none" : undefined,
         }}
+        className={[
+          "fixed left-1/2 top-0 bg-white rounded-t-[20px] pb-8 min-h-screen w-full max-w-[520px]",
+          "[transform:translate3d(-50%,98vh,0)] [transition:transform_0.25s,opacity_0.3s,border-radius_0.3s]",
+          "text-gray-700 opacity-0 z-[2005] overscroll-contain will-change-transform",
+          "data-[open=true]:[transform:translate3d(-50%,35vh,0)] data-[open=true]:opacity-100 data-[open=true]:shadow-md",
+          "data-[full=true]:[transform:translate3d(-50%,0,0)] data-[full=true]:pt-[env(safe-area-inset-top,4px)] data-[full=true]:rounded-none data-[full=true]:opacity-100",
+          "data-[desktop=true]:overflow-y-auto data-[desktop=true]:max-h-[70vh] data-[desktop=true]:min-h-[70vh]",
+        ].join(" ")}
       >
         <div
           ref={innerRef}
@@ -151,17 +157,23 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           }}
         >
           {isDesktop ? (
-            <div ref={barRef} className={overlayStyle.desktopHeader}>
+            <div
+              ref={barRef}
+              className="py-3 pl-4 pr-3 flex justify-end"
+            >
               <button
                 type="button"
-                className={overlayStyle.closeButton}
                 onClick={onClose}
+                className="w-10 h-10 rounded-full cursor-pointer flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700"
               >
                 <Icons name="cross" w="bold" size={20} t="round" />
               </button>
             </div>
           ) : (
-            <div className={overlayStyle.topDragger} ref={barRef} />
+            <div
+              ref={barRef}
+              className="w-[15%] h-1 rounded-[99px] bg-gray-200 mt-[18px] mb-3 mx-auto"
+            />
           )}
           {children({ isFull, isSticky })}
         </div>

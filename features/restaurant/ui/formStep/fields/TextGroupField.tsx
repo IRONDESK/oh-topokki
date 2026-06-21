@@ -1,14 +1,10 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
 import { TextGroupField as TextGroupFieldDef } from "@/features/restaurant/ui/formStep/place-fields";
-import { flexs, fullwidth } from "@/shared/style/container.css";
 import Icons from "@/shared/ui/Icons";
-import { fonts } from "@/shared/style/typo.css";
-import { inputStyle } from "@/shared/ui/css/input.css";
-import { buttons, label } from "@/shared/ui/css/share.css";
+import { buttons, label } from "@/shared/style/variants";
 import {
   FieldShell,
   FieldStatus,
@@ -48,25 +44,20 @@ export const TextGroupField = ({
       status={status}
       foldedValue={values.join(", ") || "선택되지 않음"}
     >
-      <div
-        className={clsx(
-          fullwidth,
-          flexs({ dir: "col", align: "start", gap: "16" }),
-        )}
-      >
-        <div className={clsx(fullwidth, flexs({}))}>
-          <div className={clsx(fullwidth, inputStyle.container)}>
+      <div className="w-full flex flex-col items-start gap-4">
+        <div className="w-full flex">
+          <div className="relative w-full">
             <input
               type="text"
               inputMode="text"
               autoFocus
-              className={clsx(inputStyle.input, fonts.head6.medium)}
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              className="relative w-full text-2xl font-medium text-gray-700 z-[1] caret-primary-600"
             />
             <span
-              className={clsx(inputStyle.inputPlaceholder, fonts.head6.medium)}
               data-hide={input.length > 0}
+              className="absolute left-0 top-0 text-2xl font-medium text-gray-400 transition-all duration-[0.25s] data-[hide=true]:opacity-0 data-[hide=true]:-translate-y-1/2"
             >
               {placeholder}
             </span>
@@ -81,7 +72,7 @@ export const TextGroupField = ({
           </button>
         </div>
 
-        <div className={flexs({ gap: "8" })}>
+        <div className="flex gap-2 items-center justify-center">
           {values.map((value) => (
             <span
               key={value}
@@ -94,9 +85,9 @@ export const TextGroupField = ({
           ))}
         </div>
 
-        <div className={flexs({ dir: "col", align: "start", gap: "4" })}>
-          <p className={fonts.body4.medium}>혹시 이런 키워드는 어떠세요?</p>
-          <div className={flexs({ gap: "6" })}>
+        <div className="flex flex-col items-start gap-1">
+          <p className="text-sm font-medium">혹시 이런 키워드는 어떠세요?</p>
+          <div className="flex gap-1.5 items-center justify-center">
             {SUGGESTED_KEYWORDS.map((item) => (
               <button
                 type="button"

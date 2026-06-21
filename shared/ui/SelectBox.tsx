@@ -1,8 +1,4 @@
 import React, { useImperativeHandle, useRef } from "react";
-import { selectStyle } from "@/shared/ui/css/select.css";
-import { fonts } from "@/shared/style/typo.css";
-import { flexs, fullwidth } from "@/shared/style/container.css";
-import clsx from "clsx";
 
 interface SelectBoxProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "ref" | "style"> {
@@ -19,15 +15,14 @@ export const SelectBox = (
   useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
 
   return (
-    <label className={selectStyle.label}>
+    <label className="relative flex justify-center items-stretch cursor-pointer w-full border border-gray-200 rounded-lg p-3 break-keep text-center has-[input:checked]:bg-primary-50 has-[input:checked]:border-primary-200 has-[input:checked]:text-primary-600">
       {icon}
-      <div className={clsx(fullwidth, flexs({ dir: "col", gap: "2" }))}>
-        <span className={fonts.body3.medium}>{title}</span>
-        <span className={fonts.caption1.regular}>{description}</span>
+      <div className="w-full flex flex-col items-center justify-center gap-0.5">
+        <span className="text-base font-medium">{title}</span>
+        <span className="text-xs font-normal">{description}</span>
       </div>
       <input
         ref={internalRef}
-        className={""}
         readOnly={true}
         style={{ display: "none" }}
         {...rest}

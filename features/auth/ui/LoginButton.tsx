@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/shared/context/AuthContext";
-import { loginStyle } from "@/features/auth/ui/login.css";
 import { Provider } from "@supabase/supabase-js";
 
 interface LoginButtonProps {
@@ -30,22 +29,12 @@ export default function LoginButton({ provider, children }: LoginButtonProps) {
     <button
       onClick={handleLogin}
       disabled={loading}
-      className={loginStyle.button}
       data-provider={provider}
+      className="cursor-pointer w-full flex items-center justify-center gap-1.5 py-4 text-center rounded-xl text-lg font-medium data-[provider=kakao]:bg-[#FEE500] data-[provider=naver]:bg-[rgba(3,199,90,1)] data-[provider=naver]:text-white disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {loading ? (
-        <div
-          style={{
-            animation: "spin 1s linear infinite",
-            borderRadius: "50%",
-            height: "16px",
-            width: "16px",
-            border: "2px solid currentColor",
-            borderTop: "2px solid transparent",
-            marginRight: "8px",
-          }}
-        ></div>
-      ) : null}
+      {loading && (
+        <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent mr-2" />
+      )}
       {children}
     </button>
   );

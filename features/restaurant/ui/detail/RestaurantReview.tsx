@@ -1,24 +1,36 @@
 import React, { useState } from "react";
-import clsx from "clsx";
 import { useAuth } from "@/shared/context/AuthContext";
 import { format, getYear, isThisYear } from "date-fns";
 
 import Icons from "@/shared/ui/Icons";
-import { typo } from "@/shared/style/typo.css";
 import { InputHead } from "@/shared/ui/InputHead";
-import { theme } from "@/shared/style/theme.css";
-import { detailStyle as style } from "@/features/restaurant/ui/detail/detail.css";
 import { ResponseReview } from "@/shared/api/model/restaurant";
 import { useCreateReview, useReviews } from "@/features/review/api/use-review";
 import { dialog } from "@/shared/ui/feature/dialog";
 import Spinner from "@/shared/ui/Spinner";
-import { flexs } from "@/shared/style/container.css";
 
 type Props = {
   initialReviews: ResponseReview[];
   restaurantId: string;
   initial: { createAt: string; authorId: string };
 };
+
+const CONTAINER_CLS = "px-5 flex-1 relative flex flex-col gap-3";
+const EMPTY_CLS =
+  "mt-10 mb-16 mx-auto flex flex-col items-center gap-2 text-gray-500 text-base font-medium";
+const REVIEWS_CLS =
+  "flex flex-col gap-8 my-1.5 mb-[calc(env(safe-area-inset-bottom)+32px)] pb-4 text-gray-700 text-sm font-normal";
+const REVIEW_ITEM_CLS = "flex flex-col gap-1";
+const BULLET_CLS =
+  "shrink-0 inline-block w-[3px] h-[3px] rounded-full bg-gray-300";
+const RATING_LABEL_CLS =
+  "inline-flex items-center gap-[3px] rounded-[4px] px-1 py-[1px] bg-primary-50 text-primary-600 text-xs font-medium";
+
+const INPUT_CONTAINER_CLS =
+  "sticky left-0 bottom-[calc(env(safe-area-inset-bottom)+20px)] -mx-1 w-[calc(100%+8px)] min-h-[60px]";
+const INPUT_BOX_CLS =
+  "flex items-center bg-white/75 rounded-[32px] w-full h-12 pl-4 pr-2.5 shadow-md backdrop-blur-[2px] [transition:border_0.2s] border border-transparent has-[input:focus]:border-primary-300 has-[input:disabled]:bg-gray-100";
+
 function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   const [reviewInput, setReviewInput] = useState("");
   const { user } = useAuth();
@@ -44,81 +56,44 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   };
 
   return (
-    <div className={clsx(style.innerPadding, style.reviewContainer)}>
-      <h3
-        className={typo({
-          size: "body1",
-          weight: "semibold",
-        })}
-      >
-        리뷰
-      </h3>
+    <div className={CONTAINER_CLS}>
+      <h3 className="text-xl font-semibold">리뷰</h3>
       {reviews.length === 0 && (
-        <div className={style.emptyReview}>
+        <div className={EMPTY_CLS}>
           <Icons name="drawer-empty" size={36} w="bold" t="round" />
           <p>작성된 리뷰가 없어요</p>
         </div>
       )}
 
       {reviews.length > 0 && (
-        <ul className={style.reviews}>
+        <ul className={REVIEWS_CLS}>
           {reviews.map((review) => (
-            <li key={review.id} className={style.reviewItem}>
-              <p
-                className={flexs({
-                  justify: "spb",
-                })}
-              >
-                <span
-                  className={flexs({
-                    align: "center",
-                    gap: "4",
-                  })}
-                >
-                  <span
-                    className={typo({
-                      weight: "medium",
-                      color: "gray500",
-                    })}
-                  >
+            <li key={review.id} className={REVIEW_ITEM_CLS}>
+              <p className="flex justify-between items-center">
+                <span className="flex items-center gap-1">
+                  <span className="font-medium text-gray-500">
                     {review.author.name}님
                   </span>
-                  <span className={style.bullet} />
-                  <span
-                    className={typo({
-                      weight: "regular",
-                      color: "gray400",
-                    })}
-                  >
+                  <span className={BULLET_CLS} />
+                  <span className="font-normal text-gray-400">
                     {!isThisYear(review.createdAt) &&
                       getYear(review.createdAt) + "년 "}
                     {format(review.createdAt, "M월 d일 HH:mm")}
                   </span>
                   {review.authorId === initial.authorId && (
                     <>
-                      <span className={style.bullet} />
-                      <span
-                        className={typo({
-                          weight: "medium",
-                          color: "primary400",
-                        })}
-                      >
+                      <span className={BULLET_CLS} />
+                      <span className="font-medium text-primary-400">
                         소개한 사람
                       </span>
                     </>
                   )}
                 </span>
               </p>
-              <p
-                className={typo({
-                  size: "body3",
-                })}
-              >
-                {review.content}
-              </p>
+              <p className="text-base">{review.content}</p>
               {review.authorId !== initial.authorId && (
                 <p style={{ marginTop: "4px" }}>
-                  <span className={style.ratingLabel}>
+                  <span className={RATING_LABEL_CLS}>
                     <Icons
                       name="social-network"
                       w="solid"
@@ -133,8 +108,8 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
           ))}
         </ul>
       )}
-      <div className={style.reviewInputContainer}>
-        <div className={style.reviewInputBox}>
+      <div className={INPUT_CONTAINER_CLS}>
+        <div className={INPUT_BOX_CLS}>
           <InputHead
             type="text"
             disabled={!user}
@@ -161,7 +136,9 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
                 t="round"
                 w="solid"
                 color={
-                  user ? theme.color.primary["500"] : theme.color.gray["300"]
+                  user
+                    ? "var(--color-primary-500)"
+                    : "var(--color-gray-300)"
                 }
                 size={28}
               />

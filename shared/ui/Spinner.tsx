@@ -1,26 +1,34 @@
-import { theme } from "@/shared/style/theme.css";
-import { shareStyle } from "@/shared/ui/css/share.css";
+type ColorName = "primary" | "gray" | "white";
 
 type Props = {
-  color?: "primary" | "gray" | "white";
+  color?: ColorName;
   size?: number;
   thick?: number;
+};
+
+const BORDER_COLOR: Record<ColorName, string> = {
+  primary: "var(--color-primary-200)",
+  gray: "var(--color-gray-200)",
+  white: "rgba(255,255,255,0.5)",
+};
+const HIGHLIGHT_COLOR: Record<ColorName, string> = {
+  primary: "var(--color-primary-600)",
+  gray: "var(--color-gray-600)",
+  white: "var(--color-white)",
 };
 
 function Spinner(props: Props) {
   const { color = "primary", size = 24, thick = 2 } = props;
   return (
     <div
+      className="rounded-full animate-spin"
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        borderRadius: "100%",
-        border: `${thick}px solid ${color === "white" ? "rgba(256,256,256,0.5)" : theme.color[color]["200"]}`,
-        borderRightColor:
-          color === "white" ? theme.color.white : theme.color[color]["600"],
-        animation: `${shareStyle.rotating} 1s linear infinite`,
+        border: `${thick}px solid ${BORDER_COLOR[color]}`,
+        borderRightColor: HIGHLIGHT_COLOR[color],
       }}
-    ></div>
+    />
   );
 }
 

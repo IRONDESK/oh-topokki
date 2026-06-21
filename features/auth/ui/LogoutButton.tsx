@@ -30,17 +30,9 @@ export default function LogoutButton({ children, className = '' }: LogoutButtonP
       disabled={loading}
       className={`inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors bg-gray-600 hover:bg-gray-700 text-white disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
-      {loading ? (
-        <div style={{
-          animation: 'spin 1s linear infinite',
-          borderRadius: '50%',
-          height: '16px',
-          width: '16px',
-          border: '2px solid white',
-          borderTop: '2px solid transparent',
-          marginRight: '8px'
-        }}></div>
-      ) : null}
+      {loading && (
+        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+      )}
       {children}
     </button>
   )

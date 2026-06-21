@@ -7,8 +7,6 @@ import { useFavorite } from "@/features/favorite/api/use-favorite";
 import { useNativeShare } from "@/shared/hooks/useNativeShare";
 import { useRestaurantDetail } from "@/features/restaurant/api/use-restaurant";
 
-import { detailStyle as style } from "@/features/restaurant/ui/detail/detail.css";
-import { fonts, typo } from "@/shared/style/typo.css";
 import {
   NOODLE_TYPE,
   SAUCE_TYPE,
@@ -18,7 +16,6 @@ import {
   TOPOKKI_TYPE,
 } from "@/shared/constants/restaurant";
 import Icons from "@/shared/ui/Icons";
-import { flexs } from "@/shared/style/container.css";
 import Spinner from "@/shared/ui/Spinner";
 import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
 import RestaurantReview from "@/features/restaurant/ui/detail/RestaurantReview";
@@ -36,6 +33,27 @@ type Props = {
     unmount: () => void;
   };
 };
+
+const INNER_PADDING = "px-5";
+const STICKY_AREA_CLS =
+  "sticky flex items-center px-4 pb-4 bg-white top-0 data-[sticky=true]:gap-1 data-[sticky=true]:px-4 data-[sticky=true]:pt-2.5 data-[sticky=true]:pb-3 data-[sticky=true]:shadow-lg data-[sticky=true]:z-10 data-[desktop=true]:px-4 data-[desktop=true]:pb-4 data-[desktop=true][data-sticky=true]:px-4 data-[desktop=true][data-sticky=true]:pt-4 data-[desktop=true][data-sticky=true]:pb-9 data-[desktop=true][data-sticky=true]:shadow-none data-[desktop=true][data-sticky=true]:[background:linear-gradient(to_bottom,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_70%,rgba(255,255,255,0)_100%)]";
+
+const TOPOKKI_TYPE_CLS =
+  "inline-flex text-sm font-medium text-primary-500 data-[sticky=true]:text-primary-600";
+
+const STICKY_ADDRESS_CLS =
+  "text-xs font-normal text-gray-400 opacity-0 inline-flex ml-1 -translate-x-4 [transition:opacity_0.2s,transform_0.3s] data-[sticky=true]:opacity-100 data-[sticky=true]:translate-x-0";
+
+const DETAIL_ITEMS_CLS =
+  "grid grid-cols-[min(30%,100px)_1fr] gap-x-1.5 gap-y-3 text-base font-normal [&>dt]:font-semibold [&>dt]:text-gray-600";
+
+const PRICE_CLS =
+  "mb-4 pt-4 flex items-center gap-1.5 border-t border-gray-200";
+
+const SIDEMENU_CLS =
+  "inline-flex items-center px-1 py-0.5 bg-gray-100 text-gray-600 rounded-[4px] text-sm font-semibold";
+
+const DIVIDER_CLS = "shrink-0 mt-6 mb-[18px] w-full h-[9px] bg-gray-100";
 
 function RestaurantDetail(props: Props) {
   const {
@@ -84,18 +102,18 @@ function RestaurantDetail(props: Props) {
   return (
     <ScrolledBottomSheet controller={controller}>
       {({ isSticky }) => (
-        <div className={style.contents}>
+        <div className="h-full flex flex-col">
           <div
-            className={clsx(style.stickyArea, style.innerPadding)}
             data-sticky={isSticky}
             data-desktop={isDesktop}
+            className={clsx(STICKY_AREA_CLS, INNER_PADDING)}
           >
             <div style={{ flex: 1 }}>
-              <p className={flexs({ align: "center", justify: "start" })}>
-                <span className={style.topokkiType} data-sticky={isSticky}>
+              <p className="flex items-center justify-start">
+                <span data-sticky={isSticky} className={TOPOKKI_TYPE_CLS}>
                   {TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
                 </span>
-                <span className={style.stickyAddress} data-sticky={isSticky}>
+                <span data-sticky={isSticky} className={STICKY_ADDRESS_CLS}>
                   {((address || restaurant?.address) as string)
                     ?.split(" ")
                     .slice(0, 3)
@@ -104,30 +122,27 @@ function RestaurantDetail(props: Props) {
               </p>
               <h2
                 style={{ transition: "font-size 0.3s" }}
-                className={clsx({
-                  [fonts.body1.semibold]: !isSticky,
-                  [fonts.body2.medium]: isSticky,
-                })}
+                className={
+                  isSticky
+                    ? "text-lg font-medium"
+                    : "text-xl font-semibold"
+                }
               >
                 {restaurantName || restaurant?.name}
               </h2>
               <p
-                className={typo({
-                  size: "caption1",
-                  weight: "regular",
-                  color: "gray400",
-                })}
                 style={{ display: isSticky ? "none" : "block" }}
+                className="text-xs font-normal text-gray-400"
               >
                 {address || restaurant?.address}
               </p>
             </div>
-            <div className={flexs({ gap: "12" })}>
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                className={style.favoriteBtn}
                 data-favorite={true}
                 onClick={onClickFav}
+                className="cursor-pointer data-[favorite=true]:text-primary-600"
               >
                 <Icons
                   name="star"
@@ -141,30 +156,24 @@ function RestaurantDetail(props: Props) {
               </button>
             </div>
           </div>
-          <p className={clsx(style.price, style.innerPadding)}>
-            <span className={fonts.head6.semibold}>
+          <p className={clsx(PRICE_CLS, INNER_PADDING)}>
+            <span className="text-2xl font-semibold">
               {price
                 ? price?.toLocaleString()
                 : restaurant?.price.toLocaleString()}
               원
             </span>
-            <span
-              className={typo({
-                size: "body4",
-                weight: "regular",
-                color: "gray600",
-              })}
-            >
+            <span className="text-sm font-normal text-gray-600">
               1인당, 기본
             </span>
           </p>
           {isLoading && (
-            <div className={style.loadingContainer}>
+            <div className="flex justify-center my-12 mx-auto">
               <Spinner size={32} thick={3} />
             </div>
           )}
           {restaurant && !isLoading && (
-            <dl className={clsx(style.detailItems, style.innerPadding)}>
+            <dl className={clsx(DETAIL_ITEMS_CLS, INNER_PADDING)}>
               <dt>떡 종류</dt>
               <dd>
                 {restaurant.riceKinds
@@ -189,24 +198,18 @@ function RestaurantDetail(props: Props) {
               )}
               <dt>매운 정도</dt>
               <dd>
-                <p className={flexs({ gap: "4", justify: "start" })}>
+                <p className="flex gap-1 justify-start items-center">
                   {Array.from({ length: 6 }).map((_, index) => (
                     <span
                       key={index}
-                      className={style.spicy}
                       data-active={restaurant.spiciness >= index}
+                      className="text-primary-200 data-[active=true]:text-primary-600"
                     >
                       <Icons name="pepper" w="solid" size={18} />
                     </span>
                   ))}
                 </p>
-                <p
-                  className={typo({
-                    size: "body4",
-                    weight: "medium",
-                    color: "primary500",
-                  })}
-                >
+                <p className="text-sm font-medium text-primary-500">
                   {SPICINESS_DESCRIPTION[restaurant.spiciness]}
                 </p>
               </dd>
@@ -217,24 +220,24 @@ function RestaurantDetail(props: Props) {
                   : "순대는 없어요"}
               </dd>
               <dt>사이드메뉴</dt>
-              <dd className={flexs({ gap: "6", justify: "start", wrap: true })}>
+              <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.sideMenus.map((menu) => (
-                  <span key={menu} className={style.sidemenu}>
+                  <span key={menu} className={SIDEMENU_CLS}>
                     {SIDE_MENU_TYPE[menu]}
                   </span>
                 ))}
               </dd>
               <dt>기타</dt>
-              <dd className={flexs({ gap: "6", justify: "start", wrap: true })}>
+              <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.others.map((menu) => (
-                  <span key={menu} className={style.sidemenu}>
+                  <span key={menu} className={SIDEMENU_CLS}>
                     {menu}
                   </span>
                 ))}
               </dd>
             </dl>
           )}
-          <div className={style.divider} />
+          <div className={DIVIDER_CLS} />
           {restaurant && (
             <RestaurantReview
               restaurantId={restaurant?.id}

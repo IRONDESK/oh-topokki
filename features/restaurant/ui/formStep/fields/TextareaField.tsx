@@ -1,15 +1,16 @@
-import clsx from "clsx";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
 import { TextareaField as TextareaFieldDef } from "@/features/restaurant/ui/formStep/place-fields";
-import { fullwidth } from "@/shared/style/container.css";
-import { inputStyle } from "@/shared/ui/css/input.css";
-import { align, fonts } from "@/shared/style/typo.css";
 import {
   FieldShell,
   FieldStatus,
 } from "@/features/restaurant/ui/formStep/fields/FieldShell";
+
+const TEXTAREA_CLS =
+  "relative w-full text-2xl font-normal text-gray-700 z-[1] caret-primary-600";
+const PLACEHOLDER_CLS =
+  "absolute left-0 top-0 text-2xl font-normal text-gray-400 transition-all duration-[0.25s] data-[hide=true]:opacity-0 data-[hide=true]:-translate-y-1/2";
 
 type Props = TextareaFieldDef & { status: FieldStatus };
 
@@ -26,19 +27,16 @@ export const TextareaField = ({
 
   return (
     <FieldShell title={title} detailTitle={detailTitle} status={status}>
-      <div className={clsx(fullwidth, inputStyle.container)}>
+      <div className="relative w-full">
         <textarea
-          className={clsx(fullwidth, inputStyle.textarea)}
+          className={TEXTAREA_CLS}
           maxLength={maxLength}
           {...register(name)}
         />
-        <span
-          className={inputStyle.textareaPlaceholder}
-          data-hide={value.length > 0}
-        >
+        <span className={PLACEHOLDER_CLS} data-hide={value.length > 0}>
           {placeholder}
         </span>
-        <p className={clsx(fonts.body4.regular, align.right)}>
+        <p className="text-sm font-normal text-right">
           {value.length}/{maxLength}
         </p>
       </div>

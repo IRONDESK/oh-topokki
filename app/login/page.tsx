@@ -4,8 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/context/AuthContext";
 import Spinner from "@/shared/ui/Spinner";
-import { fonts } from "@/shared/style/typo.css";
-import { flexs } from "@/shared/style/container.css";
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
@@ -18,9 +16,9 @@ export default function LoginPage() {
   }, [user, loading, router]);
 
   return (
-    <section className={flexs({ dir: "col", gap: "16" })} style={{ height: "100%", width: "100%" }}>
+    <section className="flex flex-col gap-4 items-center justify-center h-full w-full">
       <Spinner color="primary" size={36} thick={3} />
-      <p className={fonts.head4.medium}>처리 중...</p>
+      <p className="text-4xl font-medium">처리 중...</p>
     </section>
   );
 }

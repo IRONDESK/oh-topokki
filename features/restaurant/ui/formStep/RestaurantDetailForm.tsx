@@ -5,15 +5,12 @@ import { useFormContext } from "react-hook-form";
 import { josa } from "es-hangul";
 import { useRouter } from "next/navigation";
 
-import * as styles from "../RestaurantForm.css";
 import { RestaurantFormData } from "../RestaurantForm";
-import { fixedBottom, flexs } from "@/shared/style/container.css";
-import { fonts } from "@/shared/style/typo.css";
 import Icons from "@/shared/ui/Icons";
 import { placeFields } from "@/features/restaurant/ui/formStep/place-fields";
 import { FieldSection } from "@/features/restaurant/ui/formStep/FieldSection";
 import { Text } from "@/shared/ui/Text";
-import { mainButton } from "@/shared/ui/css/share.css";
+import { fixedBottom, mainButton } from "@/shared/style/variants";
 import { useCreateRestaurant } from "@/features/restaurant/api/use-restaurant";
 import { dialog } from "@/shared/ui/feature/dialog";
 
@@ -41,10 +38,13 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      <div className={flexs({ justify: "spb", align: "start" })}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid gap-6 w-full pb-[calc(env(safe-area-inset-bottom,0)+88px)]"
+    >
+      <div className="flex justify-between items-start">
         <div>
-          <p className={fonts.head5.medium}>
+          <p className="text-3xl font-medium">
             <Text color="primary-500">{formData.name}</Text>
             {josa(formData.name, "은/는").slice(-1)}
             <br />
@@ -54,7 +54,7 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
         <button
           type="button"
           onClick={() => setStep(1)}
-          className={styles.backBtn}
+          className="shrink-0 cursor-pointer bg-gray-100 rounded-full px-3.5 py-2 text-gray-700 hover:bg-gray-200 active:bg-gray-300 flex gap-1.5 items-center text-sm font-medium"
         >
           <Icons w="regular" name="refresh" size={14} /> 다시 선택
         </button>
@@ -66,8 +66,8 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
           return (
             <li
               key={field.name}
-              className={styles.fieldWrapper}
               data-show={order === index}
+              className="-mx-5 px-5 data-[show=true]:shadow-xl"
             >
               <FieldSection
                 status={order === index ? "unfold" : isPrevStatus}

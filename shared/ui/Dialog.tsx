@@ -3,9 +3,7 @@ import type {
   OverlayAsyncControllerComponent,
   OverlayControllerComponent,
 } from "overlay-kit";
-import { dialogStyle } from "@/shared/ui/css/dialog.css";
-import { flexs } from "@/shared/style/container.css";
-import { buttons } from "@/shared/ui/css/share.css";
+import { buttons } from "@/shared/style/variants";
 
 type AlertBaseProps = ComponentProps<OverlayControllerComponent>;
 type ConfirmBaseProps = ComponentProps<
@@ -36,22 +34,21 @@ export const Dialog = (props: DialogProps) => {
   if (!isOpen) return null;
   return (
     <section
-      className={dialogStyle.dim}
       onClick={type === "confirm" ? undefined : () => handleClose}
+      className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/50 z-[2500]"
     >
-      <div className={dialogStyle.container}>
-        <div className={dialogStyle.inner}>
-          <p className={dialogStyle.title}>{title}</p>
-          {contents && <p className={dialogStyle.contents}>{contents}</p>}
+      <div className="flex flex-col gap-5 min-w-[320px] max-w-[360px] rounded-[20px] bg-white py-5 px-4 mx-4 items-stretch whitespace-pre-wrap">
+        <div className="flex flex-col gap-2 justify-start items-start px-2">
+          <p className="text-xl font-semibold text-gray-700">{title}</p>
+          {contents && (
+            <p className="text-base font-normal text-gray-600">{contents}</p>
+          )}
         </div>
-        <div className={flexs({ gap: "8" })}>
+        <div className="flex gap-2">
           {type === "confirm" && (
             <button
               type="button"
-              className={buttons({
-                fill: "secondary",
-                size: "medium",
-              })}
+              className={buttons({ fill: "secondary", size: "medium" })}
               onClick={() => close(false)}
             >
               {btnText?.cancel ?? "취소"}
@@ -59,10 +56,7 @@ export const Dialog = (props: DialogProps) => {
           )}
           <button
             type="button"
-            className={buttons({
-              fill: "primary",
-              size: "medium",
-            })}
+            className={buttons({ fill: "primary", size: "medium" })}
             onClick={() => handleClose(true)}
           >
             {(typeof btnText === "string" ? btnText : btnText?.confirm) ??

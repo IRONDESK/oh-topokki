@@ -8,7 +8,6 @@ import { useAuth } from "@/shared/context/AuthContext";
 import { RestaurantFormProvider } from "./RestaurantFormProvider";
 import PlaceSearchForm from "./formStep/PlaceSearchForm";
 import RestaurantDetailForm from "./formStep/RestaurantDetailForm";
-import { formStyle } from "@/features/restaurant/ui/formStep/form.css";
 import { Modal } from "@/shared/ui/Modal";
 
 export type RestaurantFormData = {
@@ -48,7 +47,7 @@ const RestaurantFormContent = (
   return (
     <Modal close={handleClose} {...rest}>
       {step === 1 && (
-        <h3 className={formStyle.formTitle}>
+        <h3 className="text-3xl font-semibold mt-8 mb-[26px]">
           {user?.user_metadata.name}님의
           <br />
           떡볶이 맛집은 어디인가요?

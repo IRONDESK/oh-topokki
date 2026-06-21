@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { overlay } from "overlay-kit";
 import { NaverMap, NaverMaps, NaverMarker } from "@/shared/types/naver-maps";
-import { hoverStyle } from "@/widgets/map/ui/map.css";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
 import { TOPOKKI_RICE_KINDS } from "@/shared/constants/restaurant";
@@ -13,6 +12,13 @@ interface RestaurantMarkerProps {
   naver: NaverMaps;
   restaurants: ResponseRestaurant[];
 }
+
+const HOVER_CONTAINER_CLS =
+  "flex flex-col items-start gap-1 bg-white/60 rounded-[18px] p-3 backdrop-blur-[4px] border-t border-l border-white shadow-lg";
+const HOVER_TITLE_CLS = "text-base font-semibold text-gray-700";
+const HOVER_DESC_CLS = "flex items-center gap-[3px] text-xs font-normal text-gray-600";
+const HOVER_TAG_CLS =
+  "inline-flex items-center px-1.5 py-[1px] bg-primary-50 text-primary-500 rounded-[3px] gap-0.5 text-xs font-medium data-[type=price]:bg-transparent data-[type=price]:p-px data-[type=price]:text-gray-600";
 
 const RestaurantMarker = ({
   map,
@@ -25,7 +31,6 @@ const RestaurantMarker = ({
     const markers: NaverMarker[] = [];
 
     restaurants.forEach((restaurant) => {
-      // 커스텀 마커 아이콘 생성
       const svgString = `
         <svg width="28" height="38" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
           <path d="M16 0C7.2 0 0 7.2 0 16c0 16 16 24 16 24s16-8 16-24C32 7.2 24.8 0 16 0z" fill='#F54E26'/>
@@ -47,10 +52,7 @@ const RestaurantMarker = ({
         icon: markerIcon,
       });
 
-      // 마커 클릭 이벤트
       naver.Event.addListener(marker, "click", () => {
-        // 바텀시트가 40vh를 차지하므로, 위도를 약간 위쪽으로 조정
-        // 줌 레벨 16에서 대략 0.002도 정도 위로 이동
         const offsetLat = 0.00195;
         const adjustedPosition = new naver.LatLng(
           restaurant.latitude - offsetLat,
@@ -75,23 +77,22 @@ const RestaurantMarker = ({
         );
       });
 
-      // 정보창 생성
       const infoWindow = new naver.InfoWindow({
         content: `
-          <div style="min-width: 200px;" class="${hoverStyle.container}">
-            <h3 class="${hoverStyle.title}">${restaurant.name}</h3>
-            <div class="${hoverStyle.description}">
-            <span class="${hoverStyle.infoTag}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
-            ${restaurant.riceKinds?.map((kind) => `<span class="${hoverStyle.infoTag}">${TOPOKKI_RICE_KINDS[kind]}</span>`)}
-            <span class="${hoverStyle.infoTag}">
+          <div style="min-width: 200px;" class="${HOVER_CONTAINER_CLS}">
+            <h3 class="${HOVER_TITLE_CLS}">${restaurant.name}</h3>
+            <div class="${HOVER_DESC_CLS}">
+            <span class="${HOVER_TAG_CLS}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
+            ${restaurant.riceKinds?.map((kind) => `<span class="${HOVER_TAG_CLS}">${TOPOKKI_RICE_KINDS[kind]}</span>`).join("")}
+            <span class="${HOVER_TAG_CLS}">
               <i class="fi fi-sr-pepper" style="height: 14px; display: inline-flex; align-items: center;"></i>
               ${restaurant.spiciness}단계</span>
-              <span class="${hoverStyle.infoTag}" data-type="price">
+              <span class="${HOVER_TAG_CLS}" data-type="price">
                 <span style="font-weight: 700">₩</span>
                 ${restaurant.price?.toLocaleString()}
               </span>
             </div>
-            <div class="${hoverStyle.description}">
+            <div class="${HOVER_DESC_CLS}">
               <span>${restaurant.address.split(" ").slice(0, 2).join(" ")}</span>
               <span>(리뷰 ${restaurant.reviewCount})</span>
             </div>
@@ -103,7 +104,6 @@ const RestaurantMarker = ({
         borderWidth: 0,
       });
 
-      // 마커 호버 시 정보창 표시
       naver.Event.addListener(marker, "mouseover", () => {
         infoWindow.open(map, marker);
       });
@@ -115,7 +115,6 @@ const RestaurantMarker = ({
       markers.push(marker);
     });
 
-    // 컴포넌트 언마운트 시 마커 정리
     return () => {
       markers.forEach((marker) => {
         marker.setMap(null);

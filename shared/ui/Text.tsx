@@ -1,27 +1,23 @@
-import { theme } from "@/shared/style/theme.css";
-
-type ColorKeys = Exclude<keyof typeof theme.color, "white" | "black">;
-type ColorRangeKeys = keyof typeof theme.color.gray;
+type ColorName = "gray" | "success" | "info" | "warning" | "red" | "purple" | "magenta" | "primary";
+type ColorShade = "50" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
 
 export const Text = (props: {
   className?: string;
   display?: "inline" | "inline-block" | "block" | "flex" | "inline-flex";
-  color: `${ColorKeys}-${ColorRangeKeys}` | "white" | "black";
+  color: `${ColorName}-${ColorShade}` | "white" | "black";
   children: React.ReactNode;
 }) => {
   const { color, display, className, children } = props;
-  const [key, range] = color.split("-");
+
+  const colorValue =
+    color === "white" || color === "black"
+      ? `var(--color-${color})`
+      : `var(--color-${color})`;
+
   return (
     <span
       className={className}
-      style={{
-        display,
-        color: !range
-          ? theme.color?.[key as "white" | "black"]
-          : theme.color?.[key as ColorKeys]?.[
-              range as unknown as ColorRangeKeys
-            ],
-      }}
+      style={{ display, color: colorValue }}
     >
       {children}
     </span>

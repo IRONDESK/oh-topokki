@@ -7,8 +7,6 @@ import {
   RadioField,
 } from "@/features/restaurant/ui/formStep/place-fields";
 import { SelectBox } from "@/shared/ui/SelectBox";
-import { formStyle } from "@/features/restaurant/ui/formStep/form.css";
-import { flexs, fullwidth } from "@/shared/style/container.css";
 import {
   FieldShell,
   FieldStatus,
@@ -43,10 +41,12 @@ export const SelectField = ({
       foldedValue={foldedValue}
     >
       <div
-        className={clsx(fullwidth, {
-          [flexs({ gap: "8", align: "stretch" })]: items.length < 5,
-          [formStyle.selectListGrid]: items.length >= 5,
-        })}
+        className={clsx(
+          "w-full",
+          items.length < 5
+            ? "flex gap-2 items-stretch"
+            : "grid grid-cols-3 gap-2",
+        )}
       >
         {items.map((item) => (
           <SelectBox

@@ -10,15 +10,11 @@ import { useNaverMap } from "@/shared/hooks/useNaverMap";
 
 import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
 import { InputHead } from "@/shared/ui/InputHead";
-import { typo } from "@/shared/style/typo.css";
-import { flexRatio, flexs } from "@/shared/style/container.css";
-import { searchStyle as style } from "@/features/search/ui/search.css";
 import { useRestaurantSearch } from "@/features/restaurant/api/use-restaurant";
 import HighlightKeyword from "@/features/search/ui/Highlight";
 import Icons from "@/shared/ui/Icons";
-import { theme } from "@/shared/style/theme.css";
 import Spinner from "@/shared/ui/Spinner";
-import { buttons } from "@/shared/ui/css/share.css";
+import { buttons } from "@/shared/style/variants";
 import NaverMapIcon from "@/assets/navermap.webp";
 
 type Props = {
@@ -38,12 +34,12 @@ function SearchModal({ controller }: Props) {
   const { data, isLoading } = useRestaurantSearch(debounced);
 
   useEffect(() => {
-    const debounced = debounce(() => {
+    const d = debounce(() => {
       setDebounced(input);
     }, 300);
-    debounced();
+    d();
     return () => {
-      debounced.cancel?.();
+      d.cancel?.();
     };
   }, [input]);
 
@@ -60,31 +56,26 @@ function SearchModal({ controller }: Props) {
     lng: number;
   }) => {
     if (!map || !naver) return;
-
-    // 지도 중심점과 줌을 동시에 설정
     const offsetLat = 0.00195;
     const targetLocation = new naver.LatLng(
       location.lat - offsetLat,
       location.lng,
     );
-
-    // 위치와 줌을 동시에 설정
     map.setCenter(targetLocation);
     map.setZoom(17);
-
     setSelected(location.restaurantId);
   };
 
   const onClickDetail = (id: string) => {
     router.push(`/?restaurant=${id}`);
   };
-  const openNaverMapView = (location: { lat: number; lng: number }) => {};
+  const openNaverMapView = (_location: { lat: number; lng: number }) => {};
 
   return (
     <ScrolledBottomSheet controller={controller}>
-      {({ isFull, isSticky }) => (
-        <div className={style.container}>
-          <div className={style.inputContainer}>
+      {() => (
+        <div className="px-4">
+          <div className="px-0.5 py-1 pb-2.5 mb-2.5 border-b border-gray-200">
             <InputHead
               type="text"
               placeholder="상호명이나 메뉴를 입력해 주세요"
@@ -96,25 +87,13 @@ function SearchModal({ controller }: Props) {
           </div>
 
           {isLoading && (
-            <div
-              style={{ paddingTop: "32px" }}
-              className={flexs({
-                justify: "center",
-                align: "center",
-              })}
-            >
+            <div className="flex justify-center items-center pt-8">
               <Spinner size={32} thick={3} color="primary" />
             </div>
           )}
 
-          <div
-            className={flexs({
-              dir: "col",
-              gap: "24",
-              align: "start",
-            })}
-          >
-            {data?.items.map((item, index) => {
+          <div className="flex flex-col gap-6 items-start">
+            {data?.items.map((item) => {
               const matchedTexts = [...item.sideMenus, ...item.others].filter(
                 (text) => text.includes(debounced),
               );
@@ -122,7 +101,6 @@ function SearchModal({ controller }: Props) {
               return (
                 <div
                   key={item.id}
-                  className={style.resultItem}
                   onClick={() =>
                     onClickRestaurant({
                       lat: item.latitude,
@@ -130,66 +108,29 @@ function SearchModal({ controller }: Props) {
                       restaurantId: item.id,
                     })
                   }
+                  className="flex flex-col gap-3 cursor-pointer w-full first-of-type:pt-2.5"
                 >
-                  <div
-                    className={flexs({ gap: "12" })}
-                    style={{ width: "100%" }}
-                  >
-                    {/*<div className={style.resultPin}>{index + 1}</div>*/}
-                    <div className={flexRatio["1"]}>
-                      <p
-                        className={flexs({
-                          justify: "spb",
-                          align: "center",
-                        })}
-                      >
-                        <span
-                          className={typo({
-                            size: "body3",
-                            weight: "medium",
-                            color: "gray700",
-                          })}
-                        >
+                  <div className="flex gap-3 w-full">
+                    <div className="flex-1">
+                      <p className="flex justify-between items-center">
+                        <span className="text-base font-medium text-gray-700">
                           <HighlightKeyword
                             text={item.name}
                             keyword={debounced}
-                            highlightClassName={typo({
-                              color: "primary500",
-                            })}
+                            highlightClassName="text-primary-500"
                           />
                         </span>
-                        <span
-                          className={typo({
-                            size: "body4",
-                            weight: "regular",
-                            color: "gray600",
-                          })}
-                        >
+                        <span className="text-sm font-normal text-gray-600">
                           {TOPOKKI_TYPE[item.topokkiType]}
                         </span>
                       </p>
-                      <p
-                        className={flexs({
-                          justify: "spb",
-                          align: "center",
-                        })}
-                      >
-                        <span
-                          className={typo({
-                            size: "caption1",
-                            weight: "regular",
-                            color: "gray500",
-                          })}
-                        >
+                      <p className="flex justify-between items-center">
+                        <span className="text-xs font-normal text-gray-500">
                           {item.address}
                         </span>
                         <span
                           id="distance"
-                          className={typo({
-                            size: "body4",
-                            weight: "regular",
-                            color: "gray500",
-                          })}
+                          className="text-sm font-normal text-gray-500"
                         >
                           {getFormattedDistanceFromCurrent(
                             item.latitude,
@@ -198,25 +139,19 @@ function SearchModal({ controller }: Props) {
                         </span>
                       </p>
                       {matchedTexts.length > 0 && (
-                        <p
-                          className={flexs({
-                            align: "center",
-                            justify: "start",
-                            gap: "4",
-                          })}
-                        >
+                        <p className="flex items-center justify-start gap-1">
                           <Icons
                             name="tags"
                             w="regular"
                             t="round"
-                            color={theme.color.primary["500"]}
+                            color="var(--color-primary-500)"
                           />
                           {matchedTexts.map((text) => (
                             <HighlightKeyword
                               key={text}
                               text={text}
                               keyword={debounced}
-                              highlightClassName={style.matchedKeyword}
+                              highlightClassName="text-xs font-medium px-1 py-0.5 rounded-[2px] bg-primary-50 text-primary-600"
                             />
                           ))}
                         </p>
@@ -225,7 +160,7 @@ function SearchModal({ controller }: Props) {
                   </div>
 
                   {selected === item.id && (
-                    <div className={style.resultItemButton}>
+                    <div className="flex gap-2 w-full mb-2">
                       <button
                         type="button"
                         onClick={() => onClickDetail(item.id)}

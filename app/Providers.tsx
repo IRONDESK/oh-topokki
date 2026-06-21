@@ -6,7 +6,6 @@ import { AuthProvider } from "@/shared/context/AuthContext";
 import { OverlayProvider } from "overlay-kit";
 import { Provider as JotaiProvider } from "jotai";
 import { Toaster } from "sonner";
-import { typo } from "@/shared/style/typo.css";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -33,10 +32,7 @@ function Providers({ children }: { children: React.ReactNode }) {
           <Toaster
             duration={2000}
             position="top-center"
-            className={typo({
-              size: "body3",
-              weight: "medium",
-            })}
+            className="text-base font-medium"
             toastOptions={{
               style: {
                 backgroundColor: "rgba(0,0,0,0.8)",

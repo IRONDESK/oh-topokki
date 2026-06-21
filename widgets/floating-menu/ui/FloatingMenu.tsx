@@ -1,10 +1,6 @@
-import { floatingStyle } from "@/widgets/floating-menu/ui/floating.css";
 import { useAuth } from "@/shared/context/AuthContext";
-import { fonts, typo } from "@/shared/style/typo.css";
-import { flexs } from "@/shared/style/container.css";
 import { useRef, useEffect } from "react";
 import { overlay } from "overlay-kit";
-import RestaurantRegisterForm from "@/features/restaurant/ui/RestaurantForm";
 import LoginModal from "@/features/auth/ui/LoginModal";
 
 type Props = {
@@ -47,37 +43,41 @@ export default function FloatingMenu(props: Props) {
   return (
     <div
       ref={containerRef}
-      className={floatingStyle.container}
       data-open={isOpen}
+      className={[
+        "fixed top-0 mt-[env(safe-area-inset-top,16px)] left-2.5 px-4 py-3.5",
+        "border-l border-t border-l-white border-t-white border-r border-b border-r-transparent border-b-transparent",
+        "bg-white/55 shadow-md backdrop-blur-[4px] rounded-[20px] min-w-[160px]",
+        "[transform:translate3d(0,0,0)_scale(0.2)] opacity-0 [filter:brightness(1.05)]",
+        "[transition:transform_0.3s_cubic-bezier(0.34,1.56,0.64,1),opacity_0.3s]",
+        "origin-top-left whitespace-pre-wrap text-left",
+        "data-[open=true]:opacity-100 data-[open=true]:[transform:translate3d(0,50px,0)_scale(1)]",
+      ].join(" ")}
     >
-      <div className={flexs({ dir: "col", gap: "2", align: "start" })}>
+      <div className="flex flex-col gap-0.5 items-start">
         {!user ? (
           <button
             type="button"
-            className={fonts.body3.medium}
+            className="text-base font-medium"
             onClick={openLogin}
           >
             로그인 후{"\n"}이용해 주세요
           </button>
         ) : (
           <>
-            <p className={fonts.body3.medium}>
+            <p className="text-base font-medium">
               {user?.user_metadata.name}님,{"\n"}반갑습니다
             </p>
             <button
               type="button"
               onClick={signOut}
-              className={typo({
-                size: "caption1",
-                weight: "medium",
-                color: "gray500",
-              })}
+              className="text-xs font-medium text-gray-500"
             >
               로그아웃
             </button>
           </>
         )}
-        <ul className={floatingStyle.list}>
+        <ul className="flex flex-col gap-px text-gray-600 border-t border-gray-300 w-full mt-3 pt-3 text-sm font-normal [&>li]:cursor-pointer [&>li]:py-1">
           {user && <li>내 작성 글</li>}
           <li>서비스 안내</li>
           <li>문의</li>

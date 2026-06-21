@@ -1,9 +1,6 @@
 import clsx from "clsx";
 import { ReactNode } from "react";
 
-import { fonts } from "@/shared/style/typo.css";
-import { formStyle } from "@/features/restaurant/ui/formStep/form.css";
-
 export type FieldStatus = "fold-value" | "fold" | "unfold";
 
 interface FieldShellProps {
@@ -13,6 +10,18 @@ interface FieldShellProps {
   foldedValue?: ReactNode;
   children: ReactNode;
 }
+
+const CONTAINER_CLS =
+  "flex flex-col gap-1.5 items-start w-full transition-all duration-[0.25s] data-[fold=true]:flex-row data-[fold=true]:justify-between";
+
+const TITLE_BOX_CLS =
+  "grid items-center justify-center [grid-template-areas:'overlap']";
+
+const TITLE_BASE_CLS =
+  "[grid-area:overlap] text-left transition-all duration-[0.25s] data-[visible=true]:opacity-100 data-[visible=false]:opacity-0 data-[visible=false]:p-0";
+
+const FOLDED_VALUE_CLS =
+  "flex items-center justify-center h-8 text-base font-normal text-primary-500 transition-opacity duration-[0.25s] data-[hide=true]:opacity-0";
 
 export const FieldShell = ({
   title,
@@ -24,21 +33,20 @@ export const FieldShell = ({
   const isUnfold = status === "unfold";
 
   return (
-    <div className={formStyle.fieldContainer} data-fold={!isUnfold}>
-      <div className={formStyle.fieldTitleBox}>
+    <div className={CONTAINER_CLS} data-fold={!isUnfold}>
+      <div className={TITLE_BOX_CLS}>
         <h4
-          className={clsx(fonts.body3.medium, formStyle.fieldTitle)}
           data-visible={!isUnfold}
+          className={clsx(TITLE_BASE_CLS, "text-base font-medium")}
         >
           {title}
         </h4>
         <h4
-          className={clsx(
-            fonts.head6.semibold,
-            formStyle.fieldTitle,
-            formStyle.fieldDetailTitle,
-          )}
           data-visible={isUnfold}
+          className={clsx(
+            TITLE_BASE_CLS,
+            "text-2xl font-semibold pt-8 pb-2.5",
+          )}
         >
           {detailTitle}
         </h4>
@@ -49,7 +57,7 @@ export const FieldShell = ({
       </div>
 
       {foldedValue !== undefined && (
-        <div className={formStyle.fieldValue} data-hide={isUnfold}>
+        <div className={FOLDED_VALUE_CLS} data-hide={isUnfold}>
           {foldedValue}
         </div>
       )}
