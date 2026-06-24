@@ -50,7 +50,16 @@ export const getUserLocationAtom = atom(
       set(currentLocationAtom, newLocation);
       set(userGpsLocationAtom, newLocation);
     } catch (error) {
-      console.error("위치 정보 가져오기 실패:", error);
+      // GeolocationPositionError는 속성이 non-enumerable라 그냥 찍으면 {}로 보인다.
+      // code(1=권한거부/비보안출처, 2=위치불가, 3=타임아웃)와 message를 명시적으로 로깅.
+      if (error && typeof error === "object" && "code" in error) {
+        const geoError = error as GeolocationPositionError;
+        console.error(
+          `위치 정보 가져오기 실패 (code=${geoError.code}): ${geoError.message}`,
+        );
+      } else {
+        console.error("위치 정보 가져오기 실패:", error);
+      }
       set(locationErrorAtom, "위치 정보를 가져올 수 없습니다.");
       // 기본 위치 (서울시청)으로 설정
       set(currentLocationAtom, { lat: 37.5665, lng: 126.978 });
