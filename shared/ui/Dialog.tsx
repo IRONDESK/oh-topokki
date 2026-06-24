@@ -37,9 +37,9 @@ export const Dialog = (props: DialogProps) => {
       onClick={type === "confirm" ? undefined : () => handleClose}
       className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/50 z-[2500]"
     >
-      <div className="flex flex-col gap-5 min-w-[320px] max-w-[360px] rounded-[20px] bg-white py-5 px-4 mx-4 items-stretch whitespace-pre-wrap">
+      <div className="flex flex-col gap-5 min-w-[320px] max-w-[360px] rounded-card border-[1.5px] border-ink shadow-sticker bg-white py-5 px-4 mx-4 items-stretch whitespace-pre-wrap">
         <div className="flex flex-col gap-2 justify-start items-start px-2">
-          <p className="text-xl font-semibold text-gray-700">{title}</p>
+          <p className="text-xl font-semibold text-ink">{title}</p>
           {contents && (
             <p className="text-base font-normal text-gray-600">{contents}</p>
           )}

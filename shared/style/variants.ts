@@ -179,29 +179,29 @@ export const flexRatio = {
 export const fullwidth = "w-full";
 
 export const fixedBottom =
-  "fixed bottom-0 left-0 flex items-center gap-2 w-screen bg-white px-4 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))] z-[100] shadow-md xl:left-1/2 xl:-translate-x-1/2 xl:w-[var(--size-overlay-max)]";
+  "fixed bottom-0 left-0 flex items-center gap-2 w-screen bg-white border-t-[1.5px] border-ink px-4 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))] z-[100] xl:left-1/2 xl:-translate-x-1/2 xl:w-[var(--size-overlay-max)]";
 
 export const mainButton =
-  "flex flex-1 items-center justify-center gap-2 bg-primary-500 text-white rounded-[20px] px-6 py-3 cursor-pointer text-xl font-medium " +
-  "disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-90 " +
-  "data-[fill=secondary]:bg-primary-100 data-[fill=secondary]:text-primary-600 " +
-  "active:scale-[0.98] transition-transform";
+  "flex flex-1 items-center justify-center gap-2 bg-primary-500 text-white border-[1.5px] border-ink rounded-btn px-6 py-3 cursor-pointer text-xl font-medium shadow-pop " +
+  "disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:border-gray-300 disabled:shadow-none " +
+  "data-[fill=secondary]:bg-primary-100 data-[fill=secondary]:text-primary-700 " +
+  "active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-[transform,box-shadow] duration-150";
 
 export const buttons = cva(
-  "flex flex-1 shrink-0 items-center justify-center cursor-pointer break-keep border border-transparent transition-[background-color,transform] duration-200 " +
-    "disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-90 active:scale-[0.98]",
+  "flex flex-1 shrink-0 items-center justify-center cursor-pointer break-keep border-[1.5px] transition-[transform,box-shadow] duration-150 " +
+    "disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:border-gray-300 disabled:shadow-none " +
+    "active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
   {
     variants: {
       fill: {
-        primary: "bg-primary-500 text-white",
-        secondary: "bg-primary-100 text-primary-600",
-        outlined: "border-primary-300 text-primary-600 active:bg-primary-50",
-        assistive:
-          "bg-transparent border-gray-300 text-gray-600 active:bg-gray-50",
+        primary: "bg-primary-500 text-white border-ink shadow-pop",
+        secondary: "bg-primary-100 text-primary-700 border-ink shadow-sticker-sm",
+        outlined: "bg-white border-primary-400 text-primary-700 active:bg-primary-50",
+        assistive: "bg-white border-gray-300 text-gray-600 active:bg-gray-50",
       },
       size: {
-        large: "rounded-[20px] px-6 py-3 gap-2 h-[52px] text-xl font-medium",
-        medium: "rounded-lg px-4 py-2.5 gap-1 h-[46px] text-base font-normal",
+        large: "rounded-btn px-6 py-3 gap-2 h-[52px] text-xl font-medium",
+        medium: "rounded-[12px] px-4 py-2.5 gap-1 h-[46px] text-base font-medium",
         small:
           "min-w-[60px] rounded-[10px] px-2.5 py-2 gap-1 h-[38px] text-sm font-medium",
       },
@@ -216,10 +216,12 @@ export const label = cva(
   {
     variants: {
       fill: {
-        primary: "bg-primary-500 border-primary-50 text-white",
-        secondary: "border-primary-400 text-primary-600",
-        assistive: "bg-gray-100 border-transparent text-gray-600",
+        primary: "bg-primary-500 border-ink text-white",
+        secondary: "bg-primary-50 border-primary-300 text-primary-700",
+        assistive: "bg-gray-100 border-gray-200 text-gray-600",
         gray: "bg-gray-50 border-gray-200 text-gray-600",
+        pink: "bg-magenta-50 border-magenta-200 text-magenta-700",
+        yellow: "bg-warning-50 border-warning-300 text-warning-800",
       },
       size: {
         large: "rounded-[10px] px-3 py-1.5 gap-1 text-base font-medium",
@@ -230,8 +232,9 @@ export const label = cva(
 );
 export type LabelProps = VariantProps<typeof label>;
 
+/* 분식집 스티커 컨테이너 — 글래스모피즘 대신 솔리드 흰 면 + 잉크 외곽선 + 오프셋 그림자 */
 export const glassContainer =
-  "cursor-pointer flex items-center justify-center w-12 h-12 rounded-[32px] bg-white/40 shadow-md backdrop-blur-[4px] border-t border-l border-white " +
+  "cursor-pointer flex items-center justify-center w-12 h-12 rounded-chip bg-white border-[1.5px] border-ink shadow-sticker-sm " +
   "data-[flexible=true]:px-3.5 data-[flexible=true]:min-w-12 data-[flexible=true]:w-auto " +
-  "hover:brightness-110 transition-[filter] duration-200 " +
+  "active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-[transform,box-shadow] duration-150 " +
   "text-base font-medium";

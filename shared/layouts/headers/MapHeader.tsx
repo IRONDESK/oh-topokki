@@ -12,7 +12,7 @@ const containerCls =
   "flex justify-between items-center gap-2 fixed top-0 w-[calc(min(1280px,100vw))] min-h-12 pt-[env(safe-area-inset-top,16px)] pl-2.5 z-[1000] text-base font-normal";
 
 const menuCls =
-  "cursor-pointer w-9 h-8 rounded-md bg-primary-500 text-white flex items-center justify-center border-l border-t border-l-[rgba(245,78,38,0.55)] border-t-[rgba(245,78,38,0.55)] border-r border-b border-r-transparent border-b-transparent";
+  "cursor-pointer w-9 h-8 rounded-[10px] bg-primary-500 text-white flex items-center justify-center border-[1.5px] border-ink shadow-sticker-sm active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-[transform,box-shadow] duration-150";
 
 const logoCls =
   "flex justify-center items-center w-[100px] h-12 drop-shadow-[0_0_8px_rgba(255,255,255,0.75)]";
@@ -21,7 +21,7 @@ const filterListCls =
   "flex-1 inline-flex gap-1 overflow-x-auto pr-4 items-center";
 
 const filterItemCls =
-  "shrink-0 select-none cursor-pointer min-w-[54px] px-3.5 py-[5px] rounded-[32px] bg-white/65 backdrop-blur-[4px] border-t border-l border-white text-center text-gray-600 shadow-sm text-base font-medium hover:brightness-105 data-[selected=true]:bg-primary-500 data-[selected=true]:border-primary-200 data-[selected=true]:text-white data-[selected=true]:font-semibold";
+  "shrink-0 select-none cursor-pointer min-w-[54px] px-3.5 py-1.5 rounded-chip bg-white border-[1.5px] border-primary-200 text-center text-primary-700 shadow-sticker-sm text-base font-medium transition-[transform,box-shadow] duration-150 data-[selected=true]:bg-primary-500 data-[selected=true]:border-ink data-[selected=true]:text-white data-[selected=true]:font-semibold data-[selected=true]:shadow-pop";
 
 export default function MapHeader() {
   const [filters, setFilter] = useAtom(mapFilterAtom);
@@ -33,10 +33,11 @@ export default function MapHeader() {
 
   const FILTERS = [
     { name: "즉떡", key: "topokkiType", value: "ontable" },
-    { name: "밀떡", key: "riceKinds", value: "flour" },
-    { name: "로제", key: "noodleType", value: "rose" },
-    { name: "쫄면", key: "noodleType", value: "jolmyun" },
-    { name: "순대", key: "sundaeType", value: "sundae" },
+    { name: "밀떡", key: "riceTypes", value: "flour" },
+    { name: "로제", key: "sauceTypes", value: "rose" },
+    { name: "쫄면", key: "noodleTypes", value: "jjolmyeon" },
+    // 순대 칩은 "순대를 파는 집"(sundaeType이 null이 아닌 곳)을 의미 → 백엔드에서 not-null로 해석
+    { name: "순대", key: "sundaeType", value: "exists" },
     { name: "5000원", key: "maxPrice", value: 5000 },
   ];
 

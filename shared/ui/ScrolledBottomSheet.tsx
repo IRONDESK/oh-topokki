@@ -139,7 +139,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           transition: isDragging ? "none" : undefined,
         }}
         className={[
-          "fixed left-1/2 top-0 bg-white rounded-t-[20px] pb-8 min-h-screen w-full max-w-[520px]",
+          "fixed left-1/2 top-0 bg-white rounded-t-card border-t-[1.5px] border-x-[1.5px] border-ink pb-8 min-h-screen w-full max-w-[520px]",
           "[transform:translate3d(-50%,98vh,0)] [transition:transform_0.25s,opacity_0.3s,border-radius_0.3s]",
           "text-gray-700 opacity-0 z-[2005] overscroll-contain will-change-transform",
           "data-[open=true]:[transform:translate3d(-50%,35vh,0)] data-[open=true]:opacity-100 data-[open=true]:shadow-md",
@@ -172,7 +172,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           ) : (
             <div
               ref={barRef}
-              className="w-[15%] h-1 rounded-[99px] bg-gray-200 mt-[18px] mb-3 mx-auto"
+              className="w-[15%] h-1 rounded-chip bg-gray-300 mt-[18px] mb-3 mx-auto"
             />
           )}
           {children({ isFull, isSticky })}

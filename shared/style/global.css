@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color: gray */
-  --color-gray-50: #f8fafc;
-  --color-gray-100: #f1f5f9;
-  --color-gray-200: #e2e8f0;
-  --color-gray-300: #cbd5e1;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-600: #475569;
-  --color-gray-700: #334155;
-  --color-gray-800: #1e293b;
-  --color-gray-900: #0f172a;
+  /* Color: gray (warm stone — 떡볶이 분식집 무드에 맞춘 따뜻한 중성색) */
+  --color-gray-50: #faf7f2;
+  --color-gray-100: #f3ede4;
+  --color-gray-200: #e7ddd1;
+  --color-gray-300: #d4c7b8;
+  --color-gray-400: #a89a8b;
+  --color-gray-500: #7d6f62;
+  --color-gray-600: #5c5047;
+  --color-gray-700: #433a33;
+  --color-gray-800: #2e2722;
+  --color-gray-900: #1c1714;
 
   /* Color: success */
   --color-success-50: #f0fdec;
@@ -107,8 +107,29 @@
 
   /* App-specific sizes */
   --size-overlay-max: 640px;
+
+  /* Brand: kitsch 분식집 — 따뜻한 잉크/크림 + 스티커 질감 */
+  --color-ink: #2a1813; /* 외곽선·본문에 쓰는 따뜻한 먹색 (pure black 대신) */
+  --color-cream: #fff4ea; /* 페이지 종이 배경 */
+  --color-cream-deep: #ffe9d6; /* 살짝 깊은 크림 표면 */
+
+  /* Sticker shadows — 흐릿한 blur 대신 또렷하게 어긋난 오프셋 그림자 */
+  --shadow-sticker: 3px 4px 0 rgba(42, 24, 19, 0.14);
+  --shadow-sticker-sm: 2px 3px 0 rgba(42, 24, 19, 0.12);
+  --shadow-pop: 2px 2px 0 var(--color-ink); /* 강조 요소(주버튼·선택칩)용 솔리드 오프셋 */
+
+  /* Radius scale — 난립하던 arbitrary 값을 토큰으로 통일 */
+  --radius-card: 18px;
+  --radius-btn: 14px;
+  --radius-chip: 999px;
 }
 
+/*
+ * 옛 Eric-Meyer 리셋을 @layer base로 감싼다.
+ * Tailwind v4에서 레이어 밖(unlayered) CSS는 모든 유틸리티 레이어를 이기므로,
+ * 이걸 base 레이어에 넣어야 rounded / padding / border 등 유틸리티가 정상 적용된다.
+ */
+@layer base {
 html,
 body,
 div,
@@ -264,4 +285,7 @@ body {
   touch-action: none;
   overflow: hidden;
   overscroll-behavior: none;
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
 }

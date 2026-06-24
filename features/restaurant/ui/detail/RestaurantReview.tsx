@@ -24,12 +24,12 @@ const REVIEW_ITEM_CLS = "flex flex-col gap-1";
 const BULLET_CLS =
   "shrink-0 inline-block w-[3px] h-[3px] rounded-full bg-gray-300";
 const RATING_LABEL_CLS =
-  "inline-flex items-center gap-[3px] rounded-[4px] px-1 py-[1px] bg-primary-50 text-primary-600 text-xs font-medium";
+  "inline-flex items-center gap-[3px] rounded-lg px-1.5 py-[1px] bg-primary-50 border border-primary-200 text-primary-700 text-xs font-medium";
 
 const INPUT_CONTAINER_CLS =
   "sticky left-0 bottom-[calc(env(safe-area-inset-bottom)+20px)] -mx-1 w-[calc(100%+8px)] min-h-[60px]";
 const INPUT_BOX_CLS =
-  "flex items-center bg-white/75 rounded-[32px] w-full h-12 pl-4 pr-2.5 shadow-md backdrop-blur-[2px] [transition:border_0.2s] border border-transparent has-[input:focus]:border-primary-300 has-[input:disabled]:bg-gray-100";
+  "flex items-center bg-white rounded-chip w-full h-12 pl-4 pr-2.5 shadow-sticker-sm [transition:border_0.15s] border-[1.5px] border-ink has-[input:focus]:border-primary-500 has-[input:disabled]:bg-gray-100";
 
 function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   const [reviewInput, setReviewInput] = useState("");
@@ -72,7 +72,7 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
               <p className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
                   <span className="font-medium text-gray-500">
-                    {review.author.name}님
+                    {review.author.nickname}님
                   </span>
                   <span className={BULLET_CLS} />
                   <span className="font-normal text-gray-400">

@@ -15,6 +15,7 @@ import HighlightKeyword from "@/features/search/ui/Highlight";
 import Icons from "@/shared/ui/Icons";
 import Spinner from "@/shared/ui/Spinner";
 import { buttons } from "@/shared/style/variants";
+import { TOPOKKI_TYPE } from "@/shared/constants/restaurant";
 import NaverMapIcon from "@/assets/navermap.webp";
 
 type Props = {
@@ -151,7 +152,7 @@ function SearchModal({ controller }: Props) {
                               key={text}
                               text={text}
                               keyword={debounced}
-                              highlightClassName="text-xs font-medium px-1 py-0.5 rounded-[2px] bg-primary-50 text-primary-600"
+                              highlightClassName="text-xs font-medium px-1.5 py-0.5 rounded-md bg-primary-50 border border-primary-200 text-primary-700"
                             />
                           ))}
                         </p>
@@ -203,11 +204,5 @@ function SearchModal({ controller }: Props) {
     </ScrolledBottomSheet>
   );
 }
-
-const TOPOKKI_TYPE: Record<string, string> = {
-  ontable: "즉석떡볶이",
-  pan: "판떡볶이",
-  soup: "국물떡볶이",
-};
 
 export default SearchModal;

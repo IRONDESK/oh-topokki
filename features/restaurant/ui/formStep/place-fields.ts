@@ -87,7 +87,7 @@ export const placeFields: PlaceField[] = [
   {
     title: "떡 종류",
     detailTitle: "무슨 떡을 쓰는 곳인가요?",
-    name: "riceKinds",
+    name: "riceTypes",
     type: "checkbox",
     items: [
       { label: "밀떡", value: "flour", description: null, icon: null },
@@ -98,7 +98,7 @@ export const placeFields: PlaceField[] = [
   {
     title: "맛(소스)",
     detailTitle: "어떤 맛 떡볶이가 있나요?",
-    name: "sauceKinds",
+    name: "sauceTypes",
     type: "checkbox",
     items: [
       {
@@ -127,7 +127,7 @@ export const placeFields: PlaceField[] = [
   {
     title: "면 종류",
     detailTitle: "어떤 면을 넣을 수 있나요?",
-    name: "noodleKinds",
+    name: "noodleTypes",
     type: "checkbox",
     items: [
       { label: "면 없음", value: "", description: null, icon: null },

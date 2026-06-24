@@ -12,10 +12,11 @@ import {
   SAUCE_TYPE,
   SIDE_MENU_TYPE,
   SUNDAE_TYPE,
-  TOPOKKI_RICE_KINDS,
+  RICE_TYPE,
   TOPOKKI_TYPE,
 } from "@/shared/constants/restaurant";
 import Icons from "@/shared/ui/Icons";
+import Tag from "@/shared/ui/Tag";
 import Spinner from "@/shared/ui/Spinner";
 import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
 import RestaurantReview from "@/features/restaurant/ui/detail/RestaurantReview";
@@ -50,10 +51,7 @@ const DETAIL_ITEMS_CLS =
 const PRICE_CLS =
   "mb-4 pt-4 flex items-center gap-1.5 border-t border-gray-200";
 
-const SIDEMENU_CLS =
-  "inline-flex items-center px-1 py-0.5 bg-gray-100 text-gray-600 rounded-[4px] text-sm font-semibold";
-
-const DIVIDER_CLS = "shrink-0 mt-6 mb-[18px] w-full h-[9px] bg-gray-100";
+const DIVIDER_CLS = "shrink-0 mt-6 mb-[18px] w-full h-2 bg-gray-100";
 
 function RestaurantDetail(props: Props) {
   const {
@@ -176,21 +174,21 @@ function RestaurantDetail(props: Props) {
             <dl className={clsx(DETAIL_ITEMS_CLS, INNER_PADDING)}>
               <dt>떡 종류</dt>
               <dd>
-                {restaurant.riceKinds
-                  .map((kind) => TOPOKKI_RICE_KINDS[kind])
+                {restaurant.riceTypes
+                  .map((kind) => RICE_TYPE[kind])
                   .join(", ")}
               </dd>
               <dt>소스 종류</dt>
               <dd>
-                {restaurant.sauceKinds
+                {restaurant.sauceTypes
                   .map((kind) => SAUCE_TYPE[kind])
                   .join(", ")}
               </dd>
-              {restaurant.noodleKinds.length > 0 && (
+              {restaurant.noodleTypes.length > 0 && (
                 <>
                   <dt>면 종류</dt>
                   <dd>
-                    {restaurant.noodleKinds
+                    {restaurant.noodleTypes
                       .map((kind) => NOODLE_TYPE[kind])
                       .join(", ")}
                   </dd>
@@ -222,17 +220,17 @@ function RestaurantDetail(props: Props) {
               <dt>사이드메뉴</dt>
               <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.sideMenus.map((menu) => (
-                  <span key={menu} className={SIDEMENU_CLS}>
+                  <Tag key={menu} fill="gray">
                     {SIDE_MENU_TYPE[menu]}
-                  </span>
+                  </Tag>
                 ))}
               </dd>
               <dt>기타</dt>
               <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.others.map((menu) => (
-                  <span key={menu} className={SIDEMENU_CLS}>
+                  <Tag key={menu} fill="gray">
                     {menu}
-                  </span>
+                  </Tag>
                 ))}
               </dd>
             </dl>

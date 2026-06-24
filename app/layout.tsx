@@ -15,7 +15,7 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7fafc" },
+    { media: "(prefers-color-scheme: light)", color: "#fff4ea" },
     { media: "(prefers-color-scheme: dark)", color: "#111012" },
   ],
 };
@@ -40,7 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${pretendard.className} text-gray-800`}
+        className={`${pretendard.className} bg-cream text-ink`}
       >
         <Providers>
           <Layout>{children}</Layout>

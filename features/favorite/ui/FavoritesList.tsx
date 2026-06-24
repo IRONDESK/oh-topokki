@@ -9,6 +9,7 @@ import { naverMapAtom } from "@/shared/store/locationStore";
 import { useNaverMap } from "@/shared/hooks/useNaverMap";
 import { useFavorites } from "@/features/favorite/api/use-favorite";
 import { ResponseFavorite } from "@/shared/api/model/restaurant";
+import { TOPOKKI_TYPE, RICE_TYPE } from "@/shared/constants/restaurant";
 
 import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
 import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
@@ -99,8 +100,8 @@ function FavoritesList({ controller }: Props) {
                     {item.address.split(" ").slice(0, 2).join(" ")}
                   </span>
                   <span className="text-sm font-normal text-primary-500">
-                    {item.riceType
-                      .map((kind) => RICE_KINDS[kind] || kind)
+                    {item.riceTypes
+                      .map((kind) => RICE_TYPE[kind] || kind)
                       .join(", ")}{" "}
                     {item.price?.toLocaleString()}원
                   </span>
@@ -113,17 +114,5 @@ function FavoritesList({ controller }: Props) {
     </ScrolledBottomSheet>
   );
 }
-
-const TOPOKKI_TYPE: Record<string, string> = {
-  ontable: "즉석떡볶이",
-  pan: "판떡볶이",
-  soup: "국물떡볶이",
-};
-
-const RICE_KINDS: Record<string, string> = {
-  longrice: "가래떡",
-  flour: "밀떡",
-  rice: "쌀떡",
-};
 
 export default FavoritesList;

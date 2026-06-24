@@ -18,12 +18,12 @@ export type RestaurantFormData = {
   phoneNumber: string;
   topokkiType: string;
   price: number;
-  riceKinds: string[];
-  sauceKinds: string[];
+  riceTypes: string[];
+  sauceTypes: string[];
   spiciness: number | null;
   canChangeSpicy: boolean;
   sideMenus: string[];
-  noodleKinds: string[];
+  noodleTypes: string[];
   sundaeType: string;
   others: string[];
   recommend: Array<{ type: string; url: string }>;
@@ -48,7 +48,7 @@ const RestaurantFormContent = (
     <Modal close={handleClose} {...rest}>
       {step === 1 && (
         <h3 className="text-3xl font-semibold mt-8 mb-[26px]">
-          {user?.user_metadata.name}님의
+          {user?.nickname}님의
           <br />
           떡볶이 맛집은 어디인가요?
         </h3>

@@ -5,7 +5,7 @@ import { overlay } from "overlay-kit";
 import { NaverMap, NaverMaps, NaverMarker } from "@/shared/types/naver-maps";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
-import { TOPOKKI_RICE_KINDS } from "@/shared/constants/restaurant";
+import { RICE_TYPE } from "@/shared/constants/restaurant";
 
 interface RestaurantMarkerProps {
   map: NaverMap;
@@ -14,11 +14,11 @@ interface RestaurantMarkerProps {
 }
 
 const HOVER_CONTAINER_CLS =
-  "flex flex-col items-start gap-1 bg-white/60 rounded-[18px] p-3 backdrop-blur-[4px] border-t border-l border-white shadow-lg";
-const HOVER_TITLE_CLS = "text-base font-semibold text-gray-700";
+  "flex flex-col items-start gap-1 bg-white rounded-card p-3 border-[1.5px] border-ink shadow-sticker";
+const HOVER_TITLE_CLS = "text-base font-semibold text-gray-800";
 const HOVER_DESC_CLS = "flex items-center gap-[3px] text-xs font-normal text-gray-600";
 const HOVER_TAG_CLS =
-  "inline-flex items-center px-1.5 py-[1px] bg-primary-50 text-primary-500 rounded-[3px] gap-0.5 text-xs font-medium data-[type=price]:bg-transparent data-[type=price]:p-px data-[type=price]:text-gray-600";
+  "inline-flex items-center px-1.5 py-[1px] bg-primary-50 border border-primary-200 text-primary-700 rounded-md gap-0.5 text-xs font-medium data-[type=price]:bg-transparent data-[type=price]:border-transparent data-[type=price]:p-px data-[type=price]:text-gray-600";
 
 const RestaurantMarker = ({
   map,
@@ -83,7 +83,7 @@ const RestaurantMarker = ({
             <h3 class="${HOVER_TITLE_CLS}">${restaurant.name}</h3>
             <div class="${HOVER_DESC_CLS}">
             <span class="${HOVER_TAG_CLS}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
-            ${restaurant.riceKinds?.map((kind) => `<span class="${HOVER_TAG_CLS}">${TOPOKKI_RICE_KINDS[kind]}</span>`).join("")}
+            ${restaurant.riceTypes?.map((kind) => `<span class="${HOVER_TAG_CLS}">${RICE_TYPE[kind]}</span>`).join("")}
             <span class="${HOVER_TAG_CLS}">
               <i class="fi fi-sr-pepper" style="height: 14px; display: inline-flex; align-items: center;"></i>
               ${restaurant.spiciness}단계</span>

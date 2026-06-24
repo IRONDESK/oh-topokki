@@ -7,7 +7,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="w-full h-[calc(100vh-1px)] bg-white mx-auto overflow-hidden">
+    <main className="w-full h-[calc(100vh-1px)] bg-cream mx-auto overflow-hidden">
       {children}
       <Suspense fallback={<div />}>
         <Navigation />

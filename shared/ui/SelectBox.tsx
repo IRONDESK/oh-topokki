@@ -15,7 +15,7 @@ export const SelectBox = (
   useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
 
   return (
-    <label className="relative flex justify-center items-stretch cursor-pointer w-full border border-gray-200 rounded-lg p-3 break-keep text-center has-[input:checked]:bg-primary-50 has-[input:checked]:border-primary-200 has-[input:checked]:text-primary-600">
+    <label className="relative flex justify-center items-stretch cursor-pointer w-full border-[1.5px] border-gray-200 rounded-lg p-3 break-keep text-center transition-colors has-[input:checked]:bg-primary-50 has-[input:checked]:border-primary-400 has-[input:checked]:text-primary-700">
       {icon}
       <div className="w-full flex flex-col items-center justify-center gap-0.5">
         <span className="text-base font-medium">{title}</span>

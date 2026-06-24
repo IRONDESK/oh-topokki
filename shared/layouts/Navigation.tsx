@@ -14,13 +14,13 @@ import FavoritesList from "@/features/favorite/ui/FavoritesList";
 import { dialog } from "@/shared/ui/feature/dialog";
 
 const containerCls =
-  "select-none fixed bottom-0 left-1/2 -translate-x-1/2 mb-[calc(env(safe-area-inset-bottom,16px)-4px)] flex gap-2 items-center pb-4 w-[min(90vw,380px)]";
+  "select-none fixed bottom-0 left-1/2 -translate-x-1/2 mb-[calc(env(safe-area-inset-bottom,16px)-4px)] flex items-center gap-2 pb-4 w-[min(90vw,380px)]";
 
 const sideButtonCls =
-  "flex flex-1 flex-col justify-center items-center w-max break-keep shadow-sm min-h-[52px] gap-0.5 text-gray-700";
+  "flex flex-1 flex-col justify-center items-center w-max break-keep min-h-[52px] gap-0.5 text-gray-700";
 
 const mainButtonCls =
-  "flex-[1.7] h-[52px] !bg-[rgba(245,78,38,0.73)] text-white !border-[rgba(245,78,38,0.55)] gap-1.5 tracking-[-0.05rem] text-base font-semibold";
+  "flex flex-[1.7] items-center justify-center h-[52px] rounded-chip bg-primary-500 text-white border-[1.5px] border-ink shadow-pop gap-1.5 tracking-[-0.05rem] text-base font-semibold active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-[transform,box-shadow] duration-150";
 
 const btnTextCls = "text-xs font-normal text-gray-600";
 
@@ -71,8 +71,7 @@ function Navigation() {
       </button>
       <button
         type="button"
-        className={clsx(glassContainer, mainButtonCls)}
-        data-flexible={true}
+        className={mainButtonCls}
         onClick={tab ? () => {} : openRegisterForm}
       >
         <Icons name={tab ? "map" : "add"} t="round" w="solid" size={28} />
