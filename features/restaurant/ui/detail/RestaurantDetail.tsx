@@ -40,7 +40,7 @@ const STICKY_AREA_CLS =
   "sticky flex items-center px-4 pb-4 bg-white top-0 data-[sticky=true]:gap-1 data-[sticky=true]:px-4 data-[sticky=true]:pt-2.5 data-[sticky=true]:pb-3 data-[sticky=true]:shadow-lg data-[sticky=true]:z-10 data-[desktop=true]:px-4 data-[desktop=true]:pb-4 data-[desktop=true][data-sticky=true]:px-4 data-[desktop=true][data-sticky=true]:pt-4 data-[desktop=true][data-sticky=true]:pb-9 data-[desktop=true][data-sticky=true]:shadow-none data-[desktop=true][data-sticky=true]:[background:linear-gradient(to_bottom,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_70%,rgba(255,255,255,0)_100%)]";
 
 const TOPOKKI_TYPE_CLS =
-  "inline-flex text-sm font-medium text-primary-500 data-[sticky=true]:text-primary-600";
+  "inline-flex items-center px-2 py-0.5 rounded-md bg-magenta-500 text-white text-xs font-medium tracking-[-0.01em]";
 
 const STICKY_ADDRESS_CLS =
   "text-xs font-normal text-gray-400 opacity-0 inline-flex ml-1 -translate-x-4 [transition:opacity_0.2s,transform_0.3s] data-[sticky=true]:opacity-100 data-[sticky=true]:translate-x-0";

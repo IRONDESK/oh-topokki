@@ -63,6 +63,9 @@ export interface NaverInfoWindowOptions {
     width: number;
     height: number;
   };
+  anchorColor?: string;
+  disableAnchor?: boolean;
+  pixelOffset?: { x: number; y: number };
 }
 
 declare global {

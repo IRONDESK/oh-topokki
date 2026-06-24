@@ -211,7 +211,7 @@ export const buttons = cva(
 export type ButtonsProps = VariantProps<typeof buttons>;
 
 export const label = cva(
-  "inline-flex shrink-0 items-center justify-center cursor-pointer break-keep border gap-1 " +
+  "inline-flex shrink-0 items-center justify-center cursor-pointer break-keep border-[1.5px] gap-1 tracking-[-0.01em] " +
     "disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-90 active:scale-[0.98]",
   {
     variants: {

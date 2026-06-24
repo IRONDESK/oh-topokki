@@ -14,11 +14,14 @@ interface RestaurantMarkerProps {
 }
 
 const HOVER_CONTAINER_CLS =
-  "flex flex-col items-start gap-1 bg-white rounded-card p-3 border-[1.5px] border-ink shadow-sticker";
-const HOVER_TITLE_CLS = "text-base font-semibold text-gray-800";
-const HOVER_DESC_CLS = "flex items-center gap-[3px] text-xs font-normal text-gray-600";
-const HOVER_TAG_CLS =
-  "inline-flex items-center px-1.5 py-[1px] bg-primary-50 border border-primary-200 text-primary-700 rounded-md gap-0.5 text-xs font-medium data-[type=price]:bg-transparent data-[type=price]:border-transparent data-[type=price]:p-px data-[type=price]:text-gray-600";
+  "flex flex-col items-start gap-1.5 min-w-[210px] bg-white rounded-card p-3 border-[1.5px] border-ink shadow-sticker";
+const HOVER_TITLE_CLS =
+  "text-[15px] font-semibold text-gray-900 tracking-[-0.02em]";
+const HOVER_TYPE_CLS =
+  "inline-flex items-center shrink-0 px-1.5 py-0.5 rounded-md bg-magenta-500 text-white text-xs font-medium";
+const HOVER_META_CLS =
+  "flex items-center gap-1 text-xs font-medium text-gray-600";
+const HOVER_FOOT_CLS = "flex items-center justify-between w-full gap-2";
 
 const RestaurantMarker = ({
   map,
@@ -79,22 +82,18 @@ const RestaurantMarker = ({
 
       const infoWindow = new naver.InfoWindow({
         content: `
-          <div style="min-width: 200px;" class="${HOVER_CONTAINER_CLS}">
-            <h3 class="${HOVER_TITLE_CLS}">${restaurant.name}</h3>
-            <div class="${HOVER_DESC_CLS}">
-            <span class="${HOVER_TAG_CLS}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
-            ${restaurant.riceTypes?.map((kind) => `<span class="${HOVER_TAG_CLS}">${RICE_TYPE[kind]}</span>`).join("")}
-            <span class="${HOVER_TAG_CLS}">
-              <i class="fi fi-sr-pepper" style="height: 14px; display: inline-flex; align-items: center;"></i>
-              ${restaurant.spiciness}단계</span>
-              <span class="${HOVER_TAG_CLS}" data-type="price">
-                <span style="font-weight: 700">₩</span>
-                ${restaurant.price?.toLocaleString()}
-              </span>
+          <div class="${HOVER_CONTAINER_CLS}">
+            <div class="flex items-center gap-1.5">
+              <span class="${HOVER_TYPE_CLS}">${TOPOKKI_TYPE_ABBR[restaurant.topokkiType]}</span>
+              <h3 class="${HOVER_TITLE_CLS}">${restaurant.name}</h3>
             </div>
-            <div class="${HOVER_DESC_CLS}">
-              <span>${restaurant.address.split(" ").slice(0, 2).join(" ")}</span>
-              <span>(리뷰 ${restaurant.reviewCount})</span>
+            <div class="${HOVER_META_CLS}">
+              ${restaurant.riceTypes?.length ? `<span>${restaurant.riceTypes.map((kind) => RICE_TYPE[kind]).join(", ")}</span><span class="text-gray-300">·</span>` : ""}
+              <span class="inline-flex items-center gap-0.5 text-primary-600"><i class="fi fi-sr-pepper" style="display:inline-flex;align-items:center;"></i>${restaurant.spiciness}단계</span>
+            </div>
+            <div class="${HOVER_FOOT_CLS}">
+              <span class="text-xs font-normal text-gray-500">${restaurant.address.split(" ").slice(0, 2).join(" ")} · 리뷰 ${restaurant.reviewCount}</span>
+              <span class="shrink-0 text-sm font-semibold text-gray-900">${restaurant.price?.toLocaleString()}원</span>
             </div>
           </div>
         `,
@@ -102,6 +101,8 @@ const RestaurantMarker = ({
         backgroundColor: "transparent",
         borderColor: "transparent",
         borderWidth: 0,
+        // 네이버 기본 말풍선 꼬리(세모) 제거 — 커스텀 스티커 버블만 보이게
+        disableAnchor: true,
       });
 
       naver.Event.addListener(marker, "mouseover", () => {
