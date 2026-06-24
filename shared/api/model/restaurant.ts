@@ -10,15 +10,15 @@ export type ResponseRestaurant = {
   authorId: string;
   topokkiType: "ontable" | "pan" | "soup";
   price: number;
-  riceKinds: string[];
-  sauceKinds: string[];
+  riceTypes: string[];
+  sauceTypes: string[];
   spiciness: number;
   canChangeSpicy: boolean;
   sideMenus: string[];
-  noodleKinds: string[];
-  sundaeType: string | null;
+  noodleTypes: string[];
+  sundaeType: "single" | "basic" | "various" | null;
   others: string[];
-  recommend: string[];
+  recommend: { type: string; url: string }[];
   averageRating: number;
   reviewCount: number;
   author: ResponseAuthor;
@@ -43,8 +43,8 @@ export type ResponseReview = {
 
 type ResponseAuthor = {
   id: string;
-  name: string;
-  avatar: string;
+  nickname: string;
+  image: string | null;
 };
 
 export type RequestNewReview = {
@@ -59,7 +59,7 @@ export type ResponseFavorite = {
   id: string;
   name: string;
   topokkiType: "ontable" | "pan" | "soup";
-  riceType: string[];
+  riceTypes: string[];
   address: string;
   latitude: number;
   longitude: number;
@@ -79,7 +79,7 @@ export type ResponseAddFavorite = {
     id: string;
     memo: string | null;
     name: string;
-    riceType: string[];
+    riceTypes: string[];
     topokkiType: string;
   };
 };

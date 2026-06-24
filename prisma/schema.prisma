@@ -1,92 +1,161 @@
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
+// 떡볶이 종류 (단일 선택)
+enum TopokkiType {
+  ontable // 즉석떡볶이
+  soup // 국물떡볶이
+  pan // 판떡볶이
+}
+
+// 순대 종류 (단일 선택)
+enum SundaeType {
+  single // 순대만 있어요
+  basic // 기본 내장
+  various // 다양한 내장
+}
+
 model User {
-  id         String   @id
-  email      String   @unique
-  name       String?
-  avatar     String?
-  provider   String
-  providerId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String   @id
+  nickname      String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   restaurants Restaurant[]
   reviews     Review[]
   favorites   Favorite[]
+  sessions    Session[]
+  accounts    Account[]
 
   @@map("users")
 }
 
 model Restaurant {
-  id            String   @id @default(uuid())
-  name          String
-  address       String
-  latitude      Float
-  longitude     Float
-  phoneNumber   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  address     String
+  latitude    Float
+  longitude   Float
+  phoneNumber String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  authorId      String
-  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  // 작성자 탈퇴 시 맛집은 보존(authorId만 NULL). 커뮤니티 자산이므로 함께 삭제하지 않는다.
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  topokkiType   String?
-  price         Int?
-  riceKinds     String[] @default([])
-  sauceKinds    String[] @default([])
-  spiciness     Int?
-  canChangeSpicy Boolean @default(false)
-  sideMenus     String[] @default([])
-  noodleKinds   String[] @default([])
-  sundaeType    String?
-  others        String[] @default([])
-  recommend     Json     @default("[]")
+  topokkiType    TopokkiType?
+  price          Int?
+  riceTypes      String[]     @default([])
+  sauceTypes     String[]     @default([])
+  spiciness      Int?
+  canChangeSpicy Boolean      @default(false)
+  sideMenus      String[]     @default([])
+  noodleTypes    String[]     @default([])
+  sundaeType     SundaeType?
+  others         String[]     @default([])
+  recommend      Json         @default("[]")
 
   averageRating Float @default(0)
   reviewCount   Int   @default(0)
 
-  reviews       Review[]
-  favorites     Favorite[]
+  reviews   Review[]
+  favorites Favorite[]
 
+  @@index([authorId])
   @@map("restaurants")
 }
 
 model Review {
-  id           String   @id @default(uuid())
-  content      String
-  rating       Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(uuid())
+  content   String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  authorId     String
-  author       User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
+  @@index([restaurantId])
+  @@index([authorId])
   @@map("reviews")
 }
 
 model Favorite {
-  id           String   @id @default(uuid())
-  memo         String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(uuid())
+  memo      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, restaurantId])
+  @@index([restaurantId])
   @@map("favorites")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

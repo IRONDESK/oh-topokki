@@ -2,15 +2,19 @@ import { atom } from "jotai";
 
 interface MapFilterItems {
   topokkiType: string | null;
-  riceType: string | null;
-  noodleType: string | null;
+  riceTypes: string | null;
+  sauceTypes: string | null;
+  noodleTypes: string | null;
+  sundaeType: string | null;
   maxPrice: number | null;
-  side: string[] | null;
+  sideMenus: string[] | null;
 }
 export const mapFilterAtom = atom<MapFilterItems>({
   topokkiType: null,
-  riceType: null,
-  noodleType: null,
+  riceTypes: null,
+  sauceTypes: null,
+  noodleTypes: null,
+  sundaeType: null,
   maxPrice: null,
-  side: null,
+  sideMenus: null,
 });

@@ -4,7 +4,7 @@ export const TOPOKKI_TYPE: Record<string, string> = {
   pan: "판떡볶이",
 } as const;
 
-export const TOPOKKI_RICE_KINDS: Record<string, string> = {
+export const RICE_TYPE: Record<string, string> = {
   longrice: "가래떡",
   flour: "밀떡",
   rice: "쌀떡",
