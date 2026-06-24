@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
-import { getAuthenticatedUser } from "@/shared/lib/supabase-server";
+import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 
 export async function GET(req: NextRequest) {
   try {
     // parameter pagination
     const { searchParams } = new URL(req.url);
     const pageParam = searchParams.get("page");
+    // 필터 파라미터 이름은 실제 Prisma 필드명과 일치시킨다(혼동 방지)
     const topokkiTypeParam = searchParams.get("topokkiType");
-    const riceTypeParam = searchParams.get("riceType");
+    const riceTypesParam = searchParams.get("riceTypes");
+    const sauceTypesParam = searchParams.get("sauceTypes");
     const sundaeTypeParam = searchParams.get("sundaeType");
-    const noodleTypeParam = searchParams.get("noodleType");
+    const noodleTypesParam = searchParams.get("noodleTypes");
     const maxPriceParam = searchParams.get("maxPrice");
-    const sideMenuParam = searchParams.getAll("side");
+    const sideMenuParam = searchParams.getAll("sideMenus");
 
     const page = Math.max(parseInt(pageParam || "1", 10), 1);
 
@@ -26,21 +28,28 @@ export async function GET(req: NextRequest) {
       where.topokkiType = topokkiTypeParam;
     }
 
-    if (riceTypeParam) {
-      where.riceKinds = {
-        has: riceTypeParam,
+    if (riceTypesParam) {
+      where.riceTypes = {
+        has: riceTypesParam,
+      };
+    }
+
+    if (sauceTypesParam) {
+      where.sauceTypes = {
+        has: sauceTypesParam,
       };
     }
 
     if (sundaeTypeParam) {
-      where.sundaeType = {
-        has: sundaeTypeParam,
-      };
+      // sundaeType은 단일값(enum). "exists"는 "순대를 파는 집"(not null)을 의미하는
+      // 빠른필터용 센티널이고, 그 외에는 특정 enum 값과 동등 비교.
+      where.sundaeType =
+        sundaeTypeParam === "exists" ? { not: null } : sundaeTypeParam;
     }
 
-    if (noodleTypeParam) {
-      where.noodleKinds = {
-        has: noodleTypeParam,
+    if (noodleTypesParam) {
+      where.noodleTypes = {
+        has: noodleTypesParam,
       };
     }
 
@@ -70,7 +79,7 @@ export async function GET(req: NextRequest) {
         longitude: true,
         price: true,
         topokkiType: true,
-        riceKinds: true,
+        riceTypes: true,
         spiciness: true,
         reviewCount: true,
         averageRating: true,
@@ -119,30 +128,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // 쿠키에서 사용자 인증 정보 추출
-    const authUser = await getAuthenticatedUser();
-
-    // DB에서 사용자 정보 조회하거나 생성 (Prisma 사용)
-    let user = await prisma.user.findUnique({
-      where: { email: authUser.email! },
-    });
-
-    if (!user) {
-      // 사용자가 없으면 자동 생성
-      user = await prisma.user.create({
-        data: {
-          id: authUser.id,
-          email: authUser.email!,
-          name:
-            authUser.user_metadata?.name ||
-            authUser.user_metadata?.full_name ||
-            null,
-          avatar: authUser.user_metadata?.avatar_url || null,
-          provider: authUser.app_metadata?.provider || "unknown",
-          providerId: authUser.id,
-        },
-      });
-    }
+    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
+    const user = await getAuthenticatedUser();
 
     const body = await request.json();
     const {
@@ -153,12 +140,12 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       topokkiType,
       price,
-      riceKinds = [],
-      sauceKinds = [],
+      riceTypes = [],
+      sauceTypes = [],
       spiciness,
       canChangeSpicy = false,
       sideMenus = [],
-      noodleKinds = [],
+      noodleTypes = [],
       sundaeType,
       others = [],
       recommend = [],
@@ -181,24 +168,25 @@ export async function POST(request: NextRequest) {
         longitude: parseFloat(longitude),
         phoneNumber,
         authorId: user.id,
-        topokkiType,
+        // 빈 문자열은 유효한 enum 값이 아니므로 null로 정규화
+        topokkiType: topokkiType || null,
         price: price ? parseInt(price) : null,
-        sundaeType,
-        riceKinds: riceKinds,
-        sauceKinds: sauceKinds,
+        sundaeType: sundaeType || null,
+        riceTypes,
+        sauceTypes,
         spiciness: spiciness ? parseInt(spiciness) : null,
         canChangeSpicy,
-        sideMenus: sideMenus,
-        noodleKinds: noodleKinds,
-        others: others,
-        recommend: recommend,
+        sideMenus,
+        noodleTypes,
+        others,
+        recommend,
       },
       include: {
         author: {
           select: {
             id: true,
-            name: true,
-            avatar: true,
+            nickname: true,
+            image: true,
           },
         },
       },

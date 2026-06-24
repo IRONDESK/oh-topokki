@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
-import { getAuthenticatedUser } from "@/shared/lib/supabase-server";
+import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 
 export async function GET(req: NextRequest) {
   try {
-    // 쿠키에서 사용자 인증 정보 추출
-    const authUser = await getAuthenticatedUser();
-
-    // DB에서 사용자 정보 조회
-    const user = await prisma.user.findUnique({
-      where: { email: authUser.email! },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 },
-      );
-    }
+    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
+    const user = await getAuthenticatedUser();
 
     // 즐겨찾기 목록 조회
     const favorites = await prisma.favorite.findMany({
@@ -28,7 +16,7 @@ export async function GET(req: NextRequest) {
             id: true,
             name: true,
             topokkiType: true,
-            riceKinds: true,
+            riceTypes: true,
             address: true,
             latitude: true,
             longitude: true,
@@ -43,7 +31,7 @@ export async function GET(req: NextRequest) {
       id: favorite.restaurant.id,
       name: favorite.restaurant.name,
       topokkiType: favorite.restaurant.topokkiType,
-      riceType: favorite.restaurant.riceKinds,
+      riceTypes: favorite.restaurant.riceTypes,
       address: favorite.restaurant.address,
       latitude: favorite.restaurant.latitude,
       longitude: favorite.restaurant.longitude,
@@ -75,20 +63,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // 쿠키에서 사용자 인증 정보 추출
-    const authUser = await getAuthenticatedUser();
-
-    // DB에서 사용자 정보 조회
-    const user = await prisma.user.findUnique({
-      where: { email: authUser.email! },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 },
-      );
-    }
+    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
+    const user = await getAuthenticatedUser();
 
     const { searchParams } = new URL(req.url);
     const restaurantId = searchParams.get("restaurantId");
@@ -153,7 +129,7 @@ export async function POST(req: NextRequest) {
             id: true,
             name: true,
             topokkiType: true,
-            riceKinds: true,
+            riceTypes: true,
           },
         },
       },
@@ -166,7 +142,7 @@ export async function POST(req: NextRequest) {
           id: favorite.restaurant.id,
           name: favorite.restaurant.name,
           topokkiType: favorite.restaurant.topokkiType,
-          riceType: favorite.restaurant.riceKinds,
+          riceTypes: favorite.restaurant.riceTypes,
           addedAt: favorite.createdAt,
           memo: favorite.memo,
         },
@@ -195,20 +171,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    // 쿠키에서 사용자 인증 정보 추출
-    const authUser = await getAuthenticatedUser();
-
-    // DB에서 사용자 정보 조회
-    const user = await prisma.user.findUnique({
-      where: { email: authUser.email! },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "사용자를 찾을 수 없습니다." },
-        { status: 404 },
-      );
-    }
+    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
+    const user = await getAuthenticatedUser();
 
     const { searchParams } = new URL(req.url);
     const restaurantId = searchParams.get("restaurantId");

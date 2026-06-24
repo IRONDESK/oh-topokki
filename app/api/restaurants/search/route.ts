@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
         longitude: true,
         price: true,
         topokkiType: true,
-        riceKinds: true,
+        riceTypes: true,
         spiciness: true,
         reviewCount: true,
         averageRating: true,

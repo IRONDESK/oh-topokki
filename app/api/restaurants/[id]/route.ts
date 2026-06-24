@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
-import { getAuthenticatedUser } from "@/shared/lib/supabase-server";
+import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 
 export async function GET(
   request: NextRequest,
@@ -21,15 +21,17 @@ export async function GET(
       );
     }
 
-    // 작성자 정보 조회
-    const author = await prisma.user.findUnique({
-      where: { id: restaurant.authorId },
-      select: {
-        id: true,
-        name: true,
-        avatar: true,
-      },
-    });
+    // 작성자 정보 조회 (탈퇴한 작성자는 authorId가 null)
+    const author = restaurant.authorId
+      ? await prisma.user.findUnique({
+          where: { id: restaurant.authorId },
+          select: {
+            id: true,
+            nickname: true,
+            image: true,
+          },
+        })
+      : null;
 
     // 리뷰 정보 조회
     const restaurantReviews = await prisma.review.findMany({
@@ -38,8 +40,8 @@ export async function GET(
         author: {
           select: {
             id: true,
-            name: true,
-            avatar: true,
+            nickname: true,
+            image: true,
           },
         },
       },
@@ -56,24 +58,16 @@ export async function GET(
     // 로그인 사용자의 즐겨찾기 여부 확인
     let isFavorite: boolean | null = null;
     try {
-      const authUser = await getAuthenticatedUser();
-      if (authUser?.email) {
-        const user = await prisma.user.findUnique({
-          where: { email: authUser.email },
-        });
-
-        if (user) {
-          const userFavorite = await prisma.favorite.findUnique({
-            where: {
-              userId_restaurantId: {
-                userId: user.id,
-                restaurantId: id,
-              },
-            },
-          });
-          isFavorite = !!userFavorite;
-        }
-      }
+      const user = await getAuthenticatedUser();
+      const userFavorite = await prisma.favorite.findUnique({
+        where: {
+          userId_restaurantId: {
+            userId: user.id,
+            restaurantId: id,
+          },
+        },
+      });
+      isFavorite = !!userFavorite;
     } catch (authError) {
       // 인증 오류 시 isFavorite은 null로 유지
       isFavorite = null;
@@ -116,12 +110,12 @@ export async function PUT(
       phoneNumber,
       topokkiType,
       price,
-      riceKinds = [],
-      sauceKinds = [],
+      riceTypes = [],
+      sauceTypes = [],
       spiciness,
       canChangeSpicy,
       sideMenus = [],
-      noodleKinds = [],
+      noodleTypes = [],
       sundaeType,
       others = [],
       recommend = [],
@@ -132,13 +126,14 @@ export async function PUT(
       name,
       address,
       phoneNumber,
-      topokkiType,
-      sundaeType,
-      riceKinds,
-      sauceKinds,
+      // 빈 문자열은 유효한 enum 값이 아니므로 null로 정규화
+      topokkiType: topokkiType || null,
+      sundaeType: sundaeType || null,
+      riceTypes,
+      sauceTypes,
       canChangeSpicy,
       sideMenus,
-      noodleKinds,
+      noodleTypes,
       others,
       recommend,
     };
@@ -160,15 +155,17 @@ export async function PUT(
       );
     }
 
-    // 작성자 정보 조회
-    const author = await prisma.user.findUnique({
-      where: { id: updatedRestaurant.authorId },
-      select: {
-        id: true,
-        name: true,
-        avatar: true,
-      },
-    });
+    // 작성자 정보 조회 (탈퇴한 작성자는 authorId가 null)
+    const author = updatedRestaurant.authorId
+      ? await prisma.user.findUnique({
+          where: { id: updatedRestaurant.authorId },
+          select: {
+            id: true,
+            nickname: true,
+            image: true,
+          },
+        })
+      : null;
 
     const result = {
       ...updatedRestaurant,

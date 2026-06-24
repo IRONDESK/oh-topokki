@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
-import { getAuthenticatedUser } from "@/shared/lib/supabase-server";
+import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 
 export async function GET(
   request: NextRequest,
@@ -17,8 +17,8 @@ export async function GET(
         author: {
           select: {
             id: true,
-            name: true,
-            avatar: true,
+            nickname: true,
+            image: true,
           },
         },
       },
@@ -43,20 +43,8 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    // 쿠키에서 사용자 인증 정보 추출
-    const authUser = await getAuthenticatedUser();
-
-    // DB에서 사용자 정보 조회
-    const user = await prisma.user.findUnique({
-      where: { email: authUser.email! },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { message: "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요." },
-        { status: 404 },
-      );
-    }
+    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
+    const user = await getAuthenticatedUser();
 
     const body = await request.json();
     const { content, rating } = body;
@@ -90,8 +78,8 @@ export async function POST(
       where: { id: user.id },
       select: {
         id: true,
-        name: true,
-        avatar: true,
+        nickname: true,
+        image: true,
       },
     });
 

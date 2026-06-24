@@ -1,0 +1,29 @@
+name: DB Backup
+
+on:
+  schedule:
+    - cron: "0 18 * * 0" # 매주 일요일 18:00 UTC (KST 월 03:00)
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Neon은 최신 Postgres를 쓰므로 pg_dump 버전을 맞춰 설치
+      - name: Install PostgreSQL client
+        run: |
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Dump database
+        run: pg_dump "${{ secrets.DIRECT_URL }}" -Fc -f "backup-$(date +%F).dump"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup
+          path: backup-*.dump
+          retention-days: 90

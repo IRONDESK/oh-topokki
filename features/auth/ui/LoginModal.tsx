@@ -4,7 +4,7 @@ import type { OverlayControllerComponent } from "overlay-kit";
 import Logo from "@/assets/Logo";
 import { Modal } from "@/shared/ui/Modal";
 import Icons from "@/shared/ui/Icons";
-import LoginButton from "@/features/auth/ui/LoginButton";
+import EmailAuthForm from "@/features/auth/ui/EmailAuthForm";
 
 type Props = ComponentProps<OverlayControllerComponent> & {
   message?: string;
@@ -32,11 +32,7 @@ const LoginModal = (props: Props) => {
             {message}
           </div>
         )}
-        <div
-          className="flex flex-col gap-3 pt-5 w-full"
-        >
-          <LoginButton provider="kakao">카카오로 시작</LoginButton>
-        </div>
+        <EmailAuthForm onSuccess={close} />
       </div>
     </Modal>
   );

@@ -1,78 +1,32 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { Provider, Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/shared/lib/supabase";
+import { createContext, useContext } from "react";
+import { authClient } from "@/lib/auth-client";
+
+type Session = typeof authClient.$Infer.Session;
+// Better Auth 내부 필드는 `name`이지만 앱 전역에서는 `nickname`으로 노출한다.
+type SessionUser = Session["user"] & { nickname: string };
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: SessionUser | null;
   loading: boolean;
-  signInWithOAuth: (provider: Provider) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    };
-
-    getSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signInWithOAuth = async (provider: Provider) => {
-    const isEnvDev = process.env.NODE_ENV === "development";
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: `${isEnvDev ? "http://localhost:3000" : process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`,
-        },
-      });
-      if (error) throw error;
-    } catch (error) {
-      console.error("OAuth sign in error:", error);
-      throw error;
-    }
-  };
+  const { data, isPending } = authClient.useSession();
 
   const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    } catch (error) {
-      console.error("Sign out error:", error);
-      throw error;
-    }
+    await authClient.signOut();
   };
 
-  const value = {
-    user,
-    session,
-    loading,
-    signInWithOAuth,
+  const rawUser = data?.user ?? null;
+
+  const value: AuthContextType = {
+    user: rawUser ? { ...rawUser, nickname: rawUser.name } : null,
+    loading: isPending,
     signOut,
   };
 
