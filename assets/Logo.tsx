@@ -4,7 +4,6 @@ export default function Logo({ fill = "#FF6B43" }: SVGProps<SVGSVGElement>) {
   return (
     <svg
       width="286"
-      height="84"
       viewBox="0 0 286 84"
       fill={fill}
       xmlns="http://www.w3.org/2000/svg"
