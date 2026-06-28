@@ -195,13 +195,16 @@ export const buttons = cva(
     variants: {
       fill: {
         primary: "bg-primary-500 text-white border-ink shadow-pop",
-        secondary: "bg-primary-100 text-primary-700 border-ink shadow-sticker-sm",
-        outlined: "bg-white border-primary-400 text-primary-700 active:bg-primary-50",
+        secondary:
+          "bg-primary-100 text-primary-700 border-ink shadow-sticker-sm",
+        outlined:
+          "bg-white border-primary-400 text-primary-700 active:bg-primary-50",
         assistive: "bg-white border-gray-300 text-gray-600 active:bg-gray-50",
       },
       size: {
         large: "rounded-btn px-6 py-3 gap-2 h-[52px] text-xl font-medium",
-        medium: "rounded-[12px] px-4 py-2.5 gap-1 h-[46px] text-base font-medium",
+        medium:
+          "rounded-[12px] px-4 py-2.5 gap-1 h-[46px] text-base font-medium",
         small:
           "min-w-[60px] rounded-[10px] px-2.5 py-2 gap-1 h-[38px] text-sm font-medium",
       },
@@ -211,21 +214,21 @@ export const buttons = cva(
 export type ButtonsProps = VariantProps<typeof buttons>;
 
 export const label = cva(
-  "inline-flex shrink-0 items-center justify-center cursor-pointer break-keep border-[1.5px] gap-1 tracking-[-0.01em] " +
+  "inline-flex shrink-0 items-center justify-center break-keep border gap-1 tracking-[-0.01em] " +
     "disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-90 active:scale-[0.98]",
   {
     variants: {
       fill: {
         primary: "bg-primary-500 border-ink text-white",
         secondary: "bg-primary-50 border-primary-300 text-primary-700",
-        assistive: "bg-gray-100 border-gray-200 text-gray-600",
+        assistive: "bg-gray-100/80 border-gray-200 text-gray-600",
         gray: "bg-gray-50 border-gray-200 text-gray-600",
         pink: "bg-magenta-50 border-magenta-200 text-magenta-700",
         yellow: "bg-warning-50 border-warning-300 text-warning-800",
       },
       size: {
         large: "rounded-[10px] px-3 py-1.5 gap-1 text-base font-medium",
-        small: "min-w-[52px] rounded-lg px-2 py-1.5 gap-1 text-sm font-medium",
+        small: "min-w-[52px] rounded-lg px-2 py-1 gap-1 text-sm font-medium",
       },
     },
   },

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useOverlayData } from "overlay-kit";
 import { useIsDesktop } from "@/shared/hooks/useIsDesktop";
 import Icons from "./Icons";
-import { useOverlayData } from "overlay-kit";
 
 type BottomSheetProps = {
   controller: {
@@ -16,22 +16,26 @@ type BottomSheetProps = {
     isFull: boolean;
     isSticky: boolean;
   }) => React.ReactNode;
-  dragMultiplier?: number;
 };
 
+const SNAP_THRESHOLD = 90; // px, full 토글/닫기 스냅 기준
+
 export default function ScrolledBottomSheet(props: BottomSheetProps) {
-  const { controller, children, dragMultiplier = 0.15 } = props;
+  const { controller, children } = props;
   const isDesktop = useIsDesktop();
   const overlays = useOverlayData();
-  const hasOverlays = Object.values(overlays).length > 0;
+  const hasOverlays = Object.keys(overlays).length > 0;
+
+  const sectionRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
   const [isSticky, setIsSticky] = useState(false);
-  const [startPos, setStartPos] = useState(0);
   const [isFull, setIsFull] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
+
+  // 드래그 값은 렌더에 영향 주지 않으므로 ref로 관리한다.
+  // (touchmove마다 setState 하면 초당 ~60회 전체 리렌더 → 자식까지 재실행되어 끊김)
+  const drag = useRef({ active: false, startY: 0, offset: 0 });
 
   const onClose = () => {
     if (isDesktop && isFull) {
@@ -45,101 +49,91 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
   const onTouchStart = (event: React.TouchEvent) => {
     const scrollContainer = innerRef.current;
     if (scrollContainer) {
-      const isScrolled = scrollContainer.scrollTop > 5;
       const hasScroll =
         scrollContainer.scrollHeight > scrollContainer.clientHeight;
-
-      if (hasScroll && isScrolled) {
-        return;
-      }
+      const isScrolled = scrollContainer.scrollTop > 5;
+      // 내용이 스크롤된 상태면 시트 드래그가 아니라 내부 스크롤로 본다.
+      if (hasScroll && isScrolled) return;
     }
 
-    setStartPos(event.touches[0].clientY);
-    setIsDragging(true);
-    setDragOffset(0);
+    drag.current = {
+      active: true,
+      startY: event.touches[0].clientY,
+      offset: 0,
+    };
+    if (sectionRef.current) sectionRef.current.style.transition = "none";
   };
 
   const onTouchMove = (event: React.TouchEvent) => {
-    if (!isDragging) return;
-    const currentPos = event.touches[0].clientY;
-    const offset = currentPos - startPos;
-    setDragOffset(offset);
+    const d = drag.current;
+    const el = sectionRef.current;
+    if (!d.active || !el) return;
+
+    d.offset = event.touches[0].clientY - d.startY;
+    const y = isFull
+      ? `${Math.max(d.offset, 0)}px`
+      : `max(calc(35vh + ${d.offset}px), 1vh)`;
+    // 리렌더 없이 DOM에 직접 반영
+    el.style.transform = `translate3d(-50%, ${y}, 0)`;
   };
 
   const onTouchEnd = (event: React.TouchEvent) => {
-    if (!isDragging) return;
-    if (dragOffset < 0 && isFull) return;
-    setIsDragging(false);
-    setDragOffset(0);
+    const d = drag.current;
+    if (!d.active) return;
+    if (d.offset < 0 && isFull) return; // full 상태에서 위로 드래그는 무시
+    d.active = false;
 
-    const endPos = event.changedTouches[0].clientY;
-    const distance = startPos - endPos;
+    // 인라인 transform/transition 제거 → className 트랜지션이 다시 동작
+    const el = sectionRef.current;
+    if (el) {
+      el.style.transform = "";
+      el.style.transition = "";
+    }
 
-    if (distance >= 90) {
+    const distance = d.startY - event.changedTouches[0].clientY;
+    if (distance >= SNAP_THRESHOLD) {
       setIsFull(true);
-    } else if (distance <= -90 && isFull) {
-      setIsFull(false);
-    } else if (distance <= -90 && !isFull) {
-      onClose();
+    } else if (distance <= -SNAP_THRESHOLD) {
+      if (isFull) setIsFull(false);
+      else onClose();
     }
   };
 
+  // overlay가 떠 있는 동안 body 스크롤 잠금
   useEffect(() => {
-    const body = document.querySelector("body") as HTMLElement;
-    if (hasOverlays) {
-      body.style.overflow = "hidden";
-    }
+    if (!hasOverlays) return;
+    document.body.style.overflow = "hidden";
     return () => {
-      body.style.removeProperty("overflow");
+      document.body.style.removeProperty("overflow");
     };
-  }, [hasOverlays, isDesktop]);
+  }, [hasOverlays]);
 
+  // sticky 감지. desktop/mobile 전환 시 barRef 엘리먼트가 교체되므로 isDesktop에 의존.
   useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting);
-      },
+      ([entry]) => setIsSticky(!entry.isIntersecting),
       { threshold: [1] },
     );
-
-    const currentBarRef = barRef.current;
-    if (currentBarRef) {
-      observer.observe(currentBarRef);
-    }
-
-    return () => {
-      if (currentBarRef) {
-        observer.unobserve(currentBarRef);
-      }
-    };
-  }, []);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, [isDesktop]);
 
   return (
     <>
-      <div
-        onClick={onClose}
-        style={{ overflow: "hidden", backgroundColor: "transparent" }}
-        className="fixed inset-0 flex items-center justify-center z-[2000] py-5"
-      />
+      <div onClick={onClose} className="fixed inset-0 z-[2000]" />
       <section
+        ref={sectionRef}
         data-open={controller.isOpen}
         data-desktop={isDesktop}
         data-full={isFull}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        style={{
-          transform: isDragging
-            ? `translate3d(-50%, ${
-                isFull
-                  ? `${Math.max(dragOffset, 0)}px`
-                  : `max(calc(35vh + ${dragOffset}px), 1vh)`
-              }, 0)`
-            : undefined,
-          transition: isDragging ? "none" : undefined,
-        }}
         className={[
-          "fixed left-1/2 top-0 bg-white rounded-t-card border-t-[1.5px] border-x-[1.5px] border-ink pb-8 min-h-screen w-full max-w-[520px]",
+          "fixed left-1/2 top-0 bg-white rounded-t-card border-t-[1.5px] border-x-[1.5px] border-gray-200 pb-8 min-h-screen w-full max-w-[520px]",
           "[transform:translate3d(-50%,98vh,0)] [transition:transform_0.25s,opacity_0.3s,border-radius_0.3s]",
           "text-gray-700 opacity-0 z-[2005] overscroll-contain will-change-transform",
           "data-[open=true]:[transform:translate3d(-50%,35vh,0)] data-[open=true]:opacity-100 data-[open=true]:shadow-md",
@@ -157,10 +151,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           }}
         >
           {isDesktop ? (
-            <div
-              ref={barRef}
-              className="py-3 pl-4 pr-3 flex justify-end"
-            >
+            <div ref={barRef} className="py-3 pl-4 pr-3 flex justify-end">
               <button
                 type="button"
                 onClick={onClose}
