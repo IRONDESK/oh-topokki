@@ -39,9 +39,7 @@ export default function RootLayout({
           content="black-translucent"
         />
       </head>
-      <body
-        className={`${pretendard.className} bg-cream text-ink`}
-      >
+      <body className={`${pretendard.className} bg-cream text-ink root`}>
         <Providers>
           <Layout>{children}</Layout>
         </Providers>

@@ -275,13 +275,19 @@ table {
   border-spacing: 0;
 }
 
-* {
+  .root {
+    isolation: isolate;
+  }
+
+
+  * {
   box-sizing: border-box;
   scrollbar-width: none;
   padding: 0;
   margin: 0;
 }
 body {
+  position: relative;
   touch-action: none;
   overflow: hidden;
   overscroll-behavior: none;
