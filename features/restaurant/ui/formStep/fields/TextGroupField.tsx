@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
+import { cn } from "@/shared/lib/cn";
 import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
 import { TextGroupField as TextGroupFieldDef } from "@/features/restaurant/ui/formStep/place-fields";
 import Icons from "@/shared/ui/Icons";
@@ -53,7 +54,7 @@ export const TextGroupField = ({
               autoFocus
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="relative w-full text-2xl font-medium text-gray-700 z-[1] caret-primary-600"
+              className="relative w-full text-2xl font-medium text-gray-700 z-1 caret-primary-600"
             />
             <span
               data-hide={input.length > 0}
@@ -64,8 +65,10 @@ export const TextGroupField = ({
           </div>
           <button
             type="button"
-            className={buttons({ fill: "secondary", size: "small" })}
-            data-fill="secondary"
+            className={cn(
+              buttons({ fill: "secondary", size: "small" }),
+              "border-primary-700/40",
+            )}
             onClick={() => addValue(input)}
           >
             추가

@@ -22,14 +22,14 @@ const SPICY_LABELS = [
   "",
 ];
 
-const PEPPER_ROW_CLS =
-  "flex justify-between flex-[2] gap-1 w-full text-primary-600 whitespace-pre-wrap text-center";
-const SPICY_LABEL_CLS =
+const PEPPER_ROW_CLS: HTMLDivElement["className"] =
+  "flex justify-between items-end flex-[2] gap-1 w-full text-primary-600 whitespace-pre-wrap text-center";
+const SPICY_LABEL_CLS: HTMLDivElement["className"] =
   "flex-1 text-sm font-medium text-gray-500 mb-2.5 break-keep";
-const PEPPER_ITEM_CLS =
+const PEPPER_ITEM_CLS: HTMLDivElement["className"] =
   "flex items-center justify-center mx-auto w-10 h-10 cursor-pointer rounded-full border border-primary-200 text-primary-400 text-xl font-medium has-[input:checked]:text-white has-[input:checked]:bg-primary-500 has-[input:checked]:border-transparent [&>input[type='radio']]:hidden";
-const SPICY_CHANGE_LABEL_CLS =
-  "select-none cursor-pointer flex w-max mx-auto gap-1.5 items-center px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-base font-medium has-[input:checked]:bg-primary-50 has-[input:checked]:text-primary-600";
+const SPICY_CHANGE_LABEL_CLS: HTMLDivElement["className"] =
+  "select-none cursor-pointer flex w-max mx-auto gap-1.5 items-center px-3 py-2 bg-gray-100 text-gray-500 rounded-lg text-base font-medium has-[input:checked]:bg-primary-50 has-[input:checked]:text-primary-600";
 
 export const SpicyRangeField = ({
   status,
@@ -59,7 +59,7 @@ export const SpicyRangeField = ({
             ))}
           </div>
           <div className={PEPPER_ROW_CLS}>
-            <div className="flex-1">
+            <div className="flex-1 mb-1.5 shrink-0">
               <Icons w="regular" t="round" name="pepper" size={20} />
             </div>
             {SPICY_LEVELS.map((level) => (
@@ -70,7 +70,7 @@ export const SpicyRangeField = ({
                 </label>
               </div>
             ))}
-            <div className="flex-1">
+            <div className="flex-1 mb-1.5 shrink-0">
               <Icons w="solid" t="round" name="pepper-hot" size={20} />
             </div>
           </div>
@@ -83,9 +83,7 @@ export const SpicyRangeField = ({
             t="round"
             size={18}
             color={
-              canChange
-                ? "var(--color-primary-600)"
-                : "var(--color-gray-400)"
+              canChange ? "var(--color-primary-600)" : "var(--color-gray-400)"
             }
           />
           <span>맵기를 선택(조절)할 수 있는 가게</span>

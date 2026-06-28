@@ -130,7 +130,6 @@ export const placeFields: PlaceField[] = [
     name: "noodleTypes",
     type: "checkbox",
     items: [
-      { label: "면 없음", value: "", description: null, icon: null },
       { label: "라면", value: "ramyeon", description: null, icon: null },
       { label: "쫄면", value: "jjolmyeon", description: null, icon: null },
       { label: "우동면", value: "udon", description: null, icon: null },
@@ -195,7 +194,12 @@ export const placeFields: PlaceField[] = [
         icon: null,
       },
       { label: "야끼만두", value: "yakimandu", description: null, icon: null },
-      { label: "비엔나소시지", value: "sausage", description: null, icon: null },
+      {
+        label: "비엔나소시지",
+        value: "sausage",
+        description: null,
+        icon: null,
+      },
       { label: "치즈", value: "cheese", description: null, icon: null },
     ],
   },

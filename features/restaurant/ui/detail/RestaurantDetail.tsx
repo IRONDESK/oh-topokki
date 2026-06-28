@@ -9,10 +9,10 @@ import { useRestaurantDetail } from "@/features/restaurant/api/use-restaurant";
 
 import {
   NOODLE_TYPE,
+  RICE_TYPE,
   SAUCE_TYPE,
   SIDE_MENU_TYPE,
   SUNDAE_TYPE,
-  RICE_TYPE,
   TOPOKKI_TYPE,
 } from "@/shared/constants/restaurant";
 import Icons from "@/shared/ui/Icons";
@@ -21,6 +21,7 @@ import Spinner from "@/shared/ui/Spinner";
 import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
 import RestaurantReview from "@/features/restaurant/ui/detail/RestaurantReview";
 import { naverMapAtom } from "@/shared/store/locationStore";
+import { cn } from "@/shared/lib/cn";
 
 type Props = {
   restaurantId: string;
@@ -38,12 +39,6 @@ type Props = {
 const INNER_PADDING = "px-5";
 const STICKY_AREA_CLS =
   "sticky flex items-center px-4 pb-4 bg-white top-0 data-[sticky=true]:gap-1 data-[sticky=true]:px-4 data-[sticky=true]:pt-2.5 data-[sticky=true]:pb-3 data-[sticky=true]:shadow-lg data-[sticky=true]:z-10 data-[desktop=true]:px-4 data-[desktop=true]:pb-4 data-[desktop=true][data-sticky=true]:px-4 data-[desktop=true][data-sticky=true]:pt-4 data-[desktop=true][data-sticky=true]:pb-9 data-[desktop=true][data-sticky=true]:shadow-none data-[desktop=true][data-sticky=true]:[background:linear-gradient(to_bottom,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_70%,rgba(255,255,255,0)_100%)]";
-
-const TOPOKKI_TYPE_CLS =
-  "inline-flex items-center px-2 py-0.5 rounded-md bg-magenta-500 text-white text-xs font-medium tracking-[-0.01em]";
-
-const STICKY_ADDRESS_CLS =
-  "text-xs font-normal text-gray-400 opacity-0 inline-flex ml-1 -translate-x-4 [transition:opacity_0.2s,transform_0.3s] data-[sticky=true]:opacity-100 data-[sticky=true]:translate-x-0";
 
 const DETAIL_ITEMS_CLS =
   "grid grid-cols-[min(30%,100px)_1fr] gap-x-1.5 gap-y-3 text-base font-normal [&>dt]:font-semibold [&>dt]:text-gray-600";
@@ -107,30 +102,18 @@ function RestaurantDetail(props: Props) {
             className={clsx(STICKY_AREA_CLS, INNER_PADDING)}
           >
             <div style={{ flex: 1 }}>
-              <p className="flex items-center justify-start">
-                <span data-sticky={isSticky} className={TOPOKKI_TYPE_CLS}>
-                  {TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
-                </span>
-                <span data-sticky={isSticky} className={STICKY_ADDRESS_CLS}>
-                  {((address || restaurant?.address) as string)
-                    ?.split(" ")
-                    .slice(0, 3)
-                    .join(" ")}
-                </span>
-              </p>
               <h2
                 style={{ transition: "font-size 0.3s" }}
-                className={
-                  isSticky
-                    ? "text-lg font-medium"
-                    : "text-xl font-semibold"
-                }
+                className={cn(
+                  "text-xl font-semibold",
+                  isSticky ? "py-2" : "pb-px",
+                )}
               >
                 {restaurantName || restaurant?.name}
               </h2>
               <p
                 style={{ display: isSticky ? "none" : "block" }}
-                className="text-xs font-normal text-gray-400"
+                className="text-sm font-normal text-gray-400"
               >
                 {address || restaurant?.address}
               </p>
@@ -155,13 +138,13 @@ function RestaurantDetail(props: Props) {
             </div>
           </div>
           <p className={clsx(PRICE_CLS, INNER_PADDING)}>
-            <span className="text-2xl font-semibold">
+            <span className="text-2xl font-semibold text-gray-700">
               {price
                 ? price?.toLocaleString()
                 : restaurant?.price.toLocaleString()}
               원
             </span>
-            <span className="text-sm font-normal text-gray-600">
+            <span className="text-sm font-normal text-gray-600/90">
               1인당, 기본
             </span>
           </p>
@@ -170,13 +153,19 @@ function RestaurantDetail(props: Props) {
               <Spinner size={32} thick={3} />
             </div>
           )}
+          <div
+            className={cn(
+              "mt-2 mb-3 -mx-px text-lg p-0 text-gray-500 font-medium",
+              INNER_PADDING,
+            )}
+          >
+            {TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
+          </div>
           {restaurant && !isLoading && (
             <dl className={clsx(DETAIL_ITEMS_CLS, INNER_PADDING)}>
               <dt>떡 종류</dt>
               <dd>
-                {restaurant.riceTypes
-                  .map((kind) => RICE_TYPE[kind])
-                  .join(", ")}
+                {restaurant.riceTypes.map((kind) => RICE_TYPE[kind]).join(", ")}
               </dd>
               <dt>소스 종류</dt>
               <dd>
@@ -220,7 +209,7 @@ function RestaurantDetail(props: Props) {
               <dt>사이드메뉴</dt>
               <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.sideMenus.map((menu) => (
-                  <Tag key={menu} fill="gray">
+                  <Tag key={menu} fill="assistive">
                     {SIDE_MENU_TYPE[menu]}
                   </Tag>
                 ))}
@@ -228,7 +217,7 @@ function RestaurantDetail(props: Props) {
               <dt>기타</dt>
               <dd className="flex gap-1.5 justify-start items-center flex-wrap">
                 {restaurant.others.map((menu) => (
-                  <Tag key={menu} fill="gray">
+                  <Tag key={menu} fill="assistive">
                     {menu}
                   </Tag>
                 ))}
