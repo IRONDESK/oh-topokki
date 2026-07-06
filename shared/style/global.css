@@ -106,7 +106,7 @@
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
   /* App-specific sizes */
-  --size-overlay-max: 640px;
+  --size-overlay-max: 760px;
 
   /* Brand: kitsch 분식집 — 따뜻한 잉크/크림 + 스티커 질감 */
   --color-ink: #2a1813; /* 외곽선·본문에 쓰는 따뜻한 먹색 (pure black 대신) */

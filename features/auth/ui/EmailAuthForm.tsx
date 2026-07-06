@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import Button from "@/shared/ui/Button";
+import Icons from "@/shared/ui/Icons";
 
 type Mode = "signin" | "signup";
 
@@ -11,9 +12,52 @@ interface EmailAuthFormProps {
   onSuccess?: () => void;
 }
 
+const NICKNAME_TTEOK = [
+  "밀떡",
+  "쌀떡",
+  "즉석떡",
+  "로제떡",
+  "짜장떡",
+  "궁중떡",
+  "간장떡",
+  "치즈떡",
+  "매운떡",
+  "마라떡",
+];
+const NICKNAME_VERBS = ["먹는", "만든", "찾는", "망친", "엎은", "끓이는"];
+const NICKNAME_WHO = [
+  "오리",
+  "돼지",
+  "하마",
+  "여우",
+  "냥이",
+  "멍이",
+  "소라",
+  "너구리",
+  "고등어",
+  "문어",
+  "호랑이",
+  "토끼",
+  "곰",
+  "원숭이",
+  "사자",
+  "사장",
+  "회장",
+  "부장",
+  "직원",
+  "알바",
+  "요리사",
+  "개발자",
+];
+
+const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
+
+const generateNickname = () =>
+  `${pick(NICKNAME_TTEOK)}볶이${pick(NICKNAME_VERBS)}${pick(NICKNAME_WHO)}${Math.floor(Math.random() * 99) + 1}`;
+
 export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   const [mode, setMode] = useState<Mode>("signin");
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState(generateNickname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -46,9 +90,7 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       }
       onSuccess?.();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "오류가 발생했어요",
-      );
+      toast.error(error instanceof Error ? error.message : "오류가 발생했어요");
     } finally {
       setLoading(false);
     }
@@ -62,15 +104,25 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 pt-5 w-full">
       {mode === "signup" && (
-        <input
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          placeholder="닉네임"
-          required
-          autoComplete="nickname"
-          className="w-full py-4 px-4 rounded-btn text-lg bg-gray-100 border-[1.5px] border-transparent outline-none focus:border-primary-400 focus:bg-white"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder="닉네임"
+            required
+            autoComplete="nickname"
+            className="w-full py-4 pl-4 pr-14 rounded-btn text-lg bg-gray-100 border-[1.5px] border-transparent outline-none focus:border-primary-400 focus:bg-white"
+          />
+          <button
+            type="button"
+            onClick={() => setNickname(generateNickname())}
+            aria-label="닉네임 다시 생성"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full cursor-pointer flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+          >
+            <Icons name="refresh" w="bold" size={16} t="round" />
+          </button>
+        </div>
       )}
       <input
         type="email"
