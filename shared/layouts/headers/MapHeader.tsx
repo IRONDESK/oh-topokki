@@ -189,7 +189,7 @@ export default function MapHeader() {
           <button
             type="button"
             className={cn(
-              "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors",
+              "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors bg-white/70 hover:bg-primary-100",
               isOpenMenu &&
                 "bg-primary-600 text-primary-100 border-transparent",
             )}
@@ -200,12 +200,13 @@ export default function MapHeader() {
         </div>
       </div>
       <div className="flex items-center py-1 px-2.5 gap-3">
-        <ul className="inline-flex gap-1 overflow-x-auto items-center">
+        <ul className="inline-flex gap-1 overflow-x-auto items-center pb-0.75">
           {FILTERS.map((filter) => (
             <li
               key={filter.name}
               className={cn(
-                "shrink-0 select-none cursor-pointer min-w-13 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm lg:text-sm transition-[transform,box-shadow] duration-150",
+                "font-medium shrink-0 select-none cursor-pointer min-w-13 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm lg:text-sm transition-[transform,box-shadow] duration-150",
+                "hover:bg-primary-100 data-[selected=true]:hover:bg-primary-600",
                 "data-[selected=true]:bg-primary-500 data-[selected=true]:border-ink data-[selected=true]:text-white data-[selected=true]:font-semibold data-[selected=true]:shadow-pop",
               )}
               data-selected={filterValues.includes(filter.value)}
@@ -215,17 +216,18 @@ export default function MapHeader() {
             </li>
           ))}
         </ul>
-        <div className="lg:block hidden">
+        <div className="lg:block hidden pb-0.75">
           <button
             type="button"
             className={cn(
-              "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors",
+              "cursor-pointer px-2 h-6.5 border border-primary-400/50 flex justify-center items-center gap-1 rounded-sm text-primary-400 transition-colors bg-white/80 hover:bg-primary-50",
               isOpenMenu &&
                 "bg-primary-600 text-primary-100 border-transparent",
             )}
             onClick={openMenuFloat}
           >
-            <Icons name="menu-dots" t="round" w="bold" size={16} />
+            <Icons name="menu-dots" t="round" w="bold" size={14} />
+            <span className="font-medium text-sm">메뉴</span>
           </button>
         </div>
       </div>
