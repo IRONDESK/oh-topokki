@@ -185,32 +185,50 @@ export default function MapHeader() {
             </Popover.Root>
           </div>
         </div>
-        <button
-          type="button"
-          className={cn(
-            "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors",
-            isOpenMenu && "bg-primary-600 text-primary-100 border-transparent",
-          )}
-          onClick={openMenuFloat}
-        >
-          <Icons name="menu-dots" t="round" w="bold" size={16} />
-        </button>
-      </div>
-      <ul className="inline-flex gap-1 overflow-x-auto items-center py-1 px-2.5">
-        {FILTERS.map((filter) => (
-          <li
-            key={filter.name}
+        <div className="lg:hidden">
+          <button
+            type="button"
             className={cn(
-              "shrink-0 select-none cursor-pointer min-w-13 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm lg:text-sm transition-[transform,box-shadow] duration-150",
-              "data-[selected=true]:bg-primary-500 data-[selected=true]:border-ink data-[selected=true]:text-white data-[selected=true]:font-semibold data-[selected=true]:shadow-pop",
+              "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors",
+              isOpenMenu &&
+                "bg-primary-600 text-primary-100 border-transparent",
             )}
-            data-selected={filterValues.includes(filter.value)}
-            onClick={() => handleFilterClick(filter)}
+            onClick={openMenuFloat}
           >
-            {filter.name}
-          </li>
-        ))}
-      </ul>
+            <Icons name="menu-dots" t="round" w="bold" size={16} />
+          </button>
+        </div>
+      </div>
+      <div className="flex items-center py-1 px-2.5 gap-3">
+        <ul className="inline-flex gap-1 overflow-x-auto items-center">
+          {FILTERS.map((filter) => (
+            <li
+              key={filter.name}
+              className={cn(
+                "shrink-0 select-none cursor-pointer min-w-13 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm lg:text-sm transition-[transform,box-shadow] duration-150",
+                "data-[selected=true]:bg-primary-500 data-[selected=true]:border-ink data-[selected=true]:text-white data-[selected=true]:font-semibold data-[selected=true]:shadow-pop",
+              )}
+              data-selected={filterValues.includes(filter.value)}
+              onClick={() => handleFilterClick(filter)}
+            >
+              {filter.name}
+            </li>
+          ))}
+        </ul>
+        <div className="lg:block hidden">
+          <button
+            type="button"
+            className={cn(
+              "cursor-pointer size-6.5 border border-primary-400/50 flex justify-center items-center rounded-sm text-primary-400 transition-colors",
+              isOpenMenu &&
+                "bg-primary-600 text-primary-100 border-transparent",
+            )}
+            onClick={openMenuFloat}
+          >
+            <Icons name="menu-dots" t="round" w="bold" size={16} />
+          </button>
+        </div>
+      </div>
     </header>
   );
 }
