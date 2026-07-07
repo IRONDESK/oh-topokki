@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useOverlayData } from "overlay-kit";
 import { useIsDesktop } from "@/shared/hooks/useIsDesktop";
 import Icons from "./Icons";
+import { cn } from "@/shared/lib/cn";
 
 type BottomSheetProps = {
   controller: {
@@ -177,7 +178,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
         onTouchMove={isDesktop ? undefined : onTouchMove}
         onTouchEnd={isDesktop ? undefined : onTouchEnd}
         onTouchCancel={isDesktop ? undefined : onTouchCancel}
-        className={[
+        className={cn(
           "fixed left-1/2 top-0 bg-white rounded-t-card border-t-[1.5px] border-x-[1.5px] border-gray-200 pb-8 min-h-screen w-full max-w-130",
           "transform-[translate3d(-50%,98vh,0)] [transition:transform_0.25s,opacity_0.3s,border-radius_0.3s]",
           "text-gray-700 opacity-0 z-2005 overscroll-contain will-change-transform",
@@ -186,7 +187,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           "data-[open=true]:data-[full=true]:transform-[translate3d(-50%,0,0)]",
           "data-[full=true]:pt-[env(safe-area-inset-top,4px)] data-[full=true]:rounded-none",
           "data-[desktop=true]:overflow-y-auto data-[desktop=true]:max-h-[70vh] data-[desktop=true]:min-h-[70vh]",
-        ].join(" ")}
+        )}
       >
         <div
           ref={innerRef}
@@ -194,6 +195,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
             paddingBottom: "env(safe-area-inset-bottom, 16px)",
             overflowY: isFull ? "auto" : "visible",
             height: isFull ? "99.9dvh" : "auto",
+            minHeight: 0,
             overscrollBehaviorY: "none",
             WebkitOverflowScrolling: "touch",
           }}

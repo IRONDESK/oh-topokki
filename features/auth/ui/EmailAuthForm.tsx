@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { overlay } from "overlay-kit";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import Button from "@/shared/ui/Button";
 import Icons from "@/shared/ui/Icons";
+import TermsConsentSheet from "./TermsConsentSheet";
 
 type Mode = "signin" | "signup";
 
@@ -66,9 +68,17 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (mode === "signup" && password !== passwordConfirm) {
-      toast.error("비밀번호가 일치하지 않아요");
-      return;
+    if (mode === "signup") {
+      if (password !== passwordConfirm) {
+        toast.error("비밀번호가 일치하지 않아요");
+        return;
+      }
+
+      // 약관 동의 바텀시트에서 확인을 눌러야 가입을 진행한다.
+      const agreed = await overlay.openAsync<boolean>((controller) => (
+        <TermsConsentSheet {...controller} />
+      ));
+      if (!agreed) return;
     }
 
     setLoading(true);
