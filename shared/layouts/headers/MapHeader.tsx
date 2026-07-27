@@ -27,7 +27,7 @@ const SLIDE_INTERVAL = 2500;
 function rankStyle(rank: number) {
   if (rank === 1) return "bg-primary-500 text-white";
   if (rank <= 3) return "bg-primary-200 text-primary-700";
-  return "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-300";
+  return "bg-gray-100 text-gray-500";
 }
 
 export default function MapHeader() {
@@ -89,7 +89,7 @@ export default function MapHeader() {
     <header className="flex flex-col lg:flex-row lg:justify-between lg:w-full gap-0.5 lg:gap-4 pb-1 fixed top-0 w-screen min-h-14 pt-[env(safe-area-inset-top,16px)] text-base font-normal z-200">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 backdrop-blur-sm bg-linear-to-b from-white to-white/0 dark:from-black dark:to-black/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
+        className="pointer-events-none absolute inset-0 -z-10 backdrop-blur-sm bg-linear-to-b from-white to-white/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
       />
       <div className="px-3.5 w-full lg:w-fit flex justify-between items-center gap-0.5 lg:gap-3.5">
         <div className="flex justify-center items-center w-25 h-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.75)]">
@@ -148,7 +148,7 @@ export default function MapHeader() {
               <Popover.Portal>
                 <Popover.Positioner
                   sideOffset={-34}
-                  className="z-1000 w-(--anchor-width) rounded-lg bg-white dark:bg-black border border-gray-100 dark:border-gray-700 shadow-md pt-3 pb-2"
+                  className="z-1000 w-(--anchor-width) rounded-lg bg-white border border-gray-100 shadow-md pt-3 pb-2"
                 >
                   <Popover.Popup>
                     <p className="px-3 pb-1.5 text-sm font-semibold text-primary-500">
@@ -159,7 +159,7 @@ export default function MapHeader() {
                         <li key={item.id}>
                           <button
                             type="button"
-                            className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-primary-50 dark:hover:bg-gray-800 transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-primary-50 transition-colors"
                           >
                             <span
                               className={cn(
