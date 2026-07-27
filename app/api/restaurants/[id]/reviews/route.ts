@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
 import { getAuthenticatedUser } from "@/shared/lib/auth-server";
+import { generateNickname } from "@/shared/lib/nickname";
+
+// 익명 리뷰 표시용 IP 앞부분 ("XXX.XXX"). 프록시 뒤에서는 x-forwarded-for의 첫 값 사용.
+function getIpPrefix(request: NextRequest): string {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "";
+  if (ip.includes(".")) {
+    return ip.split(".").slice(0, 2).join(".");
+  }
+  if (ip.includes(":")) {
+    // IPv6는 앞 2개 그룹까지
+    return ip.split(":").filter(Boolean).slice(0, 2).join(":");
+  }
+  return "0.0";
+}
 
 export async function GET(
   request: NextRequest,
@@ -43,54 +60,76 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    // 쿠키에서 인증 세션의 유저 추출 (Better Auth가 users 테이블 row를 보장)
-    const user = await getAuthenticatedUser();
+
+    // 로그인 여부 확인 — 비로그인도 익명 리뷰(별점 없이 의견만)를 허용한다.
+    let user: { id: string } | null = null;
+    try {
+      user = await getAuthenticatedUser();
+    } catch {
+      user = null;
+    }
 
     const body = await request.json();
     const { content, rating } = body;
 
-    if (!content || !rating) {
+    if (!content) {
       return NextResponse.json(
         { message: "필수 정보가 누락되었습니다." },
         { status: 400 },
       );
     }
 
-    if (rating < 1 || rating > 5) {
+    // 별점은 로그인 사용자만 부여 가능
+    if (!user && rating != null) {
+      return NextResponse.json(
+        { message: "별점은 로그인 후 남길 수 있습니다." },
+        { status: 401 },
+      );
+    }
+
+    if (rating != null && (rating < 1 || rating > 5)) {
       return NextResponse.json(
         { message: "별점은 1-5 사이의 값이어야 합니다." },
         { status: 400 },
       );
     }
 
-    // 리뷰 생성
+    // 리뷰 생성 (비로그인은 "익명의○○" 랜덤 닉네임 + IP 앞 2옥텟 저장)
     const newReview = await prisma.review.create({
       data: {
         content,
-        rating: parseInt(rating),
-        authorId: user.id,
+        rating: rating != null ? parseInt(rating) : null,
+        authorId: user?.id ?? null,
+        guestNickname: user ? null : `익명의${generateNickname()}`,
+        guestIpPrefix: user ? null : getIpPrefix(request),
         restaurantId: id,
       },
     });
 
-    // 작성자 정보 조회
-    const author = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: {
-        id: true,
-        nickname: true,
-        image: true,
-      },
-    });
+    // 작성자 정보 조회 (익명 리뷰는 author 없음)
+    const author = user
+      ? await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            id: true,
+            nickname: true,
+            image: true,
+          },
+        })
+      : null;
 
-    // 맛집의 평균 별점과 리뷰 개수 업데이트
+    // 맛집의 평균 별점과 리뷰 개수 업데이트 (평균은 별점 있는 리뷰만 대상)
     const allReviews = await prisma.review.findMany({
       where: { restaurantId: id },
       select: { rating: true },
     });
 
+    const ratedReviews = allReviews.filter((r) => r.rating != null);
     const averageRating =
-      allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+      ratedReviews.length > 0
+        ? ratedReviews.reduce((sum, r) => sum + (r.rating ?? 0), 0) /
+          ratedReviews.length
+        : 0;
     const reviewCount = allReviews.length;
 
     await prisma.restaurant.update({

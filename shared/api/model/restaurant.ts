@@ -34,12 +34,14 @@ export type ResponseRestaurant = {
 export type ResponseReview = {
   id: string;
   content: string;
-  rating: number;
+  rating: number | null; // 익명 리뷰는 별점 없음
   createdAt: string;
   updatedAt: string;
-  authorId: string;
+  authorId: string | null;
   restaurantId: string;
-  author: ResponseAuthor;
+  author: ResponseAuthor | null;
+  guestNickname: string | null; // 익명 리뷰 닉네임 ("익명의...")
+  guestIpPrefix: string | null; // 익명 리뷰 IP 앞 2옥텟
 };
 
 type ResponseAuthor = {
@@ -52,7 +54,7 @@ export type RequestNewReview = {
   restaurantId: string;
   json: {
     content: string;
-    rating: number;
+    rating?: number; // 비로그인 리뷰는 별점 없이 전송
   };
 };
 

@@ -81,12 +81,15 @@ model Restaurant {
 model Review {
   id        String   @id @default(uuid())
   content   String
-  rating    Int
+  rating    Int? // 비로그인(익명) 리뷰는 별점 없이 의견만
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  // 비로그인 리뷰는 authorId 없이 guestNickname/guestIpPrefix로 표시
+  authorId      String?
+  author        User?   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  guestNickname String? // "익명의밀떡볶이먹는오리12" 형태 (서버에서 생성)
+  guestIpPrefix String? // IP 앞 2옥텟 "XXX.XXX"
 
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
