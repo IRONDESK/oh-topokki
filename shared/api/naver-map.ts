@@ -51,6 +51,17 @@ export const getRestaurantInfo = async (params: RequestGetRestaurantParams) => {
   }
 };
 
+export const getRestaurantCount = async () => {
+  try {
+    return await http.get<{ count: number }>(`/api/restaurants/count`);
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
 export const getRestaurantDetail = async ({
   restaurantId,
 }: {

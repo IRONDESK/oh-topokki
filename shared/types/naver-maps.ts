@@ -1,7 +1,14 @@
 export interface NaverMap {
   destroy(): void;
+  getCenter(): NaverLatLng;
+  getBounds(): NaverLatLngBounds;
   setCenter(latlng: NaverLatLng): void;
   setZoom(zoom: number): void;
+}
+
+export interface NaverLatLngBounds {
+  getSW(): NaverLatLng;
+  getNE(): NaverLatLng;
 }
 
 export interface NaverLatLng {

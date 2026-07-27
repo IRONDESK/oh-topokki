@@ -15,11 +15,20 @@ export async function GET(req: NextRequest) {
     const noodleTypesParam = searchParams.get("noodleTypes");
     const maxPriceParam = searchParams.get("maxPrice");
     const sideMenuParam = searchParams.getAll("sideMenus");
+    const latParam = searchParams.get("lat");
+    const lngParam = searchParams.get("lng");
+    const radiusParam = searchParams.get("radius");
 
     const page = Math.max(parseInt(pageParam || "1", 10), 1);
 
     const PAGE_SIZE = 10 as const;
     const offset = (page - 1) * PAGE_SIZE;
+
+    // 위치 기반 조회 (지도용): lat/lng가 오면 반경 내 식당을 pagination 없이 전부 반환
+    const lat = latParam ? parseFloat(latParam) : NaN;
+    const lng = lngParam ? parseFloat(lngParam) : NaN;
+    const radius = radiusParam ? parseFloat(radiusParam) : 10000; // 기본 10km
+    const isLocationQuery = !isNaN(lat) && !isNaN(lng) && !isNaN(radius);
 
     // 필터링 조건 구성
     const where: any = {};
@@ -68,6 +77,15 @@ export async function GET(req: NextRequest) {
       };
     }
 
+    if (isLocationQuery) {
+      // 반경(m)을 위도/경도 델타로 환산한 bounding box 필터.
+      // PostGIS 없이 lat/lng 컬럼 범위 비교로 처리 (수천 건 규모까지는 충분).
+      const latDelta = radius / 111320;
+      const lngDelta = radius / (111320 * Math.cos((lat * Math.PI) / 180));
+      where.latitude = { gte: lat - latDelta, lte: lat + latDelta };
+      where.longitude = { gte: lng - lngDelta, lte: lng + lngDelta };
+    }
+
     // Prisma를 사용한 쿼리
     const restaurantList = await prisma.restaurant.findMany({
       where,
@@ -88,8 +106,8 @@ export async function GET(req: NextRequest) {
       orderBy: {
         createdAt: "desc",
       },
-      take: PAGE_SIZE,
-      skip: offset,
+      // 위치 기반 조회는 지도 마커용이므로 pagination 없이 반경 내 전체 반환
+      ...(isLocationQuery ? {} : { take: PAGE_SIZE, skip: offset }),
     });
 
     console.log("조회된 맛집 수:", restaurantList.length);

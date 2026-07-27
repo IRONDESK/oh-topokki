@@ -1,10 +1,13 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { NaverMap } from "@/shared/types/naver-maps";
 import { useNaverMap } from "@/shared/hooks/useNaverMap";
-import { useRestaurantList } from "@/features/restaurant/api/use-restaurant";
+import {
+  useRestaurantCount,
+  useRestaurantList,
+} from "@/features/restaurant/api/use-restaurant";
 
 import MapView from "@/app/map/MapView";
 import RestaurantMarker from "./RestaurantMarker";
@@ -26,10 +29,49 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   const [filters] = useAtom(mapFilterAtom);
   const { naver } = useNaverMap();
 
+  // 지도 이동이 끝날 때마다(idle) 화면 영역에 맞는 중심좌표/반경을 갱신해 다시 조회한다.
+  const [viewport, setViewport] = useState<{
+    lat: number;
+    lng: number;
+    radius: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!map || !naver) return;
+
+    const syncViewport = () => {
+      const c = map.getCenter();
+      const bounds = map.getBounds();
+      const ne = bounds.getNE();
+      const sw = bounds.getSW();
+
+      // 화면 반경 = 중심에서 모서리까지 거리(대각선 절반) + 20% 여유.
+      // 줌 레벨과 무관하게 화면에 보이는 식당은 항상 조회 범위에 들어온다.
+      const halfLatM = ((ne.lat() - sw.lat()) / 2) * 111320;
+      const halfLngM =
+        ((ne.lng() - sw.lng()) / 2) *
+        111320 *
+        Math.cos((c.lat() * Math.PI) / 180);
+      const radius =
+        Math.ceil((Math.hypot(halfLatM, halfLngM) * 1.2) / 1000) * 1000;
+
+      setViewport({
+        // 소수 3자리(약 100m)로 반올림 — 미세한 이동으로 queryKey가 바뀌는 것을 방지
+        lat: Number(c.lat().toFixed(3)),
+        lng: Number(c.lng().toFixed(3)),
+        radius,
+      });
+    };
+
+    syncViewport(); // 초기 로드 시 1회
+    naver.Event.addListener(map, "idle", syncViewport);
+    return () => naver.Event.removeListener(map, "idle", syncViewport);
+  }, [map, naver]);
+
   const queryParams = {
-    lat: center?.lat,
-    lng: center?.lng,
-    radius: 10000,
+    lat: viewport?.lat,
+    lng: viewport?.lng,
+    radius: viewport?.radius ?? 10000,
     ...filters,
   };
 
@@ -38,7 +80,8 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
     isLoading,
     error,
     refetch,
-  } = useRestaurantList(queryParams, { enabled: !!map });
+  } = useRestaurantList(queryParams, { enabled: !!map && !!viewport });
+  const { data: totalCount } = useRestaurantCount();
 
   const handleMapLoad = useCallback(
     (mapInstance: NaverMap) => {
@@ -83,7 +126,7 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
         data-loading={isLoading}
         className="fixed px-3 py-1 left-1/2 bottom-[calc(env(safe-area-inset-bottom)+52px)] mb-6 bg-black/40 text-white backdrop-blur-[4px] rounded-[20px] shadow-sm z-[1000] tracking-[-0.05rem] [transition:transform_0.35s,opacity_0.3s] [transition-delay:0.15s] text-base font-normal data-[loading=true]:[transform:translate3d(-50%,100%,0)] data-[loading=true]:opacity-0 data-[loading=false]:[transform:translate3d(-50%,0,0)] data-[loading=false]:opacity-100"
       >
-        총 {restaurants?.length}개의 떡볶이 맛집
+        총 {totalCount?.count ?? 0}개의 떡볶이 맛집
       </div>
     </div>
   );

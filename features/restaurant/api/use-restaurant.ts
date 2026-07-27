@@ -1,6 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import {
+  getRestaurantCount,
   getRestaurantDetail,
   getRestaurantInfo,
   getRestaurantSearch,
@@ -18,6 +24,7 @@ export const restaurantKeys = {
   detail: (id: string) => [...restaurantKeys.details(), id] as const,
   searches: () => [...restaurantKeys.all, "search"] as const,
   search: (query: string) => [...restaurantKeys.searches(), query] as const,
+  count: () => [...restaurantKeys.all, "count"] as const,
 };
 
 export const useRestaurantList = (
@@ -28,6 +35,15 @@ export const useRestaurantList = (
     enabled: options?.enabled ?? true,
     queryKey: restaurantKeys.list(params),
     queryFn: () => getRestaurantInfo(params),
+    staleTime: 60_000,
+    // 지도 이동으로 좌표가 바뀌어도 새 데이터가 올 때까지 기존 마커 유지
+    placeholderData: keepPreviousData,
+  });
+
+export const useRestaurantCount = () =>
+  useQuery({
+    queryKey: restaurantKeys.count(),
+    queryFn: getRestaurantCount,
     staleTime: 60_000,
   });
 
