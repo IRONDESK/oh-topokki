@@ -11,21 +11,54 @@ import { placeFields } from "@/features/restaurant/ui/formStep/place-fields";
 import { FieldSection } from "@/features/restaurant/ui/formStep/FieldSection";
 import { Text } from "@/shared/ui/Text";
 import { fixedBottom, mainButton } from "@/shared/style/variants";
-import { useCreateRestaurant } from "@/features/restaurant/api/use-restaurant";
+import {
+  useCreateRestaurant,
+  useUpdateRestaurant,
+} from "@/features/restaurant/api/use-restaurant";
 import { dialog } from "@/shared/ui/feature/dialog";
 
 type Props = {
   setStep: (step: number) => void;
+  // 있으면 수정 모드로 동작 (등록 대신 PUT)
+  restaurantId?: string;
+  onComplete?: () => void;
 };
 
-const RestaurantDetailForm = ({ setStep }: Props) => {
+const RestaurantDetailForm = ({ setStep, restaurantId, onComplete }: Props) => {
   const [order, setOrder] = useState(0);
   const { watch, handleSubmit } = useFormContext<RestaurantFormData>();
   const formData = watch();
   const { mutate, isPending } = useCreateRestaurant();
+  const { mutate: update, isPending: isUpdatePending } = useUpdateRestaurant();
   const router = useRouter();
 
+  const isEdit = !!restaurantId;
+  const isSaving = isPending || isUpdatePending;
+  // "나의 한마디"는 등록 시 첫 리뷰를 만드는 필드라 수정 모드에서는 제외
+  const fields = isEdit
+    ? placeFields.filter((f) => f.name !== "myComment")
+    : placeFields;
+
   const onSubmit = (data: RestaurantFormData) => {
+    if (isEdit) {
+      update(
+        { restaurantId, json: data },
+        {
+          onSuccess: async () => {
+            await dialog.alert({ title: "맛집 정보를 수정했어요" });
+            onComplete?.();
+          },
+          onError: async (error) => {
+            dialog.alert({
+              title: "수정에 실패했어요",
+              contents: error.message,
+            });
+          },
+        },
+      );
+      return;
+    }
+
     mutate(data, {
       onSuccess: async (restaurant) => {
         await dialog.alert({ title: "새 맛집을 등록했어요" });
@@ -51,17 +84,19 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
             어떤 맛집인가요?
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setStep(1)}
-          className="shrink-0 cursor-pointer bg-gray-100 rounded-full px-3.5 py-2 text-gray-700 hover:bg-gray-200 active:bg-gray-300 flex gap-1.5 items-center text-sm font-medium"
-        >
-          <Icons w="regular" name="refresh" size={14} /> 다시 선택
-        </button>
+        {!isEdit && (
+          <button
+            type="button"
+            onClick={() => setStep(1)}
+            className="shrink-0 cursor-pointer bg-gray-100 rounded-full px-3.5 py-2 text-gray-700 hover:bg-gray-200 active:bg-gray-300 flex gap-1.5 items-center text-sm font-medium"
+          >
+            <Icons w="regular" name="refresh" size={14} /> 다시 선택
+          </button>
+        )}
       </div>
 
       <ul>
-        {placeFields.map((field, index) => {
+        {fields.map((field, index) => {
           const isPrevStatus = index < order ? "fold-value" : "fold";
           return (
             <li
@@ -89,12 +124,18 @@ const RestaurantDetailForm = ({ setStep }: Props) => {
             이전
           </button>
         )}
-        {order === placeFields.length - 1 && (
-          <button type="submit" disabled={isPending} className={mainButton}>
-            {isPending ? "등록 중..." : "등록하기"}
+        {order === fields.length - 1 && (
+          <button type="submit" disabled={isSaving} className={mainButton}>
+            {isSaving
+              ? isEdit
+                ? "수정 중..."
+                : "등록 중..."
+              : isEdit
+                ? "수정하기"
+                : "등록하기"}
           </button>
         )}
-        {order < placeFields.length - 1 && (
+        {order < fields.length - 1 && (
           <button
             type="button"
             className={mainButton}

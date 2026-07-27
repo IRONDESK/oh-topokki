@@ -6,11 +6,13 @@ import {
 } from "@tanstack/react-query";
 
 import {
+  deleteRestaurantInfo,
   getRestaurantCount,
   getRestaurantDetail,
   getRestaurantInfo,
   getRestaurantSearch,
   postRestaurantInfo,
+  putRestaurantInfo,
 } from "@/shared/api/naver-map";
 import { RequestGetRestaurantParams } from "@/shared/api/model/common";
 import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
@@ -68,6 +70,29 @@ export const useCreateRestaurant = () => {
 
   return useMutation({
     mutationFn: (data: RestaurantFormData) => postRestaurantInfo(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: restaurantKeys.all });
+    },
+  });
+};
+
+export const useUpdateRestaurant = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { restaurantId: string; json: RestaurantFormData }) =>
+      putRestaurantInfo(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: restaurantKeys.all });
+    },
+  });
+};
+
+export const useDeleteRestaurant = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { restaurantId: string }) => deleteRestaurantInfo(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: restaurantKeys.all });
     },

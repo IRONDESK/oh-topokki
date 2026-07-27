@@ -1,11 +1,18 @@
 import React, { useEffect } from "react";
 import clsx from "clsx";
 import { useAtomValue } from "jotai";
+import { overlay } from "overlay-kit";
+import { useAuth } from "@/shared/context/AuthContext";
 import { useNaverMap } from "@/shared/hooks/useNaverMap";
 import { useIsDesktop } from "@/shared/hooks/useIsDesktop";
 import { useFavorite } from "@/features/favorite/api/use-favorite";
 import { useNativeShare } from "@/shared/hooks/useNativeShare";
-import { useRestaurantDetail } from "@/features/restaurant/api/use-restaurant";
+import {
+  useDeleteRestaurant,
+  useRestaurantDetail,
+} from "@/features/restaurant/api/use-restaurant";
+import RestaurantRegisterForm from "@/features/restaurant/ui/RestaurantForm";
+import { dialog } from "@/shared/ui/feature/dialog";
 
 import {
   NOODLE_TYPE,
@@ -65,9 +72,46 @@ function RestaurantDetail(props: Props) {
   const { data: restaurant, isLoading } = useRestaurantDetail(restaurantId);
   const { handleFavorite } = useFavorite();
   const { share } = useNativeShare();
+  const { user } = useAuth();
+  const { mutate: deleteRestaurant } = useDeleteRestaurant();
+
+  const isAuthor =
+    !!user && !!restaurant?.authorId && restaurant.authorId === user.id;
 
   const onClickFav = async () => {
     await handleFavorite(restaurantId);
+  };
+
+  const onClickEdit = () => {
+    if (!restaurant) return;
+    // 수정 폼이 뜨면 기존 상세 바텀시트는 정리한다 (닫힘 애니메이션 후 unmount)
+    controller.close();
+    setTimeout(controller.unmount, 300);
+    overlay.open((formController) => (
+      <RestaurantRegisterForm {...formController} restaurant={restaurant} />
+    ));
+  };
+
+  const onClickDelete = async () => {
+    const ok = await dialog.confirm({
+      title: "맛집을 삭제할까요?",
+      contents: "등록된 리뷰와 즐겨찾기도 함께 삭제되며 되돌릴 수 없어요.",
+    });
+    if (!ok) return;
+
+    deleteRestaurant(
+      { restaurantId },
+      {
+        onSuccess: () => {
+          dialog.alert({ title: "맛집을 삭제했어요" });
+          controller.close();
+          setTimeout(controller.unmount, 300);
+        },
+        onError: (error) => {
+          dialog.alert({ title: "삭제에 실패했어요", contents: error.message });
+        },
+      },
+    );
   };
 
   const onClickShare = async () => {
@@ -119,6 +163,26 @@ function RestaurantDetail(props: Props) {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {isAuthor && (
+                <>
+                  <button
+                    type="button"
+                    onClick={onClickEdit}
+                    aria-label="맛집 정보 수정"
+                    className="cursor-pointer text-gray-500 hover:text-gray-700"
+                  >
+                    <Icons name="pencil" w="regular" t="round" size={22} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onClickDelete}
+                    aria-label="맛집 삭제"
+                    className="cursor-pointer text-gray-500 hover:text-red-500"
+                  >
+                    <Icons name="trash" w="regular" t="round" size={22} />
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 data-favorite={true}

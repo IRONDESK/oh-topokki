@@ -150,12 +150,39 @@ export async function GET(
   }
 }
 
+// 본인이 등록한 식당인지 검증. 실패 시 에러 응답 반환.
+async function assertOwnRestaurant(id: string) {
+  const user = await getAuthenticatedUser();
+
+  const restaurant = await prisma.restaurant.findUnique({
+    where: { id },
+    select: { authorId: true },
+  });
+  if (!restaurant) {
+    return NextResponse.json(
+      { message: "맛집을 찾을 수 없습니다." },
+      { status: 404 },
+    );
+  }
+  if (!restaurant.authorId || restaurant.authorId !== user.id) {
+    return NextResponse.json(
+      { message: "본인이 등록한 맛집만 수정/삭제할 수 있습니다." },
+      { status: 403 },
+    );
+  }
+  return null;
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
+
+    const authError = await assertOwnRestaurant(id);
+    if (authError) return authError;
+
     const body = await request.json();
     const {
       name,
@@ -230,6 +257,14 @@ export async function PUT(
     return NextResponse.json(result);
   } catch (error) {
     console.error("맛집 수정 오류:", error);
+
+    if (
+      error instanceof Error &&
+      (error.message.includes("로그인") || error.message.includes("인증"))
+    ) {
+      return NextResponse.json({ message: error.message }, { status: 401 });
+    }
+
     return NextResponse.json(
       { message: "맛집 수정에 실패했습니다." },
       { status: 500 },
@@ -244,20 +279,22 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const deletedRestaurant = await prisma.restaurant.delete({
-      where: { id },
-    });
+    const authError = await assertOwnRestaurant(id);
+    if (authError) return authError;
 
-    if (!deletedRestaurant) {
-      return NextResponse.json(
-        { message: "맛집을 찾을 수 없습니다." },
-        { status: 404 },
-      );
-    }
+    await prisma.restaurant.delete({ where: { id } });
 
     return NextResponse.json({ message: "맛집이 삭제되었습니다." });
   } catch (error) {
     console.error("맛집 삭제 오류:", error);
+
+    if (
+      error instanceof Error &&
+      (error.message.includes("로그인") || error.message.includes("인증"))
+    ) {
+      return NextResponse.json({ message: error.message }, { status: 401 });
+    }
+
     return NextResponse.json(
       { message: "맛집 삭제에 실패했습니다." },
       { status: 500 },

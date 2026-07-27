@@ -9,6 +9,7 @@ import { RestaurantFormProvider } from "./RestaurantFormProvider";
 import PlaceSearchForm from "./formStep/PlaceSearchForm";
 import RestaurantDetailForm from "./formStep/RestaurantDetailForm";
 import { Modal } from "@/shared/ui/Modal";
+import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 
 export type RestaurantFormData = {
   name: string;
@@ -30,16 +31,19 @@ export type RestaurantFormData = {
   myComment: string;
 };
 
-const RestaurantFormContent = (
-  controller: ComponentProps<OverlayControllerComponent>,
-) => {
-  const { close, ...rest } = controller;
+type FormProps = ComponentProps<OverlayControllerComponent> & {
+  // 있으면 수정 모드: 기존 값이 채워진 상태로 상세 스텝부터 시작
+  restaurant?: ResponseRestaurant;
+};
+
+const RestaurantFormContent = (props: FormProps) => {
+  const { close, restaurant, ...rest } = props;
   const { user } = useAuth();
   const { reset } = useFormContext<RestaurantFormData>();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(restaurant ? 2 : 1);
 
   const handleClose = () => {
-    setStep(1);
+    setStep(restaurant ? 2 : 1);
     close();
     reset();
   };
@@ -56,20 +60,44 @@ const RestaurantFormContent = (
       {step === 1 ? (
         <PlaceSearchForm setStep={setStep} />
       ) : (
-        <RestaurantDetailForm setStep={setStep} />
+        <RestaurantDetailForm
+          setStep={setStep}
+          restaurantId={restaurant?.id}
+          onComplete={handleClose}
+        />
       )}
     </Modal>
   );
 };
 
-const RestaurantRegisterForm = (
-  controller: ComponentProps<OverlayControllerComponent>,
-) => {
-  if (!controller.isOpen) return null;
+// ResponseRestaurant → 폼 초기값 (null 필드는 폼 기본 형태로 정규화)
+const toFormValues = (r: ResponseRestaurant): Partial<RestaurantFormData> => ({
+  name: r.name,
+  address: r.address,
+  latitude: r.latitude,
+  longitude: r.longitude,
+  phoneNumber: r.phoneNumber ?? "",
+  topokkiType: r.topokkiType ?? "",
+  price: r.price ?? 0,
+  riceTypes: r.riceTypes,
+  sauceTypes: r.sauceTypes,
+  spiciness: r.spiciness ?? null,
+  canChangeSpicy: r.canChangeSpicy,
+  sideMenus: r.sideMenus,
+  noodleTypes: r.noodleTypes,
+  sundaeType: r.sundaeType ?? "",
+  others: r.others,
+  recommend: r.recommend,
+});
+
+const RestaurantRegisterForm = (props: FormProps) => {
+  if (!props.isOpen) return null;
 
   return (
-    <RestaurantFormProvider>
-      <RestaurantFormContent {...controller} />
+    <RestaurantFormProvider
+      defaultValues={props.restaurant ? toFormValues(props.restaurant) : undefined}
+    >
+      <RestaurantFormContent {...props} />
     </RestaurantFormProvider>
   );
 };

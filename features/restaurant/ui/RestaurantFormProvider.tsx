@@ -6,10 +6,13 @@ import { RestaurantFormData } from "./RestaurantForm";
 
 interface RestaurantFormProviderProps {
   children: ReactNode;
+  // 수정 모드에서 기존 식당 값을 채워 넣을 때 사용
+  defaultValues?: Partial<RestaurantFormData>;
 }
 
 export const RestaurantFormProvider = ({
   children,
+  defaultValues,
 }: RestaurantFormProviderProps) => {
   const methods = useForm<RestaurantFormData>({
     defaultValues: {
@@ -30,6 +33,7 @@ export const RestaurantFormProvider = ({
       others: [],
       recommend: [],
       myComment: "",
+      ...defaultValues,
     },
   });
 
