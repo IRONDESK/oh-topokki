@@ -69,6 +69,7 @@ model Restaurant {
 
   averageRating Float @default(0)
   reviewCount   Int   @default(0)
+  viewCount     Int   @default(0)
 
   reviews   Review[]
   favorites Favorite[]

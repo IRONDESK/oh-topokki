@@ -2,6 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
 import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 
+// 조회수 중복 방지: 최근에 본 식당 id·시각을 쿠키에 담아 24시간 내 재조회는 카운트하지 않는다.
+const VIEW_COOKIE = "viewed_restaurants";
+const VIEW_DEDUP_WINDOW_MS = 24 * 60 * 60 * 1000;
+const VIEW_COOKIE_MAX_ENTRIES = 60; // 쿠키 4KB 제한 대비 상한
+
+type ViewEntry = { rid: string; ts: number };
+
+// 쿠키 값 형식: "<id>.<timestamp>_<id>.<timestamp>..." (uuid에는 '.'과 '_'가 없음)
+function parseViewCookie(raw: string | undefined, now: number): ViewEntry[] {
+  if (!raw) return [];
+  return raw
+    .split("_")
+    .map((entry) => {
+      const [rid, ts] = entry.split(".");
+      return { rid, ts: Number(ts) };
+    })
+    .filter(
+      (e) => e.rid && !isNaN(e.ts) && now - e.ts < VIEW_DEDUP_WINDOW_MS,
+    );
+}
+
+function serializeViewCookie(entries: ViewEntry[]): string {
+  return entries
+    .slice(-VIEW_COOKIE_MAX_ENTRIES)
+    .map((e) => `${e.rid}.${e.ts}`)
+    .join("_");
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -19,6 +47,25 @@ export async function GET(
         { message: "맛집을 찾을 수 없습니다." },
         { status: 404 },
       );
+    }
+
+    // 조회수 증가 (동시 요청에도 안전한 원자적 increment)
+    // 단, 24시간 내 같은 브라우저의 재조회는 쿠키로 걸러 중복 카운트하지 않는다.
+    const now = Date.now();
+    const viewEntries = parseViewCookie(
+      request.cookies.get(VIEW_COOKIE)?.value,
+      now,
+    );
+    const alreadyViewed = viewEntries.some((e) => e.rid === id);
+
+    let viewCount = restaurant.viewCount;
+    if (!alreadyViewed) {
+      ({ viewCount } = await prisma.restaurant.update({
+        where: { id },
+        data: { viewCount: { increment: 1 } },
+        select: { viewCount: true },
+      }));
+      viewEntries.push({ rid: id, ts: now });
     }
 
     // 작성자 정보 조회 (탈퇴한 작성자는 authorId가 null)
@@ -76,6 +123,7 @@ export async function GET(
     // 결과 조합
     const result = {
       ...restaurant,
+      viewCount,
       author: author || null,
       reviews: restaurantReviews,
       isFavorite,
@@ -85,7 +133,14 @@ export async function GET(
       },
     };
 
-    return NextResponse.json(result);
+    const response = NextResponse.json(result);
+    response.cookies.set(VIEW_COOKIE, serializeViewCookie(viewEntries), {
+      maxAge: VIEW_DEDUP_WINDOW_MS / 1000,
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+    return response;
   } catch (error) {
     console.error("맛집 조회 오류:", error);
     return NextResponse.json(

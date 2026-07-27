@@ -21,6 +21,7 @@ export type ResponseRestaurant = {
   recommend: { type: string; url: string }[];
   averageRating: number;
   reviewCount: number;
+  viewCount: number;
   author: ResponseAuthor;
   reviews: ResponseReview[];
   isFavorite: boolean | null;

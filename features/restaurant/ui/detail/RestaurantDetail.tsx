@@ -155,11 +155,17 @@ function RestaurantDetail(props: Props) {
           )}
           <div
             className={cn(
-              "mt-2 mb-3 -mx-px text-lg p-0 text-gray-500 font-medium",
+              "mt-2 mb-3 -mx-px flex items-center justify-between text-lg p-0 text-gray-500 font-medium",
               INNER_PADDING,
             )}
           >
             {TOPOKKI_TYPE[topokkiType || (restaurant?.topokkiType ?? "")]}
+            {restaurant && (
+              <span className="flex items-center gap-1 text-sm font-normal text-gray-400">
+                <Icons name="eye" w="regular" t="round" size={14} />
+                조회 {restaurant.viewCount.toLocaleString()}
+              </span>
+            )}
           </div>
           {restaurant && !isLoading && (
             <dl className={clsx(DETAIL_ITEMS_CLS, INNER_PADDING)}>
