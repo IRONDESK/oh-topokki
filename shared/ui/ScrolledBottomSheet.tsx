@@ -195,7 +195,10 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           style={{
             paddingBottom: "env(safe-area-inset-bottom, 16px)",
             overflowY: isFull ? "auto" : "visible",
-            overflowX: "hidden",
+            // 주의: 한 축이 hidden이면 다른 축 visible이 auto로 강제되어
+            // inner가 의도치 않은 스크롤 컨테이너가 됨 → sticky 헤더가 깨진다.
+            // inner가 실제 스크롤러일 때(full)만 x축을 잠근다.
+            overflowX: isFull ? "hidden" : "visible",
             height: isFull ? "99.9dvh" : "auto",
             minHeight: 0,
             overscrollBehaviorY: "none",
