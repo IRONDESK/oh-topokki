@@ -8,6 +8,7 @@ import {
 } from "@/shared/api/model/common";
 import {
   RequestNewReview,
+  RequestUpdateReview,
   ResponseRestaurant,
   ResponseReview,
 } from "@/shared/api/model/restaurant";
@@ -43,6 +44,36 @@ export const getRestaurantInfo = async (params: RequestGetRestaurantParams) => {
     return await http.get<ResponseRestaurant[]>(`/api/restaurants`, {
       searchParams: params,
     });
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const putRestaurantInfo = async (data: {
+  restaurantId: string;
+  json: RestaurantFormData;
+}) => {
+  try {
+    return await http.put<ResponseRestaurant>(
+      `/api/restaurants/${data.restaurantId}`,
+      { json: data.json },
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const deleteRestaurantInfo = async (data: { restaurantId: string }) => {
+  try {
+    return await http.delete<{ message: string }>(
+      `/api/restaurants/${data.restaurantId}`,
+    );
   } catch (error) {
     if (isHttpError(error)) {
       throw new Error(error.message);
@@ -116,6 +147,36 @@ export const postRestaurantReview = async (data: RequestNewReview) => {
     return await http.post<ResponseReview>(
       `/api/restaurants/${data.restaurantId}/reviews`,
       { json: data.json },
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const putRestaurantReview = async (data: RequestUpdateReview) => {
+  try {
+    return await http.put<ResponseReview>(
+      `/api/restaurants/${data.restaurantId}/reviews/${data.reviewId}`,
+      { json: data.json },
+    );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const deleteRestaurantReview = async (data: {
+  restaurantId: string;
+  reviewId: string;
+}) => {
+  try {
+    return await http.delete<{ message: string }>(
+      `/api/restaurants/${data.restaurantId}/reviews/${data.reviewId}`,
     );
   } catch (error) {
     if (isHttpError(error)) {

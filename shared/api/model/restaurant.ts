@@ -58,6 +58,15 @@ export type RequestNewReview = {
   };
 };
 
+export type RequestUpdateReview = {
+  restaurantId: string;
+  reviewId: string;
+  json: {
+    content: string;
+    rating?: number;
+  };
+};
+
 export type ResponseFavorite = {
   id: string;
   name: string;

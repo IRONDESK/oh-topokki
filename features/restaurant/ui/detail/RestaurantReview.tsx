@@ -5,7 +5,12 @@ import { format, getYear, isThisYear } from "date-fns";
 import Icons from "@/shared/ui/Icons";
 import { InputHead } from "@/shared/ui/InputHead";
 import { ResponseReview } from "@/shared/api/model/restaurant";
-import { useCreateReview, useReviews } from "@/features/review/api/use-review";
+import {
+  useCreateReview,
+  useDeleteReview,
+  useReviews,
+  useUpdateReview,
+} from "@/features/review/api/use-review";
 import { dialog } from "@/shared/ui/feature/dialog";
 import Spinner from "@/shared/ui/Spinner";
 
@@ -39,6 +44,39 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
   const { user } = useAuth();
   const { data: reviews } = useReviews(restaurantId, initialReviews);
   const { mutate, isPending } = useCreateReview();
+  const { mutate: updateReview, isPending: isUpdating } = useUpdateReview();
+  const { mutate: deleteReview } = useDeleteReview();
+
+  // 인라인 수정 상태 (한 번에 하나만)
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [editRating, setEditRating] = useState(0);
+
+  const startEdit = (review: ResponseReview) => {
+    setEditingId(review.id);
+    setEditContent(review.content);
+    setEditRating(review.rating ?? 0);
+  };
+
+  const submitEdit = (reviewId: string) => {
+    if (!editContent.trim() || editRating < 1) return;
+    updateReview(
+      {
+        restaurantId,
+        reviewId,
+        json: { content: editContent, rating: editRating },
+      },
+      { onSuccess: () => setEditingId(null) },
+    );
+  };
+
+  const confirmDelete = async (reviewId: string) => {
+    const ok = await dialog.confirm({
+      title: "리뷰를 삭제할까요?",
+      contents: "삭제한 리뷰는 되돌릴 수 없어요.",
+    });
+    if (ok) deleteReview({ restaurantId, reviewId });
+  };
 
   // 로그인 리뷰는 별점(1+)까지 있어야 제출 가능, 익명은 내용만 있으면 됨
   const canSubmit = !!reviewInput.trim() && (!user || rating >= 1);
@@ -114,21 +152,105 @@ function RestaurantReview({ initialReviews, restaurantId, initial }: Props) {
                       </>
                     )}
                 </span>
-              </p>
-              <p className="text-base">{review.content}</p>
-              {review.rating != null && review.authorId !== initial.authorId && (
-                <p style={{ marginTop: "4px" }}>
-                  <span className={RATING_LABEL_CLS}>
-                    <Icons
-                      name="social-network"
-                      w="solid"
-                      t="straight"
-                      size={14}
-                    />
-                    {RATING_MESSAGE[review.rating]}
+                {user && review.authorId === user.id && editingId !== review.id && (
+                  <span className="flex items-center gap-2 text-xs font-medium text-gray-400">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(review)}
+                      className="cursor-pointer hover:text-gray-600"
+                    >
+                      수정
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => confirmDelete(review.id)}
+                      className="cursor-pointer hover:text-red-500"
+                    >
+                      삭제
+                    </button>
                   </span>
-                </p>
+                )}
+              </p>
+              {editingId === review.id ? (
+                <div className="flex flex-col gap-2 mt-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setEditRating(n)}
+                          aria-label={`별점 ${n}점`}
+                          className="cursor-pointer"
+                        >
+                          <Icons
+                            name="star"
+                            w={n <= editRating ? "solid" : "regular"}
+                            t="round"
+                            size={18}
+                            color={
+                              n <= editRating
+                                ? "var(--color-primary-500)"
+                                : "var(--color-gray-300)"
+                            }
+                          />
+                        </button>
+                      ))}
+                    </span>
+                    <span className="text-xs font-medium text-gray-500">
+                      {editRating > 0
+                        ? RATING_MESSAGE[editRating]
+                        : "별점을 선택해주세요"}
+                    </span>
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      className="flex-1 min-w-0 rounded-lg border-[1.5px] border-gray-200 focus:border-primary-400 outline-none px-3 py-2 text-base"
+                    />
+                    {isUpdating ? (
+                      <Spinner color="primary" thick={2} size={20} />
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          disabled={!editContent.trim() || editRating < 1}
+                          onClick={() => submitEdit(review.id)}
+                          className="shrink-0 cursor-pointer px-2.5 py-2 rounded-lg text-sm font-medium text-white bg-primary-500 disabled:bg-gray-300"
+                        >
+                          저장
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingId(null)}
+                          className="shrink-0 cursor-pointer px-2.5 py-2 rounded-lg text-sm font-medium text-gray-500 bg-gray-100"
+                        >
+                          취소
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-base">{review.content}</p>
               )}
+              {editingId !== review.id &&
+                review.rating != null &&
+                review.authorId !== initial.authorId && (
+                  <p style={{ marginTop: "4px" }}>
+                    <span className={RATING_LABEL_CLS}>
+                      <Icons
+                        name="social-network"
+                        w="solid"
+                        t="straight"
+                        size={14}
+                      />
+                      {RATING_MESSAGE[review.rating]}
+                    </span>
+                  </p>
+                )}
             </li>
           ))}
         </ul>
