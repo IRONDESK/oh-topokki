@@ -186,7 +186,8 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           // full transform은 open과 조합해야 닫힐 때(open=false) 슬라이드-다운 애니메이션이 살아난다.
           "data-[open=true]:data-[full=true]:transform-[translate3d(-50%,0,0)]",
           "data-[full=true]:pt-[env(safe-area-inset-top,4px)] data-[full=true]:rounded-none",
-          "data-[desktop=true]:overflow-y-auto data-[desktop=true]:max-h-[70vh] data-[desktop=true]:min-h-[70vh]",
+          // 내부 콘텐츠가 시트 폭을 넘어도 x축 스크롤이 생기지 않게 차단 (모바일은 inner에서 처리)
+          "data-[desktop=true]:overflow-y-auto data-[desktop=true]:overflow-x-hidden data-[desktop=true]:max-h-[70vh] data-[desktop=true]:min-h-[70vh]",
         )}
       >
         <div
@@ -194,6 +195,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           style={{
             paddingBottom: "env(safe-area-inset-bottom, 16px)",
             overflowY: isFull ? "auto" : "visible",
+            overflowX: "hidden",
             height: isFull ? "99.9dvh" : "auto",
             minHeight: 0,
             overscrollBehaviorY: "none",
