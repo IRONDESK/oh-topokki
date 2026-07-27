@@ -8,7 +8,7 @@ import Button from "@/shared/ui/Button";
 import Icons from "@/shared/ui/Icons";
 import TermsConsentSheet from "./TermsConsentSheet";
 
-type Mode = "signin" | "signup";
+type Mode = "signin" | "signup" | "forgot";
 
 interface EmailAuthFormProps {
   onSuccess?: () => void;
@@ -67,6 +67,26 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (mode === "forgot") {
+      setLoading(true);
+      try {
+        const { error } = await authClient.requestPasswordReset({
+          email,
+          redirectTo: "/reset-password",
+        });
+        if (error) throw new Error(error.message ?? "요청에 실패했어요");
+        toast.success("비밀번호 재설정 링크를 이메일로 보냈어요");
+        setMode("signin");
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "오류가 발생했어요",
+        );
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
 
     if (mode === "signup") {
       if (password !== passwordConfirm) {
@@ -143,16 +163,18 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         autoComplete="email"
         className="w-full py-4 px-4 rounded-xl text-lg bg-gray-100 outline-none focus:ring-2 focus:ring-primary-300"
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="비밀번호"
-        required
-        minLength={8}
-        autoComplete={mode === "signup" ? "new-password" : "current-password"}
-        className="w-full py-4 px-4 rounded-xl text-lg bg-gray-100 outline-none focus:ring-2 focus:ring-primary-300"
-      />
+      {mode !== "forgot" && (
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호"
+          required
+          minLength={8}
+          autoComplete={mode === "signup" ? "new-password" : "current-password"}
+          className="w-full py-4 px-4 rounded-xl text-lg bg-gray-100 outline-none focus:ring-2 focus:ring-primary-300"
+        />
+      )}
       {mode === "signup" && (
         <input
           type="password"
@@ -170,18 +192,43 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         {loading && (
           <span className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
         )}
-        {mode === "signup" ? "회원가입" : "로그인"}
+        {mode === "signup"
+          ? "회원가입"
+          : mode === "forgot"
+            ? "재설정 링크 받기"
+            : "로그인"}
       </Button>
 
-      <button
-        type="button"
-        onClick={toggleMode}
-        className="text-sm font-medium text-gray-500 mt-1"
-      >
-        {mode === "signin"
-          ? "계정이 없으신가요? 회원가입"
-          : "이미 계정이 있으신가요? 로그인"}
-      </button>
+      {mode === "forgot" ? (
+        <button
+          type="button"
+          onClick={() => setMode("signin")}
+          className="text-sm font-medium text-gray-500 mt-1"
+        >
+          로그인으로 돌아가기
+        </button>
+      ) : (
+        <div className="flex items-center justify-center gap-4 mt-1">
+          <button
+            type="button"
+            onClick={toggleMode}
+            className="text-sm font-medium text-gray-500"
+          >
+            {mode === "signin"
+              ? "계정이 없으신가요? 회원가입"
+              : "이미 계정이 있으신가요? 로그인"}
+          </button>
+          {/*{mode === "signin" && (*/}
+          {/*  <button*/}
+          {/*    type="button"*/}
+          {/*    onClick={() => setMode("forgot")}*/}
+          {/*    className="text-sm font-medium text-gray-500"*/}
+          {/*  >*/}
+          {/*    비밀번호 찾기*/}
+          {/*  </button>*/}
+          {/*)}*/}
+        </div>
+      )}
     </form>
   );
 }
