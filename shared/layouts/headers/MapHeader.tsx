@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { overlay, useCurrentOverlay } from "overlay-kit";
 import { Popover } from "@base-ui/react/popover";
 import { useAtom } from "jotai";
@@ -7,24 +8,15 @@ import { useAtom } from "jotai";
 import { cn } from "@/shared/lib/cn";
 import Icons from "@/shared/ui/Icons";
 import { mapFilterAtom } from "@/shared/store/filterStore";
+import { useRestaurantRanking } from "@/features/restaurant/api/use-restaurant";
 import FloatingMenu from "@/widgets/floating-menu/ui/FloatingMenu";
 import Logo from "@/assets/Logo";
 
-// TODO: 실시간 인기 식당 API 연동 전 임시 목데이터.
-// 추후 useRestaurantList(sort=popular) 등으로 교체. 형태는 ResponseRestaurant에 맞춤.
-type PopularRestaurant = { id: string; name: string; reviewCount: number };
-
-const POPULAR_RESTAURANTS: PopularRestaurant[] = [
-  { id: "1", name: "우리네떡볶이 성수지점", reviewCount: 128 },
-  { id: "2", name: "동대문엽기떡볶이 강남점", reviewCount: 96 },
-  { id: "3", name: "신전떡볶이 홍대점", reviewCount: 74 },
-  { id: "4", name: "청년다방 건대점", reviewCount: 51 },
-  { id: "5", name: "죠스떡볶이 잠실점", reviewCount: 33 },
-];
-
 const SLIDE_INTERVAL = 2500;
 
-function rankStyle(rank: number) {
+// unrank(활동 없어 최근 등록으로 채운 항목)는 순위 색을 주지 않는다.
+function rankStyle(rank: number, unrank: boolean) {
+  if (unrank) return "bg-gray-100 text-gray-400";
   if (rank === 1) return "bg-primary-500 text-white";
   if (rank <= 3) return "bg-primary-200 text-primary-700";
   return "bg-gray-100 text-gray-500";
@@ -34,29 +26,37 @@ export default function MapHeader() {
   const isOpenMenu = useCurrentOverlay() === "floating-menu";
   const [filters, setFilter] = useAtom(mapFilterAtom);
   const filterValues = Object.values(filters).filter((v) => v !== null);
+  const router = useRouter();
+
+  const { data: ranking = [] } = useRestaurantRanking();
 
   const [rankIndex, setRankIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const [isRankOpen, setIsRankOpen] = useState(false);
 
-  // 인기 1~5위 위아래 슬라이딩. popover 열려 있는 동안은 정지.
+  // 인기 랭킹 위아래 슬라이딩. popover 열려 있는 동안은 정지.
   // 끝에 1위 복제본(아래 렌더)을 두고 거기까지 슬라이드한 뒤,
-  // 애니메이션 없이 진짜 1위(index 0)로 순간 리셋해 5→1 무한 루프처럼 보이게 함.
+  // 애니메이션 없이 진짜 1위(index 0)로 순간 리셋해 무한 루프처럼 보이게 함.
   useEffect(() => {
-    if (isRankOpen || POPULAR_RESTAURANTS.length <= 1) return;
+    if (isRankOpen || ranking.length <= 1) return;
     const timer = setInterval(() => {
       setIsAnimating(true);
       setRankIndex((prev) => prev + 1);
     }, SLIDE_INTERVAL);
     return () => clearInterval(timer);
-  }, [isRankOpen]);
+  }, [isRankOpen, ranking.length]);
 
   // 복제본(= length 인덱스)까지 슬라이드가 끝나면 애니메이션 끄고 0으로 순간 이동.
   const handleSlideEnd = () => {
-    if (rankIndex === POPULAR_RESTAURANTS.length) {
+    if (rankIndex >= ranking.length) {
       setIsAnimating(false);
       setRankIndex(0);
     }
+  };
+
+  const openRestaurantDetail = (restaurantId: string) => {
+    setIsRankOpen(false);
+    router.replace(`/?restaurant=${restaurantId}`);
   };
 
   const openMenuFloat = () => {
@@ -109,10 +109,10 @@ export default function MapHeader() {
                     style={{ transform: `translateY(-${rankIndex * 1.5}rem)` }}
                     onTransitionEnd={handleSlideEnd}
                   >
-                    {[...POPULAR_RESTAURANTS, POPULAR_RESTAURANTS[0]].map(
-                      (item, idx) => {
+                    {ranking.length > 0 &&
+                      [...ranking, ranking[0]].map((item, idx) => {
                         // 마지막은 1위 복제본 → 순위는 항상 (실제 인덱스 % 길이) + 1
-                        const rank = (idx % POPULAR_RESTAURANTS.length) + 1;
+                        const rank = (idx % ranking.length) + 1;
                         return (
                           <div
                             key={idx}
@@ -121,18 +121,17 @@ export default function MapHeader() {
                             <span
                               className={cn(
                                 "shrink-0 size-4 flex items-center justify-center rounded text-[11px] font-bold leading-none",
-                                rankStyle(rank),
+                                rankStyle(rank, item.unrank),
                               )}
                             >
-                              {rank}
+                              {item.unrank ? "N" : rank}
                             </span>
                             <span className="flex-1 truncate text-sm text-gray-700">
                               {item.name}
                             </span>
                           </div>
                         );
-                      },
-                    )}
+                      })}
                   </div>
                 </div>
                 {/* 화살표까지 트리거 영역에 포함 (중첩 button 방지 위해 span) */}
@@ -155,25 +154,26 @@ export default function MapHeader() {
                       실시간 인기 떡볶이
                     </p>
                     <ul>
-                      {POPULAR_RESTAURANTS.map((item, idx) => (
+                      {ranking.map((item, idx) => (
                         <li key={item.id}>
                           <button
                             type="button"
-                            className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-primary-50 transition-colors"
+                            onClick={() => openRestaurantDetail(item.id)}
+                            className="w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-left hover:bg-primary-50 transition-colors"
                           >
                             <span
                               className={cn(
                                 "shrink-0 size-5 flex items-center justify-center rounded text-sm font-bold leading-none",
-                                rankStyle(idx + 1),
+                                rankStyle(idx + 1, item.unrank),
                               )}
                             >
-                              {idx + 1}
+                              {item.unrank ? "N" : idx + 1}
                             </span>
                             <span className="flex-1 truncate text-base text-gray-700">
                               {item.name}
                             </span>
                             <span className="shrink-0 text-sm text-gray-400">
-                              리뷰 {item.reviewCount}
+                              {item.unrank ? "최근 등록" : `조회 ${item.viewCount}`}
                             </span>
                           </button>
                         </li>

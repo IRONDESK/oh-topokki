@@ -9,6 +9,7 @@ import {
 import {
   RequestNewReview,
   RequestUpdateReview,
+  ResponseRankingItem,
   ResponseRestaurant,
   ResponseReview,
 } from "@/shared/api/model/restaurant";
@@ -74,6 +75,17 @@ export const deleteRestaurantInfo = async (data: { restaurantId: string }) => {
     return await http.delete<{ message: string }>(
       `/api/restaurants/${data.restaurantId}`,
     );
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const getRestaurantRanking = async () => {
+  try {
+    return await http.get<ResponseRankingItem[]>(`/api/restaurants/ranking`);
   } catch (error) {
     if (isHttpError(error)) {
       throw new Error(error.message);

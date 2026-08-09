@@ -10,6 +10,7 @@ import {
   getRestaurantCount,
   getRestaurantDetail,
   getRestaurantInfo,
+  getRestaurantRanking,
   getRestaurantSearch,
   postRestaurantInfo,
   putRestaurantInfo,
@@ -27,6 +28,7 @@ export const restaurantKeys = {
   searches: () => [...restaurantKeys.all, "search"] as const,
   search: (query: string) => [...restaurantKeys.searches(), query] as const,
   count: () => [...restaurantKeys.all, "count"] as const,
+  ranking: () => [...restaurantKeys.all, "ranking"] as const,
 };
 
 export const useRestaurantList = (
@@ -46,6 +48,13 @@ export const useRestaurantCount = () =>
   useQuery({
     queryKey: restaurantKeys.count(),
     queryFn: getRestaurantCount,
+    staleTime: 60_000,
+  });
+
+export const useRestaurantRanking = () =>
+  useQuery({
+    queryKey: restaurantKeys.ranking(),
+    queryFn: getRestaurantRanking,
     staleTime: 60_000,
   });
 

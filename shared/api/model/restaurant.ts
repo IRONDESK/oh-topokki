@@ -50,6 +50,15 @@ type ResponseAuthor = {
   image: string | null;
 };
 
+export type ResponseRankingItem = {
+  id: string;
+  name: string;
+  viewCount: number;
+  favoriteCnt: number;
+  reviewCnt: number;
+  unrank: boolean; // true면 활동 없는 식당을 최근 등록순으로 채운 항목
+};
+
 export type RequestNewReview = {
   restaurantId: string;
   json: {
