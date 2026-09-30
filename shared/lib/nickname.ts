@@ -3,15 +3,25 @@ const NICKNAME_TTEOK = [
   "밀떡",
   "쌀떡",
   "즉석떡",
+  "판떡",
   "로제떡",
   "짜장떡",
   "궁중떡",
   "간장떡",
   "치즈떡",
+  "기름떡",
   "매운떡",
   "마라떡",
 ];
-const NICKNAME_VERBS = ["먹는", "만든", "찾는", "망친", "엎은", "끓이는"];
+const NICKNAME_VERBS = [
+  "먹는",
+  "만든",
+  "찾는",
+  "망친",
+  "엎은",
+  "끓이는",
+  "보는",
+];
 const NICKNAME_WHO = [
   "오리",
   "돼지",
@@ -35,6 +45,12 @@ const NICKNAME_WHO = [
   "알바",
   "요리사",
   "개발자",
+  "의사",
+  "검사",
+  "판사",
+  "교사",
+  "학생",
+  "가수",
 ];
 
 const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
