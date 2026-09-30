@@ -6,6 +6,7 @@
 .fi-br-menu-dots:before{content:"\f92d"}
 .fi-br-refresh:before{content:"\fb39"}
 .fi-br-search:before{content:"\fbc0"}
+.fi-br-settings-sliders:before{content:"\fbd6"}
 .fi-br-star:before{content:"\fceb"}
 @font-face{font-family:uicons-regular-rounded;src:url(./uicons-regular-rounded.woff2) format("woff2");font-display:block}
 [class^=fi-rr-]:before,[class*=" fi-rr-"]:before{font-family:uicons-regular-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}

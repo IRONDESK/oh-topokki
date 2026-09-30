@@ -105,6 +105,17 @@ export type ResponseAddFavorite = {
   };
 };
 
+// 검색 필터 (GET /api/restaurants/search · /api/restaurants 공용 파라미터)
+export type SearchRestaurantFilters = {
+  topokkiType?: string | null;
+  riceTypes?: string | null;
+  sauceTypes?: string | null;
+  sundaeType?: string | null;
+  sideMenus?: string[] | null;
+  minSpiciness?: number | null;
+  maxSpiciness?: number | null;
+};
+
 // 등록/수정 폼 값 (POST/PUT body)
 export type RestaurantFormData = {
   name: string;

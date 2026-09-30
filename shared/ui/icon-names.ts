@@ -14,6 +14,7 @@ export type IconName =
   | "play"
   | "refresh"
   | "search"
+  | "settings-sliders"
   | "share"
   | "social-network"
   | "square"

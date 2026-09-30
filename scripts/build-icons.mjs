@@ -13,7 +13,15 @@ import path from "node:path";
 
 // prefix: <weight 첫 글자><shape 첫 글자> — Icons.tsx의 `fi-${w[0]}${t[0]}-${name}` 규칙과 동일
 const ICONS = {
-  br: ["cross", "drawer-empty", "menu-dots", "refresh", "search", "star"],
+  br: [
+    "cross",
+    "drawer-empty",
+    "menu-dots",
+    "refresh",
+    "search",
+    "settings-sliders",
+    "star",
+  ],
   rr: [
     "angle-small-down",
     "angle-small-right",

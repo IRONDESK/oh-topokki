@@ -19,6 +19,7 @@ import { RequestGetRestaurantParams } from "@/shared/api/model/common";
 import {
   RestaurantFormData,
   ResponseRestaurant,
+  SearchRestaurantFilters,
 } from "@/shared/api/model/restaurant";
 
 export const restaurantKeys = {
@@ -29,7 +30,8 @@ export const restaurantKeys = {
   details: () => [...restaurantKeys.all, "detail"] as const,
   detail: (id: string) => [...restaurantKeys.details(), id] as const,
   searches: () => [...restaurantKeys.all, "search"] as const,
-  search: (query: string) => [...restaurantKeys.searches(), query] as const,
+  search: (query: string, filters?: SearchRestaurantFilters) =>
+    [...restaurantKeys.searches(), query, filters ?? {}] as const,
   count: () => [...restaurantKeys.all, "count"] as const,
   ranking: () => [...restaurantKeys.all, "ranking"] as const,
 };
@@ -76,11 +78,21 @@ export const useRestaurantDetail = (
     initialDataUpdatedAt: 0,
   });
 
-export const useRestaurantSearch = (query: string) =>
+export const hasAnySearchFilter = (filters?: SearchRestaurantFilters) =>
+  !!filters &&
+  Object.values(filters).some(
+    (v) => v != null && (!Array.isArray(v) || v.length > 0),
+  );
+
+export const useRestaurantSearch = (
+  query: string,
+  filters?: SearchRestaurantFilters,
+) =>
   useQuery({
-    enabled: query.trim().length > 0,
-    queryKey: restaurantKeys.search(query),
-    queryFn: () => getRestaurantSearch({ query }),
+    // 키워드 없이 필터만으로도 조회 가능
+    enabled: query.trim().length > 0 || hasAnySearchFilter(filters),
+    queryKey: restaurantKeys.search(query, filters),
+    queryFn: () => getRestaurantSearch({ query, ...filters }),
     staleTime: 5 * 60_000,
   });
 

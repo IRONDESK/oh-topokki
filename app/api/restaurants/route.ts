@@ -71,6 +71,16 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // 매운맛 구간 필터 (검색 화면과 동일 파라미터)
+    const minSpiciness = parseInt(searchParams.get("minSpiciness") ?? "", 10);
+    const maxSpiciness = parseInt(searchParams.get("maxSpiciness") ?? "", 10);
+    if (!isNaN(minSpiciness) || !isNaN(maxSpiciness)) {
+      where.spiciness = {
+        ...(!isNaN(minSpiciness) && { gte: minSpiciness }),
+        ...(!isNaN(maxSpiciness) && { lte: maxSpiciness }),
+      };
+    }
+
     if (sideMenuParam.length > 0) {
       where.sideMenus = {
         hasEvery: sideMenuParam,

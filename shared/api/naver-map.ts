@@ -1,6 +1,9 @@
 import { http, isHttpError } from "@/shared/lib/http";
 import { NaverPlaceSearchResult } from "@/shared/api/model/naver-map";
-import { RestaurantFormData } from "@/shared/api/model/restaurant";
+import {
+  RestaurantFormData,
+  SearchRestaurantFilters,
+} from "@/shared/api/model/restaurant";
 import {
   PaginationDetailResponse,
   PaginationResponse,
@@ -122,10 +125,12 @@ export const getRestaurantDetail = async ({
   }
 };
 
-export const getRestaurantSearch = async (params: {
-  query: string;
-  page?: number;
-}) => {
+export const getRestaurantSearch = async (
+  params: {
+    query: string;
+    page?: number;
+  } & SearchRestaurantFilters,
+) => {
   try {
     return await http.get<PaginationDetailResponse<ResponseRestaurant[]>>(
       `/api/restaurants/search`,

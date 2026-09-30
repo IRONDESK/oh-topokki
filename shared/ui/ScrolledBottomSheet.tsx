@@ -15,9 +15,12 @@ type BottomSheetProps = {
   children: ({
     isFull,
     isSticky,
+    expand,
   }: {
     isFull: boolean;
     isSticky: boolean;
+    /** 시트를 프로그래매틱하게 full로 확장 (모바일 전용, 데스크톱은 no-op) */
+    expand: () => void;
   }) => React.ReactNode;
 };
 
@@ -224,7 +227,13 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           ) : (
             <div className="w-[15%] h-1 rounded-chip bg-gray-300 mt-4.5 mb-3 mx-auto" />
           )}
-          {children({ isFull, isSticky })}
+          {children({
+            isFull,
+            isSticky,
+            expand: () => {
+              if (!isDesktop) setIsFull(true);
+            },
+          })}
         </div>
       </section>
     </>
