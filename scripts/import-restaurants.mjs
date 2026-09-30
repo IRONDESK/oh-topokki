@@ -25,6 +25,7 @@ const rows = raw.map((r) => ({
   topokkiType: r.topokkiType || null,
   sundaeType: r.sundaeType || null,
   price: r.price ?? null,
+  priceServings: r.priceServings ?? 1,
   riceTypes: r.riceTypes ?? [],
   sauceTypes: r.sauceTypes ?? [],
   spiciness: r.spiciness ?? null,
