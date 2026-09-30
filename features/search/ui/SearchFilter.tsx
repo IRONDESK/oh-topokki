@@ -174,7 +174,7 @@ function SearchFilter({ filters, onChange, onApply, onReset, resultCount }: Prop
         </section>
       ))}
 
-      <div className="sticky bottom-0 mt-auto flex gap-2 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white">
+      <div className="sticky bottom-0 mt-auto flex gap-2 pt-2.5 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] bg-white">
         <button
           type="button"
           className={buttons({ fill: "assistive", size: "medium" })}
