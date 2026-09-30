@@ -1,8 +1,10 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { atom, useSetAtom, useStore } from "jotai";
+import { overlay } from "overlay-kit";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 import { restaurantPath } from "@/shared/constants/site";
+import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
 
 /** 상세 조회 전에 먼저 보여줄 수 있는 값 (마커·목록이 이미 가진 필드) */
 export type RestaurantPreview = Pick<
@@ -17,6 +19,10 @@ export const restaurantPreviewAtom = atom<Record<string, RestaurantPreview>>(
 
 // 지도(앱 안)에서 상세를 열었는지 여부. 닫을 때 back / replace("/") 판단에 사용
 const openedInAppAtom = atom(false);
+
+// 라우트 응답을 기다리는 동안 임시 시트를 먼저 띄웠는지 여부.
+// 라우트 시트(RestaurantDetailRoute)가 슬라이드 인 애니메이션을 생략하는 판단에 사용.
+export const detailPendingAtom = atom(false);
 
 const isDetailPath = () => window.location.pathname.startsWith("/restaurants/");
 
@@ -36,6 +42,21 @@ export function useOpenRestaurantDetail() {
           [restaurantId]: { name, address, price, topokkiType, latitude, longitude },
         }));
       }
+      // 라우트(RSC) 응답을 기다리는 동안 화면이 멈춰 보이지 않도록,
+      // 같은 상세 시트를 오버레이로 먼저 띄운다(프리뷰 헤더 + 로딩 스피너).
+      // 라우트 도착 시 RestaurantDetailRoute가 overlay.unmountAll()로 정리하며 이어받는다.
+      store.set(detailPendingAtom, true);
+      overlay.open(
+        (controller) => (
+          <RestaurantDetail
+            restaurantId={restaurantId}
+            preview={preview}
+            controller={controller}
+          />
+        ),
+        { overlayId: "restaurant-detail-pending" },
+      );
+
       // 상세 → 다른 상세는 replace: 닫으면 항상 지도로 돌아가도록 히스토리를 쌓지 않는다
       if (isDetailPath()) {
         router.replace(restaurantPath(restaurantId), { scroll: false });
