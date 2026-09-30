@@ -1,13 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { overlay } from "overlay-kit";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { generateNickname } from "@/shared/lib/nickname";
 import Button from "@/shared/ui/Button";
 import Icons from "@/shared/ui/Icons";
-import TermsConsentSheet from "./TermsConsentSheet";
+import type { LegalTab } from "@/features/legal/ui/LegalTabs";
+
+// 약관 본문은 링크를 눌렀을 때만 로드
+const LegalSheet = dynamic(() => import("@/features/legal/ui/LegalSheet"));
+
+const openLegal = (tab: LegalTab) =>
+  overlay.open((controller) => <LegalSheet controller={controller} tab={tab} />);
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -51,12 +58,8 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         toast.error("비밀번호가 일치하지 않아요");
         return;
       }
-
-      // 약관 동의 바텀시트에서 확인을 눌러야 가입을 진행한다.
-      const agreed = await overlay.openAsync<boolean>((controller) => (
-        <TermsConsentSheet {...controller} />
-      ));
-      if (!agreed) return;
+      // 별도 체크박스 없이 [약관 동의 후 회원가입] 버튼 클릭을 약관 동의로 본다.
+      // (필수 개인정보는 계약 이행 목적이라 보호법 제15조①4호로 처리, 방침으로 고지)
     }
 
     setLoading(true);
@@ -146,12 +149,34 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         />
       )}
 
+      {mode === "signup" && (
+        <p className="px-1 text-xs font-normal leading-relaxed text-gray-500 break-keep">
+          가입하면{" "}
+          <button
+            type="button"
+            onClick={() => openLegal("terms")}
+            className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
+          >
+            서비스 이용약관
+          </button>
+          에 동의하고{" "}
+          <button
+            type="button"
+            onClick={() => openLegal("privacy")}
+            className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
+          >
+            개인정보 처리방침
+          </button>
+          을 확인한 것으로 봅니다. 만 14세 미만은 가입할 수 없어요.
+        </p>
+      )}
+
       <Button type="submit" disabled={loading} className="w-full mt-1">
         {loading && (
           <span className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
         )}
         {mode === "signup"
-          ? "회원가입"
+          ? "약관 동의 후 회원가입"
           : mode === "forgot"
             ? "재설정 링크 받기"
             : "로그인"}

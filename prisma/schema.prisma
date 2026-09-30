@@ -86,8 +86,9 @@ model Review {
   updatedAt DateTime @updatedAt
 
   // 비로그인 리뷰는 authorId 없이 guestNickname/guestIpPrefix로 표시
+  // 작성자 탈퇴 시 리뷰 내용·별점은 보존하고 authorId만 NULL ("탈퇴한 사용자"로 표시)
   authorId      String?
-  author        User?   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author        User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
   guestNickname String? // "익명의밀떡볶이먹는오리12" 형태 (서버에서 생성)
   guestIpPrefix String? // IP 앞 2옥텟 "XXX.XXX"
 

@@ -48,7 +48,8 @@ prisma/       # 스키마 (User + 도메인 모델 통합)
 데이터 성격에 따라 삭제 정책을 다르게 가져갔습니다.
 
 - **맛집 정보는 커뮤니티 자산** → `authorId`를 nullable로 두고 `onDelete: SetNull`로 보존
-- **리뷰·즐겨찾기는 개인 데이터** → `onDelete: Cascade`로 함께 삭제
+- **리뷰도 커뮤니티 자산** → `onDelete: SetNull`로 내용·별점은 보존하고 "탈퇴한 사용자"로 표시 (별점 집계도 그대로 유지)
+- **즐겨찾기는 개인 데이터** → `onDelete: Cascade`로 함께 삭제
 
 ### 4. 스키마 설계
 - 단일 선택 값(`topokkiType`, `sundaeType`)은 enum으로 강제하고, 다중 선택(소스·사리 등)은 확장이 쉬운 `String[]`로 유지했습니다.

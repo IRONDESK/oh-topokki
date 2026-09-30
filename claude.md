@@ -150,7 +150,7 @@ jobs:
 ## 스키마 정리 (2026-06-24, 데이터 0건일 때 일괄)
 
 - **단일 선택지 → enum**: `topokkiType`(TopokkiType: ontable/soup/pan), `sundaeType`(SundaeType: single/basic/various). 다중 선택은 String[] 유지(확장 용이). 빈 문자열은 유효 enum이 아니므로 생성/수정 시 `|| null` 정규화.
-- **유저 삭제 시 맛집 보존**: `Restaurant.authorId` nullable + `onDelete: SetNull`(커뮤니티 자산). 리뷰·즐겨찾기는 개인 데이터라 `Cascade` 유지.
+- **유저 삭제 시 맛집 보존**: `Restaurant.authorId` nullable + `onDelete: SetNull`(커뮤니티 자산). 리뷰·즐겨찾기는 개인 데이터라 `Cascade` 유지. → (2026-09-30 변경) 리뷰도 `SetNull`로 보존("탈퇴한 사용자" 표시), 즐겨찾기만 `Cascade`.
 - **필드명 일관화**: `riceKinds→riceTypes`, `sauceKinds→sauceTypes`, `noodleKinds→noodleTypes`. `sideMenus`·`others`는 유지(요청대로 `sideMenus`는 "menu" 명칭 보존). 상수 `TOPOKKI_RICE_KINDS→RICE_TYPE`. 즐겨찾기 응답 alias `riceType→riceTypes`.
 - **FK 인덱스 추가**(Postgres는 FK 자동 인덱스 X): `Restaurant.authorId`, `Review.restaurantId`, `Review.authorId`, `Favorite.restaurantId`.
 - **버그 수정**: GET `sundaeType` 필터가 스칼라에 `{ has }`를 쓰던 것 → 동등 비교로. `recommend` 응답 타입 `string[]` → `{ type; url }[]`(실제 형태).

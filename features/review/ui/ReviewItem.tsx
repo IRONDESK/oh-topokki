@@ -58,7 +58,9 @@ export default function ReviewItem({
           <span className="font-medium text-gray-500">
             {review.author
               ? `${review.author.nickname}님`
-              : `${review.guestNickname}(${review.guestIpPrefix})님`}
+              : review.guestNickname
+                ? `${review.guestNickname}(${review.guestIpPrefix})님`
+                : "탈퇴한 사용자"}
           </span>
           <span className={BULLET_CLS} />
           <span className="font-normal text-gray-400">

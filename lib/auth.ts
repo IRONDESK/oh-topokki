@@ -18,6 +18,9 @@ export const auth = betterAuth({
     fields: {
       name: "nickname",
     },
+    // 회원 탈퇴: 비밀번호 확인 후 즉시 삭제 (authClient.deleteUser({ password }))
+    // 세션·계정·즐겨찾기는 삭제, 맛집·리뷰는 authorId만 NULL로 보존 (schema onDelete 정책)
+    deleteUser: { enabled: true },
   },
   plugins: [nextCookies()], // 항상 마지막 플러그인
 });

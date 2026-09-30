@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/shared/lib/prisma";
 import { getAuthenticatedUser } from "@/shared/lib/auth-server";
 import { generateNickname } from "@/shared/lib/nickname";
+import { syncRestaurantStats } from "@/shared/lib/restaurant-stats";
 
 // 익명 리뷰 표시용 IP 앞부분 ("XXX.XXX"). 프록시 뒤에서는 x-forwarded-for의 첫 값 사용.
 function getIpPrefix(request: NextRequest): string {
@@ -119,26 +120,7 @@ export async function POST(
       : null;
 
     // 맛집의 평균 별점과 리뷰 개수 업데이트 (평균은 별점 있는 리뷰만 대상)
-    const allReviews = await prisma.review.findMany({
-      where: { restaurantId: id },
-      select: { rating: true },
-    });
-
-    const ratedReviews = allReviews.filter((r) => r.rating != null);
-    const averageRating =
-      ratedReviews.length > 0
-        ? ratedReviews.reduce((sum, r) => sum + (r.rating ?? 0), 0) /
-          ratedReviews.length
-        : 0;
-    const reviewCount = allReviews.length;
-
-    await prisma.restaurant.update({
-      where: { id },
-      data: {
-        averageRating,
-        reviewCount,
-      },
-    });
+    await syncRestaurantStats(id);
 
     // 응답 구성
     const result = {

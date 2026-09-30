@@ -1,7 +1,14 @@
 import { useAuth } from "@/shared/context/AuthContext";
 import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { overlay } from "overlay-kit";
 import LoginModal from "@/features/auth/ui/LoginModal";
+
+// 약관 본문은 모달을 열 때만 로드
+const ServiceInfoModal = dynamic(
+  () => import("@/features/legal/ui/ServiceInfoModal"),
+);
+const WithdrawSheet = dynamic(() => import("@/features/auth/ui/WithdrawSheet"));
 
 type Props = {
   close: () => void;
@@ -20,6 +27,16 @@ export default function FloatingMenu(props: Props) {
 
   const openLogin = () => {
     overlay.open((controller) => <LoginModal {...controller} />);
+  };
+
+  const openWithdraw = () => {
+    onClose();
+    overlay.open((controller) => <WithdrawSheet controller={controller} />);
+  };
+
+  const openServiceInfo = () => {
+    onClose();
+    overlay.open((controller) => <ServiceInfoModal {...controller} />);
   };
 
   useEffect(() => {
@@ -80,8 +97,21 @@ export default function FloatingMenu(props: Props) {
           {user && (
             <li className="p-2 hover:bg-gray-100 rounded-sm">내 작성 글</li>
           )}
-          <li className="p-2 hover:bg-gray-100 rounded-sm">서비스 안내</li>
+          <li
+            className="p-2 hover:bg-gray-100 rounded-sm"
+            onClick={openServiceInfo}
+          >
+            서비스 안내
+          </li>
           <li className="p-2 hover:bg-gray-100 rounded-sm">문의</li>
+          {user && (
+            <li
+              className="p-2 hover:bg-gray-100 rounded-sm text-gray-400"
+              onClick={openWithdraw}
+            >
+              회원 탈퇴
+            </li>
+          )}
         </ul>
       </div>
     </div>
