@@ -11,15 +11,12 @@
 [class^=fi-rr-]:before,[class*=" fi-rr-"]:before{font-family:uicons-regular-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 .fi-rr-angle-small-down:before{content:"\f153"}
 .fi-rr-angle-small-right:before{content:"\f155"}
-.fi-rr-eye:before{content:"\f5f8"}
-.fi-rr-pencil:before{content:"\fa29"}
 .fi-rr-pepper:before{content:"\fa37"}
 .fi-rr-refresh:before{content:"\fb34"}
 .fi-rr-share:before{content:"\fbd5"}
 .fi-rr-square:before{content:"\fcd4"}
 .fi-rr-star:before{content:"\fce9"}
 .fi-rr-tags:before{content:"\fd51"}
-.fi-rr-trash:before{content:"\fe17"}
 @font-face{font-family:uicons-regular-straight;src:url(./uicons-regular-straight.woff2) format("woff2");font-display:block}
 [class^=fi-rs-]:before,[class*=" fi-rs-"]:before{font-family:uicons-regular-straight!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 .fi-rs-cross:before{content:"\f4f9"}

@@ -27,8 +27,13 @@ function RestaurantReview({
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="px-5 flex-1 relative flex flex-col gap-3">
-      <h3 className="text-xl font-semibold">리뷰</h3>
+    <section className="px-5 pt-6 flex-1 relative flex flex-col gap-4">
+      <h3 className="text-lg font-semibold text-gray-900">
+        리뷰
+        {reviews.length > 0 && (
+          <span className="ml-1 font-normal text-gray-500">{reviews.length}</span>
+        )}
+      </h3>
       {reviews.length === 0 ? (
         <div className={EMPTY_CLS}>
           <Icons name="drawer-empty" size={36} w="bold" />
@@ -51,7 +56,7 @@ function RestaurantReview({
         </ul>
       )}
       <ReviewComposer restaurantId={restaurantId} />
-    </div>
+    </section>
   );
 }
 

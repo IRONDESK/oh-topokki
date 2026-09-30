@@ -17,15 +17,12 @@ const ICONS = {
   rr: [
     "angle-small-down",
     "angle-small-right",
-    "eye",
-    "pencil",
     "pepper",
     "refresh",
     "share",
     "square",
     "star",
     "tags",
-    "trash",
   ],
   rs: ["cross"],
   sr: [

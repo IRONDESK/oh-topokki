@@ -7,10 +7,8 @@ export type IconName =
   | "checkbox"
   | "cross"
   | "drawer-empty"
-  | "eye"
   | "map"
   | "menu-dots"
-  | "pencil"
   | "pepper"
   | "pepper-hot"
   | "play"
@@ -21,5 +19,4 @@ export type IconName =
   | "square"
   | "star"
   | "tags"
-  | "trash"
   | "triangle-warning";
