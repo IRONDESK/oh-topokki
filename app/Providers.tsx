@@ -32,6 +32,8 @@ function Providers({ children }: { children: React.ReactNode }) {
           <Toaster
             duration={2000}
             position="top-center"
+            offset={{ top: "calc(env(safe-area-inset-top, 0px) + 16px)" }}
+            mobileOffset={{ top: "calc(env(safe-area-inset-top, 0px) + 16px)" }}
             className="text-base font-medium"
             toastOptions={{
               style: {
