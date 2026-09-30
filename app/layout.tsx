@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     title: `${SITE_NAME} - 오늘의 떡볶이를 찾아보세요`,
     description: DESCRIPTION,
+    images: [{ url: "/logo.png", width: 1254, height: 1254, alt: SITE_NAME }],
   },
 };
 export const viewport: Viewport = {
