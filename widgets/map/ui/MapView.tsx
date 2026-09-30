@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useNaverMap } from "@/shared/hooks/useNaverMap";
 import { useCurrentLocation } from "@/shared/hooks/useUserLocation";
 import { NaverMap } from "@/shared/types/naver-maps";
-import { DEFAULT_LOCATION, naverMapAtom } from "@/shared/store/locationStore";
+import {
+  DEFAULT_LOCATION,
+  mapFocusedAtom,
+  naverMapAtom,
+} from "@/shared/store/locationStore";
 
 const FALLBACK_CLS =
   "w-full h-screen flex items-center justify-center bg-[#f8f9fa]";
@@ -15,6 +19,7 @@ function MapView() {
   const mapRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<NaverMap | null>(null);
   const setMap = useSetAtom(naverMapAtom);
+  const focused = useAtomValue(mapFocusedAtom);
   const { naver, error } = useNaverMap();
   const location = useCurrentLocation();
 
@@ -47,9 +52,14 @@ function MapView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naver, setMap]);
 
+  // GPS 위치가 도착하면 중심 이동. 단, 이미 식당 등으로 지도를 옮겼다면
+  // (예: /restaurants/[id]로 바로 진입) 늦게 온 위치로 덮어쓰지 않는다.
   useEffect(() => {
     if (!naver || !location || !instanceRef.current) return;
+    if (focused) return;
     instanceRef.current.setCenter(new naver.LatLng(location.lat, location.lng));
+    // focused가 나중에 true로 바뀌는 것만으로는 다시 실행할 필요 없음
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [naver, location]);
 
   if (error) {

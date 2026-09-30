@@ -17,10 +17,12 @@ export type LegalDocument = {
   sections: LegalSection[];
 };
 
+import { SITE_URL } from "@/shared/constants/site";
+
 // 운영자 정보 (약관·방침 공통)
 export const OPERATOR = {
   service: "오떠끼(오늘의 떡볶이)",
   name: "손수철",
   email: "todaytopokki@gmail.com",
-  url: "https://oh-topokki.vercel.app",
+  url: SITE_URL,
 } as const;

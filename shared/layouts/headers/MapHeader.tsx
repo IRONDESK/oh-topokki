@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { overlay, useCurrentOverlay } from "overlay-kit";
 import { Popover } from "@base-ui/react/popover";
 import { useAtom } from "jotai";
@@ -10,6 +9,7 @@ import Icons from "@/shared/ui/Icons";
 import { mapFilterAtom } from "@/shared/store/filterStore";
 import { useRestaurantRanking } from "@/features/restaurant/api/use-restaurant";
 import FloatingMenu from "@/widgets/floating-menu/ui/FloatingMenu";
+import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 import Logo from "@/assets/Logo";
 
 const SLIDE_INTERVAL = 2500;
@@ -26,7 +26,7 @@ export default function MapHeader() {
   const isOpenMenu = useCurrentOverlay() === "floating-menu";
   const [filters, setFilter] = useAtom(mapFilterAtom);
   const filterValues = Object.values(filters).filter((v) => v !== null);
-  const router = useRouter();
+  const openDetail = useOpenRestaurantDetail();
 
   const { data: ranking = [] } = useRestaurantRanking();
 
@@ -56,7 +56,7 @@ export default function MapHeader() {
 
   const openRestaurantDetail = (restaurantId: string) => {
     setIsRankOpen(false);
-    router.replace(`/?restaurant=${restaurantId}`);
+    openDetail(restaurantId);
   };
 
   const openMenuFloat = () => {

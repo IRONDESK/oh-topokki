@@ -1,4 +1,6 @@
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/shared/lib/prisma";
+import { restaurantPath } from "@/shared/constants/site";
 
 /** 리뷰 변경 후 식당의 평균 별점(별점 있는 리뷰만)·리뷰 개수(전체)를 다시 계산한다. */
 export async function syncRestaurantStats(restaurantId: string) {
@@ -17,4 +19,6 @@ export async function syncRestaurantStats(restaurantId: string) {
     where: { id: restaurantId },
     data: { averageRating, reviewCount: allReviews.length },
   });
+  // 서버 렌더링된 상세 페이지(ISR 캐시)도 새 리뷰로 갱신
+  revalidatePath(restaurantPath(restaurantId));
 }

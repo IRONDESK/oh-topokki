@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { NaverMap, NaverMarker } from "@/shared/types/naver-maps";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
-import { openRestaurantDetail } from "@/features/restaurant/ui/detail/openRestaurantDetail";
+import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 import { RICE_TYPE, TOPOKKI_TYPE_ABBR } from "@/shared/constants/restaurant";
 
 interface RestaurantMarkerProps {
@@ -22,6 +22,8 @@ const HOVER_META_CLS =
 const HOVER_FOOT_CLS = "flex items-center justify-between w-full gap-2";
 
 const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
+  const openDetail = useOpenRestaurantDetail();
+
   useEffect(() => {
     if (!restaurants.length) return;
     const naver = window.naver.maps;
@@ -52,7 +54,7 @@ const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
 
       // 지도 이동은 상세 시트가 preview 좌표로 처리한다
       naver.Event.addListener(marker, "click", () =>
-        openRestaurantDetail(restaurant.id, { preview: restaurant }),
+        openDetail(restaurant.id, restaurant),
       );
 
       const infoWindow = new naver.InfoWindow({
@@ -96,7 +98,7 @@ const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
         marker.setMap(null);
       });
     };
-  }, [map, restaurants]);
+  }, [map, restaurants, openDetail]);
 
   return null;
 };

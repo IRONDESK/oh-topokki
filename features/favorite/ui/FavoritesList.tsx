@@ -8,7 +8,7 @@ import ScrolledBottomSheet, {
   closeSheet,
   type SheetController,
 } from "@/shared/ui/ScrolledBottomSheet";
-import { openRestaurantDetail } from "@/features/restaurant/ui/detail/openRestaurantDetail";
+import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 import Spinner from "@/shared/ui/Spinner";
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
 
 function FavoritesList({ controller }: Props) {
   const { data: favorites, isLoading } = useFavorites();
+  const openDetail = useOpenRestaurantDetail();
 
   // 목록 시트를 닫고 상세 시트를 연다 (지도 이동은 상세 시트가 처리)
   const onClickItem = (item: ResponseFavorite) => {
@@ -24,7 +25,7 @@ function FavoritesList({ controller }: Props) {
       close: controller.close,
       unmount: () => {
         controller.unmount();
-        openRestaurantDetail(item.id, { preview: item });
+        openDetail(item.id, item);
       },
     });
   };

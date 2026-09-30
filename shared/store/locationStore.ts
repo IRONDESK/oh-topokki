@@ -12,6 +12,9 @@ export const DEFAULT_LOCATION: Location = { lat: 37.5665, lng: 126.978 };
 // 네이버 지도 instance
 export const naverMapAtom = atom<NaverMap | null>(null);
 
+// 식당 등으로 지도를 직접 이동했는지 여부. true면 늦게 도착한 GPS 위치로 중심을 덮어쓰지 않는다.
+export const mapFocusedAtom = atom(false);
+
 // 현재 위치 atom (지도 중심점)
 export const currentLocationAtom = atom<Location | null>(null);
 

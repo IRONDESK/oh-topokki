@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
+import { restaurantPath } from "@/shared/constants/site";
 import { prisma } from "@/shared/lib/prisma";
 import { getAuthenticatedUser } from "@/shared/lib/auth-server";
+import { findRestaurantDetail } from "@/features/restaurant/api/restaurant-detail.server";
 
 // 조회수 중복 방지: 최근에 본 식당 id·시각을 쿠키에 담아 24시간 내 재조회는 카운트하지 않는다.
 const VIEW_COOKIE = "viewed_restaurants";
@@ -37,10 +40,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // 레스토랑 기본 정보 조회
-    const restaurant = await prisma.restaurant.findUnique({
-      where: { id },
-    });
+    const restaurant = await findRestaurantDetail(id);
 
     if (!restaurant) {
       return NextResponse.json(
@@ -68,41 +68,7 @@ export async function GET(
       viewEntries.push({ rid: id, ts: now });
     }
 
-    // 작성자 정보 조회 (탈퇴한 작성자는 authorId가 null)
-    const author = restaurant.authorId
-      ? await prisma.user.findUnique({
-          where: { id: restaurant.authorId },
-          select: {
-            id: true,
-            nickname: true,
-            image: true,
-          },
-        })
-      : null;
-
-    // 리뷰 정보 조회
-    const restaurantReviews = await prisma.review.findMany({
-      where: { restaurantId: id },
-      include: {
-        author: {
-          select: {
-            id: true,
-            nickname: true,
-            image: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    // 즐겨찾기 총 개수 조회
-    const favoriteCnt = await prisma.favorite.count({
-      where: { restaurantId: id },
-    });
-
-    // 로그인 사용자의 즐겨찾기 여부 확인
+    // 로그인 사용자의 즐겨찾기 여부 (비로그인이면 null)
     let isFavorite: boolean | null = null;
     try {
       const user = await getAuthenticatedUser();
@@ -115,23 +81,11 @@ export async function GET(
         },
       });
       isFavorite = !!userFavorite;
-    } catch (authError) {
-      // 인증 오류 시 isFavorite은 null로 유지
+    } catch {
       isFavorite = null;
     }
 
-    // 결과 조합
-    const result = {
-      ...restaurant,
-      viewCount,
-      author: author || null,
-      reviews: restaurantReviews,
-      isFavorite,
-      favoriteCnt,
-      _count: {
-        reviews: restaurantReviews.length,
-      },
-    };
+    const result = { ...restaurant, viewCount, isFavorite };
 
     const response = NextResponse.json(result);
     response.cookies.set(VIEW_COOKIE, serializeViewCookie(viewEntries), {
@@ -254,6 +208,7 @@ export async function PUT(
       author: author || null,
     };
 
+    revalidatePath(restaurantPath(id)); // 서버 렌더링된 상세 페이지 캐시 갱신
     return NextResponse.json(result);
   } catch (error) {
     console.error("맛집 수정 오류:", error);
@@ -284,6 +239,7 @@ export async function DELETE(
 
     await prisma.restaurant.delete({ where: { id } });
 
+    revalidatePath(restaurantPath(id));
     return NextResponse.json({ message: "맛집이 삭제되었습니다." });
   } catch (error) {
     console.error("맛집 삭제 오류:", error);

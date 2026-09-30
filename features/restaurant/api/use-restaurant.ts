@@ -16,7 +16,10 @@ import {
   putRestaurantInfo,
 } from "@/shared/api/naver-map";
 import { RequestGetRestaurantParams } from "@/shared/api/model/common";
-import { RestaurantFormData } from "@/shared/api/model/restaurant";
+import {
+  RestaurantFormData,
+  ResponseRestaurant,
+} from "@/shared/api/model/restaurant";
 
 export const restaurantKeys = {
   all: ["restaurant"] as const,
@@ -58,12 +61,19 @@ export const useRestaurantRanking = () =>
     staleTime: 60_000,
   });
 
-export const useRestaurantDetail = (restaurantId: string) =>
+export const useRestaurantDetail = (
+  restaurantId: string,
+  initialData?: ResponseRestaurant,
+) =>
   useQuery({
     enabled: !!restaurantId,
     queryKey: restaurantKeys.detail(restaurantId),
     queryFn: () => getRestaurantDetail({ restaurantId }),
     staleTime: 30_000,
+    // 서버 렌더링 값으로 먼저 그리고, 마운트 시 바로 다시 조회한다
+    // (조회수 집계·로그인 사용자의 즐겨찾기 여부는 API에서만 처리)
+    initialData,
+    initialDataUpdatedAt: 0,
   });
 
 export const useRestaurantSearch = (query: string) =>

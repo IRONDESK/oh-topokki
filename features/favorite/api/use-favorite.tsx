@@ -90,7 +90,6 @@ const handleLogoutFavorite = async () => {
   });
 
   if (confirm) {
-    overlayKit.close("restaurant-detail");
     overlayKit.open((controller) => (
       <LoginModal message="로그인 후에 작성할 수 있어요" {...controller} />
     ));

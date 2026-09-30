@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { josa } from "es-hangul";
-import { useRouter } from "next/navigation";
 
 import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import Icons from "@/shared/ui/Icons";
@@ -16,6 +15,7 @@ import {
   useUpdateRestaurant,
 } from "@/features/restaurant/api/use-restaurant";
 import { dialog } from "@/shared/ui/feature/dialog";
+import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 
 type Props = {
   setStep: (step: number) => void;
@@ -30,7 +30,7 @@ const RestaurantDetailForm = ({ setStep, restaurantId, onComplete }: Props) => {
   const formData = watch();
   const { mutate, isPending } = useCreateRestaurant();
   const { mutate: update, isPending: isUpdatePending } = useUpdateRestaurant();
-  const router = useRouter();
+  const openDetail = useOpenRestaurantDetail();
 
   const isEdit = !!restaurantId;
   const isSaving = isPending || isUpdatePending;
@@ -62,7 +62,8 @@ const RestaurantDetailForm = ({ setStep, restaurantId, onComplete }: Props) => {
     mutate(data, {
       onSuccess: async (restaurant) => {
         await dialog.alert({ title: "새 맛집을 등록했어요" });
-        router.replace(`/?restaurant=${restaurant.id}`);
+        onComplete?.();
+        openDetail(restaurant.id);
       },
       onError: async (error) => {
         dialog.alert({ title: "등록에 실패했어요", contents: error.message });

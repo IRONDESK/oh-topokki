@@ -9,6 +9,7 @@ import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 import { dialog } from "@/shared/ui/feature/dialog";
 import Icons from "@/shared/ui/Icons";
 import { cn } from "@/shared/lib/cn";
+import { restaurantPath } from "@/shared/constants/site";
 
 // 수정 폼(react-hook-form 등)은 작성자만 쓰므로 필요할 때 로드
 const RestaurantForm = dynamic(
@@ -81,7 +82,7 @@ export default function DetailHeader({
     share({
       title: `${name} - 오늘의떡볶이`,
       text: `${name}의 떡볶이 정보를 확인해보세요!`,
-      url: window.location.href,
+      url: `${window.location.origin}${restaurantPath(restaurantId)}`,
     });
 
   return (

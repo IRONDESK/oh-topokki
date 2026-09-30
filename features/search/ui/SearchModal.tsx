@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { debounce } from "es-toolkit";
-import { useRouter } from "next/navigation";
 import { useMapFocus } from "@/shared/hooks/useMapFocus";
 import { useDistanceFromUser } from "@/shared/hooks/useUserLocation";
+import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 
 import ScrolledBottomSheet, {
   type SheetController,
@@ -21,7 +21,7 @@ type Props = {
 };
 
 function SearchModal({ controller }: Props) {
-  const router = useRouter();
+  const openDetail = useOpenRestaurantDetail();
   const focusMap = useMapFocus();
   const distanceFromUser = useDistanceFromUser();
 
@@ -41,9 +41,6 @@ function SearchModal({ controller }: Props) {
     };
   }, [input]);
 
-  const onClickDetail = (id: string) => {
-    router.push(`/?restaurant=${id}`);
-  };
 
   return (
     <ScrolledBottomSheet controller={controller}>
@@ -132,7 +129,7 @@ function SearchModal({ controller }: Props) {
                     <div className="flex gap-2 w-full mb-2">
                       <button
                         type="button"
-                        onClick={() => onClickDetail(item.id)}
+                        onClick={() => openDetail(item.id, item)}
                         className={buttons({
                           fill: "outlined",
                           size: "medium",

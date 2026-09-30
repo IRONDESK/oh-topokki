@@ -3,10 +3,25 @@ import "@/shared/style/global.css";
 import localFont from "next/font/local";
 import Layout from "@/shared/layouts/Layout";
 import Providers from "@/app/Providers";
+import { SITE_NAME, SITE_URL } from "@/shared/constants/site";
+
+const DESCRIPTION =
+  "밀떡·쌀떡, 소스, 매운맛 단계, 순대까지 — 떡볶이 맛집을 지도에서 자세하게 찾아보세요";
 
 export const metadata: Metadata = {
-  title: "오떠끼 - 오늘의 떡볶이를 찾아보세요",
-  description: "떡볶이, 분식집을 자세하게 찾아볼 수 있어요",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} - 오늘의 떡볶이를 찾아보세요`,
+    template: `%s | ${SITE_NAME}`, // 하위 페이지: "선화당 - 부산 동구 판떡볶이 | 오떠끼"
+  },
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "ko_KR",
+    title: `${SITE_NAME} - 오늘의 떡볶이를 찾아보세요`,
+    description: DESCRIPTION,
+  },
 };
 export const viewport: Viewport = {
   width: "device-width",

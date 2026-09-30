@@ -3,6 +3,7 @@ import { useMapFocus } from "@/shared/hooks/useMapFocus";
 import { useRestaurantDetail } from "@/features/restaurant/api/use-restaurant";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
 import { TOPOKKI_TYPE } from "@/shared/constants/restaurant";
+import type { RestaurantPreview } from "@/features/restaurant/model/detail-navigation";
 import { getYoutubeIds } from "@/shared/lib/youtube";
 
 import Icons from "@/shared/ui/Icons";
@@ -17,22 +18,25 @@ import DetailInfo from "@/features/restaurant/ui/detail/DetailInfo";
 import InfluencerSection from "@/features/restaurant/ui/detail/InfluencerSection";
 import RestaurantReview from "@/features/restaurant/ui/detail/RestaurantReview";
 
-/** 상세 조회 전에 먼저 보여줄 수 있는 값 (마커·즐겨찾기 목록이 이미 가진 필드) */
-export type RestaurantPreview = Pick<
-  ResponseRestaurant,
-  "name" | "address" | "price" | "topokkiType" | "latitude" | "longitude"
->;
-
 type Props = {
   restaurantId: string;
   preview?: RestaurantPreview;
+  initialData?: ResponseRestaurant; // 서버 렌더링 데이터
   controller: SheetController;
 };
 
 const DIVIDER_CLS = "shrink-0 mt-6 mb-[18px] w-full h-2 bg-gray-100";
 
-function RestaurantDetail({ restaurantId, preview, controller }: Props) {
-  const { data: restaurant, isLoading } = useRestaurantDetail(restaurantId);
+function RestaurantDetail({
+  restaurantId,
+  preview,
+  initialData,
+  controller,
+}: Props) {
+  const { data: restaurant, isLoading } = useRestaurantDetail(
+    restaurantId,
+    initialData,
+  );
   const focusMap = useMapFocus();
 
   // 조회 전엔 preview 값으로 먼저 그린다
