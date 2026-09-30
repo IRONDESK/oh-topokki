@@ -57,6 +57,7 @@ model Restaurant {
 
   topokkiType    TopokkiType?
   price          Int?
+  priceServings  Int          @default(1) // price가 몇 인분 기준인지 (2인 세트만 파는 곳 등)
   riceTypes      String[]     @default([])
   sauceTypes     String[]     @default([])
   spiciness      Int?

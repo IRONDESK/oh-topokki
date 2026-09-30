@@ -23,6 +23,7 @@ export const RestaurantFormProvider = ({
       phoneNumber: "",
       topokkiType: "",
       price: 0,
+      priceServings: "1",
       riceTypes: [],
       sauceTypes: [],
       spiciness: null,

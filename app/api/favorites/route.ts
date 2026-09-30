@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
             latitude: true,
             longitude: true,
             price: true,
+            priceServings: true,
           },
         },
       },
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
       latitude: favorite.restaurant.latitude,
       longitude: favorite.restaurant.longitude,
       price: favorite.restaurant.price,
+      priceServings: favorite.restaurant.priceServings,
       addedAt: favorite.createdAt,
       memo: favorite.memo,
     }));

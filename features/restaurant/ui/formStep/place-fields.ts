@@ -82,7 +82,24 @@ export const placeFields: PlaceField[] = [
     detailTitle: "가격은 얼마인가요?",
     name: "price",
     type: "number",
-    placeholder: "1인분 기준으로 알려주세요",
+    placeholder: "기본 메뉴 가격을 알려주세요",
+  },
+  {
+    title: "가격 기준",
+    detailTitle: "그 가격은 몇 인분 기준인가요?",
+    name: "priceServings",
+    type: "radio",
+    items: [
+      { label: "1인분", value: "1", description: null, icon: null },
+      {
+        label: "2인분",
+        value: "2",
+        description: "2인 세트 등",
+        icon: null,
+      },
+      { label: "3인분", value: "3", description: null, icon: null },
+      { label: "4인분", value: "4", description: null, icon: null },
+    ],
   },
   {
     title: "떡 종류",

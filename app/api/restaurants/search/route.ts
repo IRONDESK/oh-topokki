@@ -84,6 +84,7 @@ export async function GET(req: NextRequest) {
         latitude: true,
         longitude: true,
         price: true,
+        priceServings: true,
         topokkiType: true,
         riceTypes: true,
         spiciness: true,

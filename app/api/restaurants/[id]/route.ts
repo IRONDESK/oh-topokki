@@ -146,6 +146,7 @@ export async function PUT(
       phoneNumber,
       topokkiType,
       price,
+      priceServings,
       riceTypes = [],
       sauceTypes = [],
       spiciness,
@@ -177,6 +178,8 @@ export async function PUT(
     if (latitude) updateData.latitude = parseFloat(latitude);
     if (longitude) updateData.longitude = parseFloat(longitude);
     if (price) updateData.price = parseInt(price);
+    if (priceServings)
+      updateData.priceServings = Math.max(parseInt(priceServings, 10) || 1, 1);
     if (spiciness !== undefined) updateData.spiciness = parseInt(spiciness);
 
     const updatedRestaurant = await prisma.restaurant.update({

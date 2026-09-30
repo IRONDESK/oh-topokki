@@ -80,7 +80,11 @@ function RestaurantDetail({
               <span className="text-lg font-semibold text-gray-900">
                 {summary.price.toLocaleString()}원
               </span>
-              <span className="text-sm text-gray-500">1인 기본</span>
+              <span className="text-sm text-gray-500">
+                {(summary.priceServings ?? 1) > 1
+                  ? `${summary.priceServings}인 기준`
+                  : "1인 기본"}
+              </span>
             </p>
           )}
 

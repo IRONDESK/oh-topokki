@@ -70,7 +70,7 @@ const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
             </div>
             <div class="${HOVER_FOOT_CLS}">
               <span class="text-xs font-normal text-gray-500">${restaurant.address.split(" ").slice(0, 2).join(" ")} · 리뷰 ${restaurant.reviewCount}</span>
-              <span class="shrink-0 text-sm font-semibold text-gray-900">${restaurant.price?.toLocaleString()}원</span>
+              <span class="shrink-0 text-sm font-semibold text-gray-900">${restaurant.price?.toLocaleString()}원${(restaurant.priceServings ?? 1) > 1 ? `<span class="font-normal text-gray-500"> ${restaurant.priceServings}인</span>` : ""}</span>
             </div>
           </div>
         `,

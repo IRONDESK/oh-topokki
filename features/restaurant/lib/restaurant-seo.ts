@@ -19,7 +19,8 @@ function describe(r: ResponseRestaurant) {
     r.riceTypes.length > 0 && labels(r.riceTypes, RICE_TYPE),
     r.sauceTypes.length > 0 && `${labels(r.sauceTypes, SAUCE_TYPE)} 소스`,
     r.spiciness != null && `매운맛 ${r.spiciness}단계`,
-    r.price && `${r.price.toLocaleString("ko-KR")}원`,
+    r.price &&
+      `${r.price.toLocaleString("ko-KR")}원${(r.priceServings ?? 1) > 1 ? ` (${r.priceServings}인)` : ""}`,
     r.reviewCount > 0 && `리뷰 ${r.reviewCount}개`,
   ]
     .filter(Boolean)
@@ -76,7 +77,10 @@ export function buildRestaurantJsonLd(r: ResponseRestaurant) {
       longitude: r.longitude,
     },
     ...(r.phoneNumber && { telephone: r.phoneNumber }),
-    ...(r.price && { priceRange: `₩${r.price.toLocaleString("ko-KR")}~` }),
+    // 세트(n인분) 가격은 1인 기준으로 환산해 시작가로 표기
+    ...(r.price && {
+      priceRange: `₩${Math.round(r.price / (r.priceServings || 1)).toLocaleString("ko-KR")}~`,
+    }),
     ...(rated.length > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",

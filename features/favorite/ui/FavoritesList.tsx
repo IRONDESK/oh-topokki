@@ -78,6 +78,8 @@ function FavoritesList({ controller }: Props) {
                       .map((kind) => RICE_TYPE[kind] || kind)
                       .join(", ")}{" "}
                     {item.price?.toLocaleString()}원
+                    {(item.priceServings ?? 1) > 1 &&
+                      `(${item.priceServings}인)`}
                   </span>
                 </p>
               </div>

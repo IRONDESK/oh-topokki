@@ -10,6 +10,7 @@ export type ResponseRestaurant = {
   authorId: string;
   topokkiType: "ontable" | "pan" | "soup";
   price: number;
+  priceServings: number; // price가 몇 인분 기준인지 (1이면 1인분)
   riceTypes: string[];
   sauceTypes: string[];
   spiciness: number;
@@ -85,6 +86,7 @@ export type ResponseFavorite = {
   latitude: number;
   longitude: number;
   price: number;
+  priceServings: number;
   addedAt: string;
   memo: string | null;
 };
@@ -125,6 +127,7 @@ export type RestaurantFormData = {
   phoneNumber: string;
   topokkiType: string;
   price: number;
+  priceServings: string; // radio 값이라 문자열 ("1" | "2" | "3" | "4")
   riceTypes: string[];
   sauceTypes: string[];
   spiciness: number | null;

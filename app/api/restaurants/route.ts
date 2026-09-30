@@ -65,9 +65,17 @@ export async function GET(req: NextRequest) {
     if (maxPriceParam) {
       const maxPrice = parseInt(maxPriceParam, 10);
       if (!isNaN(maxPrice)) {
-        where.price = {
-          lte: maxPrice,
-        };
+        // 세트(n인분) 가격은 1인분 기준으로 환산해 비교:
+        // price / priceServings <= maxPrice  ⇔  price <= maxPrice * priceServings.
+        // Prisma where로는 컬럼 간 연산이 안 되므로 인분 수별 OR로 풀어쓴다.
+        where.AND = [
+          {
+            OR: Array.from({ length: 8 }, (_, i) => i + 1).map((n) => ({
+              priceServings: n,
+              price: { lte: maxPrice * n },
+            })),
+          },
+        ];
       }
     }
 
@@ -106,6 +114,7 @@ export async function GET(req: NextRequest) {
         latitude: true,
         longitude: true,
         price: true,
+        priceServings: true,
         topokkiType: true,
         riceTypes: true,
         spiciness: true,
@@ -168,6 +177,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       topokkiType,
       price,
+      priceServings,
       riceTypes = [],
       sauceTypes = [],
       spiciness,
@@ -199,6 +209,7 @@ export async function POST(request: NextRequest) {
         // 빈 문자열은 유효한 enum 값이 아니므로 null로 정규화
         topokkiType: topokkiType || null,
         price: price ? parseInt(price) : null,
+        priceServings: Math.max(parseInt(priceServings, 10) || 1, 1),
         sundaeType: sundaeType || null,
         riceTypes,
         sauceTypes,

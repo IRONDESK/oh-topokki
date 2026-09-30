@@ -63,6 +63,7 @@ const toFormValues = (r: ResponseRestaurant): Partial<RestaurantFormData> => ({
   phoneNumber: r.phoneNumber ?? "",
   topokkiType: r.topokkiType ?? "",
   price: r.price ?? 0,
+  priceServings: String(r.priceServings ?? 1),
   riceTypes: r.riceTypes,
   sauceTypes: r.sauceTypes,
   spiciness: r.spiciness ?? null,

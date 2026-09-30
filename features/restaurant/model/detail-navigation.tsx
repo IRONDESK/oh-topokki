@@ -9,7 +9,13 @@ import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
 /** 상세 조회 전에 먼저 보여줄 수 있는 값 (마커·목록이 이미 가진 필드) */
 export type RestaurantPreview = Pick<
   ResponseRestaurant,
-  "name" | "address" | "price" | "topokkiType" | "latitude" | "longitude"
+  | "name"
+  | "address"
+  | "price"
+  | "priceServings"
+  | "topokkiType"
+  | "latitude"
+  | "longitude"
 >;
 
 // 라우트 이동 중(loading.tsx) 시트 헤더를 먼저 그리기 위한 미리보기 값
@@ -35,11 +41,26 @@ export function useOpenRestaurantDetail() {
   return useCallback(
     (restaurantId: string, preview?: RestaurantPreview) => {
       if (preview) {
-        const { name, address, price, topokkiType, latitude, longitude } =
-          preview;
+        const {
+          name,
+          address,
+          price,
+          priceServings,
+          topokkiType,
+          latitude,
+          longitude,
+        } = preview;
         setPreview((prev) => ({
           ...prev,
-          [restaurantId]: { name, address, price, topokkiType, latitude, longitude },
+          [restaurantId]: {
+            name,
+            address,
+            price,
+            priceServings,
+            topokkiType,
+            latitude,
+            longitude,
+          },
         }));
       }
       // 라우트(RSC) 응답을 기다리는 동안 화면이 멈춰 보이지 않도록,
