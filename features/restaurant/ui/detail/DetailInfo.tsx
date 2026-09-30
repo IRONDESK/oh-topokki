@@ -28,22 +28,6 @@ type Row = { label: string; value: ReactNode };
 /** 값이 있는 항목만 만든다 — 데이터가 없으면 라벨도 보이지 않게 */
 function buildRows(r: ResponseRestaurant): Row[] {
   const rows: (Row | false)[] = [
-    {
-      label: "주소",
-      value: (
-        <>
-          {r.address}
-          <button
-            type="button"
-            onClick={() => openNaverMap(r)}
-            className="cursor-pointer ml-1.5 inline-flex items-center whitespace-nowrap align-baseline text-gray-500 hover:text-gray-700"
-          >
-            네이버지도
-            <Icons name="angle-small-right" w="regular" size={15} />
-          </button>
-        </>
-      ),
-    },
     !!r.phoneNumber && {
       label: "전화",
       value: (
@@ -84,7 +68,7 @@ function buildRows(r: ResponseRestaurant): Row[] {
   return rows.filter((row): row is Row => !!row);
 }
 
-/** 주소·전화 + 떡·소스·면·맵기·순대·사이드 등 떡볶이 속성 목록 */
+/** 전화 + 떡·소스·면·맵기·순대·사이드 등 떡볶이 속성 목록. 주소는 구분선 아래 맨 마지막 */
 export default function DetailInfo({
   restaurant,
 }: {
@@ -98,6 +82,21 @@ export default function DetailInfo({
           <dd className="min-w-0 text-gray-900 break-keep">{value}</dd>
         </div>
       ))}
+      <div className="col-span-2 h-px bg-gray-100" />
+      <div className="contents">
+        <dt className="text-gray-500">주소</dt>
+        <dd className="min-w-0 text-gray-900 break-keep">
+          {restaurant.address}
+          <button
+            type="button"
+            onClick={() => openNaverMap(restaurant)}
+            className="cursor-pointer ml-1.5 inline-flex items-center whitespace-nowrap align-baseline text-gray-500 hover:text-gray-700"
+          >
+            네이버지도
+            <Icons name="angle-small-right" w="regular" size={15} />
+          </button>
+        </dd>
+      </div>
     </dl>
   );
 }
