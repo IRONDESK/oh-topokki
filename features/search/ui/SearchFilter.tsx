@@ -148,7 +148,7 @@ function SearchFilter({ filters, onChange, onApply, onReset, resultCount }: Prop
   };
 
   return (
-    <div className="flex flex-col gap-4 pt-1">
+    <div className="flex flex-1 flex-col gap-4 pt-1">
       {SECTIONS.map((section) => (
         <section key={section.key} className="flex flex-col gap-1.5">
           <h3 className="text-sm font-semibold text-gray-500">
@@ -174,7 +174,7 @@ function SearchFilter({ filters, onChange, onApply, onReset, resultCount }: Prop
         </section>
       ))}
 
-      <div className="sticky bottom-0 flex gap-2 pt-2.5 pb-3 bg-white">
+      <div className="sticky bottom-0 mt-auto flex gap-2 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white">
         <button
           type="button"
           className={buttons({ fill: "assistive", size: "medium" })}

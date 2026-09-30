@@ -103,7 +103,8 @@ function SearchModal({ controller }: Props) {
   return (
     <ScrolledBottomSheet controller={controller}>
       {({ expand }) => (
-        <div className="px-4">
+        // 필터 모드에서는 full 높이를 채워 하단 버튼(mt-auto)이 시트 바닥에 붙게 한다
+        <div className={cn("px-4", filterOpen && "flex min-h-full flex-col")}>
           <div className="flex items-center gap-2 px-0.5 py-1 pb-2.5 mb-2.5 border-b border-gray-200">
             <button
               type="button"
