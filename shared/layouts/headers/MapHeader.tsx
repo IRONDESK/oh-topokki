@@ -86,12 +86,12 @@ export default function MapHeader() {
   };
 
   return (
-    <header className="isolate flex flex-col lg:flex-row lg:justify-between lg:w-full gap-0.5 lg:gap-4 pb-1 fixed top-0 w-screen min-h-14 pt-[env(safe-area-inset-top,16px)] text-base font-normal z-200">
+    <header className="isolate flex flex-col lg:flex-row lg:justify-between lg:w-full gap-0.5 lg:gap-4 pb-1 fixed top-0 w-screen min-h-15.5 pt-[calc(4px+env(safe-area-inset-top,16px))] text-base font-normal z-200">
       {/* iOS WebKit은 backdrop-filter + 음수 z-index 자식 조합에서 형제 콘텐츠를 blur 밑에 깔아버림
           → 오버레이는 z-0, 콘텐츠 row는 relative z-10으로 페인트 순서를 명시 (isolate로 헤더 내부에 한정) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 backdrop-blur-sm bg-linear-to-b from-white to-white/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
+        className="pointer-events-none absolute inset-0 z-0 backdrop-blur-sm bg-linear-to-b from-white/85 to-white/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
       />
       <div className="relative z-10 px-3.5 w-full lg:w-fit flex justify-between items-center gap-0.5 lg:gap-3.5">
         <div className="flex justify-center items-center w-25 h-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.75)]">
@@ -175,7 +175,9 @@ export default function MapHeader() {
                               {item.name}
                             </span>
                             <span className="shrink-0 text-sm text-gray-400">
-                              {item.unrank ? "최근 등록" : `조회 ${item.viewCount}`}
+                              {item.unrank
+                                ? "최근 등록"
+                                : `조회 ${item.viewCount}`}
                             </span>
                           </button>
                         </li>
