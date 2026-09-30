@@ -86,12 +86,14 @@ export default function MapHeader() {
   };
 
   return (
-    <header className="flex flex-col lg:flex-row lg:justify-between lg:w-full gap-0.5 lg:gap-4 pb-1 fixed top-0 w-screen min-h-14 pt-[env(safe-area-inset-top,16px)] text-base font-normal z-200">
+    <header className="isolate flex flex-col lg:flex-row lg:justify-between lg:w-full gap-0.5 lg:gap-4 pb-1 fixed top-0 w-screen min-h-14 pt-[env(safe-area-inset-top,16px)] text-base font-normal z-200">
+      {/* iOS WebKit은 backdrop-filter + 음수 z-index 자식 조합에서 형제 콘텐츠를 blur 밑에 깔아버림
+          → 오버레이는 z-0, 콘텐츠 row는 relative z-10으로 페인트 순서를 명시 (isolate로 헤더 내부에 한정) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 backdrop-blur-sm bg-linear-to-b from-white to-white/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
+        className="pointer-events-none absolute inset-0 z-0 backdrop-blur-sm bg-linear-to-b from-white to-white/0 mask-[linear-gradient(to_bottom,black_55%,transparent)]"
       />
-      <div className="px-3.5 w-full lg:w-fit flex justify-between items-center gap-0.5 lg:gap-3.5">
+      <div className="relative z-10 px-3.5 w-full lg:w-fit flex justify-between items-center gap-0.5 lg:gap-3.5">
         <div className="flex justify-center items-center w-25 h-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.75)]">
           <Logo className="h-10" />
         </div>
@@ -199,7 +201,7 @@ export default function MapHeader() {
           </button>
         </div>
       </div>
-      <div className="flex items-center py-1 px-2.5 gap-3">
+      <div className="relative z-10 flex items-center py-1 px-2.5 gap-3">
         <ul className="inline-flex gap-1 overflow-x-auto items-center pb-0.75">
           {FILTERS.map((filter) => (
             <li
