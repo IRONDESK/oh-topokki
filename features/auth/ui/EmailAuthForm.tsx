@@ -14,7 +14,9 @@ import type { LegalTab } from "@/features/legal/ui/LegalTabs";
 const LegalSheet = dynamic(() => import("@/features/legal/ui/LegalSheet"));
 
 const openLegal = (tab: LegalTab) =>
-  overlay.open((controller) => <LegalSheet controller={controller} tab={tab} />);
+  overlay.open((controller) => (
+    <LegalSheet controller={controller} tab={tab} />
+  ));
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -109,9 +111,11 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
             type="button"
             onClick={() => setNickname(generateNickname())}
             aria-label="닉네임 다시 생성"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full cursor-pointer flex items-center justify-center text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+            className="absolute right-0 top-0 h-full pr-3 pl-2 group cursor-pointer flex items-center justify-center"
           >
-            <Icons name="refresh" w="bold" size={16} t="round" />
+            <span className="size-10 rounded-full flex items-center justify-center text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-600">
+              <Icons name="refresh" w="bold" size={18} t="round" />
+            </span>
           </button>
         </div>
       )}
