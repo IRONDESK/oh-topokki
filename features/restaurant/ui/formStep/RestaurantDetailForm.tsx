@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { josa } from "es-hangul";
 import { useRouter } from "next/navigation";
 
-import { RestaurantFormData } from "../RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import Icons from "@/shared/ui/Icons";
 import { placeFields } from "@/features/restaurant/ui/formStep/place-fields";
 import { FieldSection } from "@/features/restaurant/ui/formStep/FieldSection";

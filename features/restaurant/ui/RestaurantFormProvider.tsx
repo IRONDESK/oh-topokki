@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { RestaurantFormData } from "./RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 
 interface RestaurantFormProviderProps {
   children: ReactNode;

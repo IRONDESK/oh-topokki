@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import { overlay } from "overlay-kit";
@@ -7,11 +8,15 @@ import { useAuth } from "@/shared/context/AuthContext";
 
 import Icons from "@/shared/ui/Icons";
 import { glassContainer } from "@/shared/style/variants";
-import RestaurantRegisterForm from "@/features/restaurant/ui/RestaurantForm";
 import LoginModal from "@/features/auth/ui/LoginModal";
 import SearchModal from "@/features/search/ui/SearchModal";
 import FavoritesList from "@/features/favorite/ui/FavoritesList";
 import { dialog } from "@/shared/ui/feature/dialog";
+
+// 등록 폼(react-hook-form·필드 컴포넌트)은 버튼을 눌렀을 때만 필요하므로 분리 로드
+const RestaurantRegisterForm = dynamic(
+  () => import("@/features/restaurant/ui/RestaurantForm"),
+);
 
 const containerCls =
   "select-none fixed bottom-0 left-1/2 -translate-x-1/2 mb-[calc(env(safe-area-inset-bottom,16px)-4px)] flex items-center gap-2 pb-4 w-[min(90vw,380px)]";

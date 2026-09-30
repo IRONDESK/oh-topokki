@@ -1,15 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useAtom } from "jotai";
-import { NaverMap } from "@/shared/types/naver-maps";
-import { useNaverMap } from "@/shared/hooks/useNaverMap";
+import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
 import {
   useRestaurantCount,
   useRestaurantList,
 } from "@/features/restaurant/api/use-restaurant";
 
-import MapView from "@/app/map/MapView";
+import MapView from "./MapView";
 import RestaurantMarker from "./RestaurantMarker";
 import Spinner from "@/shared/ui/Spinner";
 import MapHeader from "@/shared/layouts/headers/MapHeader";
@@ -17,17 +15,9 @@ import Icons from "@/shared/ui/Icons";
 import { naverMapAtom } from "@/shared/store/locationStore";
 import { mapFilterAtom } from "@/shared/store/filterStore";
 
-interface TteokbokkiMapProps {
-  center?: {
-    lat: number;
-    lng: number;
-  };
-}
-
-const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
-  const [map, setMap] = useAtom(naverMapAtom);
-  const [filters] = useAtom(mapFilterAtom);
-  const { naver } = useNaverMap();
+const TopokkiMap = () => {
+  const map = useAtomValue(naverMapAtom);
+  const filters = useAtomValue(mapFilterAtom);
 
   // 지도 이동이 끝날 때마다(idle) 화면 영역에 맞는 중심좌표/반경을 갱신해 다시 조회한다.
   const [viewport, setViewport] = useState<{
@@ -37,7 +27,8 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   } | null>(null);
 
   useEffect(() => {
-    if (!map || !naver) return;
+    if (!map) return;
+    const { Event } = window.naver.maps;
 
     const syncViewport = () => {
       const c = map.getCenter();
@@ -64,9 +55,9 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
     };
 
     syncViewport(); // 초기 로드 시 1회
-    naver.Event.addListener(map, "idle", syncViewport);
-    return () => naver.Event.removeListener(map, "idle", syncViewport);
-  }, [map, naver]);
+    const listener = Event.addListener(map, "idle", syncViewport);
+    return () => Event.removeListener(listener);
+  }, [map]);
 
   const queryParams = {
     lat: viewport?.lat,
@@ -83,24 +74,13 @@ const TopokkiMap = ({ center }: TteokbokkiMapProps) => {
   } = useRestaurantList(queryParams, { enabled: !!map && !!viewport });
   const { data: totalCount } = useRestaurantCount();
 
-  const handleMapLoad = useCallback(
-    (mapInstance: NaverMap) => {
-      setMap(mapInstance);
-    },
-    [setMap],
-  );
-
   return (
     <div className="relative w-full h-[calc(100vh-1px)] overflow-hidden">
       <MapHeader />
-      <MapView center={center} onMapLoad={handleMapLoad} />
+      <MapView />
 
-      {map && naver && restaurants && restaurants?.length > 0 && (
-        <RestaurantMarker
-          map={map}
-          naver={naver}
-          restaurants={restaurants ?? []}
-        />
+      {map && restaurants && restaurants.length > 0 && (
+        <RestaurantMarker map={map} restaurants={restaurants} />
       )}
 
       {isLoading && (

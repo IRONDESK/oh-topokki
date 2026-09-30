@@ -1,32 +1,29 @@
-import { ComponentProps, useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { debounce } from "es-toolkit";
-import { useMapLocation } from "@/shared/hooks/useMapLocation";
-import { useAtomValue } from "jotai";
-import type { OverlayControllerComponent } from "overlay-kit";
-import { naverMapAtom } from "@/shared/store/locationStore";
 import { useRouter } from "next/navigation";
-import { useNaverMap } from "@/shared/hooks/useNaverMap";
+import { useMapFocus } from "@/shared/hooks/useMapFocus";
+import { useDistanceFromUser } from "@/shared/hooks/useUserLocation";
 
-import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
+import ScrolledBottomSheet, {
+  type SheetController,
+} from "@/shared/ui/ScrolledBottomSheet";
 import { InputHead } from "@/shared/ui/InputHead";
 import { useRestaurantSearch } from "@/features/restaurant/api/use-restaurant";
 import HighlightKeyword from "@/features/search/ui/Highlight";
 import Icons from "@/shared/ui/Icons";
 import Spinner from "@/shared/ui/Spinner";
+import NaverMapButton from "@/shared/ui/NaverMapButton";
 import { buttons } from "@/shared/style/variants";
 import { TOPOKKI_TYPE } from "@/shared/constants/restaurant";
-import NaverMapIcon from "@/assets/navermap.webp";
 
 type Props = {
-  controller: ComponentProps<OverlayControllerComponent>;
+  controller: SheetController;
 };
 
 function SearchModal({ controller }: Props) {
   const router = useRouter();
-  const { naver } = useNaverMap();
-  const map = useAtomValue(naverMapAtom);
-  const { getFormattedDistanceFromCurrent } = useMapLocation();
+  const focusMap = useMapFocus();
+  const distanceFromUser = useDistanceFromUser();
 
   const [input, setInput] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -44,33 +41,9 @@ function SearchModal({ controller }: Props) {
     };
   }, [input]);
 
-  useEffect(() => {
-    return () => {
-      setInput("");
-      setDebounced("");
-    };
-  }, []);
-
-  const onClickRestaurant = (location: {
-    restaurantId: string;
-    lat: number;
-    lng: number;
-  }) => {
-    if (!map || !naver) return;
-    const offsetLat = 0.00195;
-    const targetLocation = new naver.LatLng(
-      location.lat - offsetLat,
-      location.lng,
-    );
-    map.setCenter(targetLocation);
-    map.setZoom(17);
-    setSelected(location.restaurantId);
-  };
-
   const onClickDetail = (id: string) => {
     router.push(`/?restaurant=${id}`);
   };
-  const openNaverMapView = (_location: { lat: number; lng: number }) => {};
 
   return (
     <ScrolledBottomSheet controller={controller}>
@@ -102,13 +75,10 @@ function SearchModal({ controller }: Props) {
               return (
                 <div
                   key={item.id}
-                  onClick={() =>
-                    onClickRestaurant({
-                      lat: item.latitude,
-                      lng: item.longitude,
-                      restaurantId: item.id,
-                    })
-                  }
+                  onClick={() => {
+                    focusMap({ lat: item.latitude, lng: item.longitude });
+                    setSelected(item.id);
+                  }}
                   className="flex flex-col gap-3 cursor-pointer w-full first-of-type:pt-2.5"
                 >
                   <div className="flex gap-3 w-full">
@@ -133,10 +103,8 @@ function SearchModal({ controller }: Props) {
                           id="distance"
                           className="text-sm font-normal text-gray-500"
                         >
-                          {getFormattedDistanceFromCurrent(
-                            item.latitude,
-                            item.longitude,
-                          ) || "-"}
+                          {distanceFromUser(item.latitude, item.longitude) ??
+                            "-"}
                         </span>
                       </p>
                       {matchedTexts.length > 0 && (
@@ -172,27 +140,7 @@ function SearchModal({ controller }: Props) {
                       >
                         상세보기
                       </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openNaverMapView({
-                            lat: item.latitude,
-                            lng: item.longitude,
-                          })
-                        }
-                        className={buttons({
-                          fill: "assistive",
-                          size: "medium",
-                        })}
-                      >
-                        <Image
-                          src={NaverMapIcon}
-                          alt=""
-                          width={26}
-                          height={26}
-                        />
-                        지도앱
-                      </button>
+                      <NaverMapButton place={item} />
                     </div>
                   )}
                 </div>

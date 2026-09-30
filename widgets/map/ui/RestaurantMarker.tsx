@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { overlay } from "overlay-kit";
-import { NaverMap, NaverMaps, NaverMarker } from "@/shared/types/naver-maps";
+import { NaverMap, NaverMarker } from "@/shared/types/naver-maps";
 import { ResponseRestaurant } from "@/shared/api/model/restaurant";
-import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
-import { RICE_TYPE } from "@/shared/constants/restaurant";
+import { openRestaurantDetail } from "@/features/restaurant/ui/detail/openRestaurantDetail";
+import { RICE_TYPE, TOPOKKI_TYPE_ABBR } from "@/shared/constants/restaurant";
 
 interface RestaurantMarkerProps {
   map: NaverMap;
-  naver: NaverMaps;
   restaurants: ResponseRestaurant[];
 }
 
@@ -23,13 +21,10 @@ const HOVER_META_CLS =
   "flex items-center gap-1 text-xs font-medium text-gray-600";
 const HOVER_FOOT_CLS = "flex items-center justify-between w-full gap-2";
 
-const RestaurantMarker = ({
-  map,
-  naver,
-  restaurants,
-}: RestaurantMarkerProps) => {
+const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
   useEffect(() => {
-    if (!map || !naver || !restaurants.length) return;
+    if (!restaurants.length) return;
+    const naver = window.naver.maps;
 
     const markers: NaverMarker[] = [];
 
@@ -55,30 +50,10 @@ const RestaurantMarker = ({
         icon: markerIcon,
       });
 
-      naver.Event.addListener(marker, "click", () => {
-        const offsetLat = 0.00195;
-        const adjustedPosition = new naver.LatLng(
-          restaurant.latitude - offsetLat,
-          restaurant.longitude,
-        );
-
-        map.setCenter(adjustedPosition);
-        map.setZoom(17);
-
-        overlay.open(
-          (controller) => (
-            <RestaurantDetail
-              restaurantId={restaurant.id}
-              restaurantName={restaurant.name}
-              topokkiType={restaurant.topokkiType}
-              price={restaurant.price}
-              address={restaurant.address}
-              controller={controller}
-            />
-          ),
-          { overlayId: "restaurant-detail" },
-        );
-      });
+      // 지도 이동은 상세 시트가 preview 좌표로 처리한다
+      naver.Event.addListener(marker, "click", () =>
+        openRestaurantDetail(restaurant.id, { preview: restaurant }),
+      );
 
       const infoWindow = new naver.InfoWindow({
         content: `
@@ -121,15 +96,9 @@ const RestaurantMarker = ({
         marker.setMap(null);
       });
     };
-  }, [map, naver, restaurants]);
+  }, [map, restaurants]);
 
   return null;
-};
-
-const TOPOKKI_TYPE_ABBR: Record<string, string> = {
-  ontable: "즉떡",
-  pan: "판떡",
-  soup: "국물",
 };
 
 export default RestaurantMarker;

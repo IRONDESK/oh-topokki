@@ -1,6 +1,6 @@
 import { http, isHttpError } from "@/shared/lib/http";
 import { NaverPlaceSearchResult } from "@/shared/api/model/naver-map";
-import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import {
   PaginationDetailResponse,
   PaginationResponse,

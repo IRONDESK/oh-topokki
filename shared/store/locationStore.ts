@@ -6,66 +6,56 @@ export interface Location {
   lng: number;
 }
 
+// 위치를 못 가져올 때 쓰는 기본 위치 (서울시청)
+export const DEFAULT_LOCATION: Location = { lat: 37.5665, lng: 126.978 };
+
 // 네이버 지도 instance
 export const naverMapAtom = atom<NaverMap | null>(null);
 
 // 현재 위치 atom (지도 중심점)
 export const currentLocationAtom = atom<Location | null>(null);
 
-// 실제 GPS 위치 atom
+// 실제 GPS 위치 atom (거리 계산용, 실패 시 null)
 export const userGpsLocationAtom = atom<Location | null>(null);
 
-// 위치 로딩 상태 atom
-export const isLocationLoadingAtom = atom(false);
+const requestPosition = (options: PositionOptions) =>
+  new Promise<GeolocationPosition>((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject, options),
+  );
 
-// 위치 에러 상태 atom
-export const locationErrorAtom = atom<string | null>(null);
+// 여러 곳에서 동시에 호출돼도(StrictMode 이중 effect 등) 요청은 한 번만 보낸다.
+let pending: Promise<void> | null = null;
 
 // 위치 정보 가져오기 action atom
-export const getUserLocationAtom = atom(
-  null,
-  async (get, set) => {
-    if (!navigator.geolocation) {
-      set(locationErrorAtom, "위치 서비스가 지원되지 않습니다.");
-      return;
-    }
+export const getUserLocationAtom = atom(null, (_get, set) => {
+  if (pending) return pending;
 
-    set(isLocationLoadingAtom, true);
-    set(locationErrorAtom, null);
-
+  pending = (async () => {
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000, // 5분 캐시
-        });
-      });
-
-      const newLocation: Location = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-
-      set(currentLocationAtom, newLocation);
-      set(userGpsLocationAtom, newLocation);
-    } catch (error) {
-      // GeolocationPositionError는 속성이 non-enumerable라 그냥 찍으면 {}로 보인다.
-      // code(1=권한거부/비보안출처, 2=위치불가, 3=타임아웃)와 message를 명시적으로 로깅.
-      if (error && typeof error === "object" && "code" in error) {
-        const geoError = error as GeolocationPositionError;
-        console.error(
-          `위치 정보 가져오기 실패 (code=${geoError.code}): ${geoError.message}`,
-        );
-      } else {
-        console.error("위치 정보 가져오기 실패:", error);
+      if (!("geolocation" in navigator)) {
+        throw new Error("위치 서비스가 지원되지 않습니다.");
       }
-      set(locationErrorAtom, "위치 정보를 가져올 수 없습니다.");
-      // 기본 위치 (서울시청)으로 설정
-      set(currentLocationAtom, { lat: 37.5665, lng: 126.978 });
-      set(userGpsLocationAtom, { lat: 37.5665, lng: 126.978 });
+      // enableHighAccuracy는 데스크톱/실내에서 타임아웃·POSITION_UNAVAILABLE이 잦아
+      // 먼저 저정밀(와이파이/IP 기반, 빠름)로 받는다. 지도 초기 중심에는 충분.
+      const { coords } = await requestPosition({
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 5 * 60_000,
+      });
+      const location = { lat: coords.latitude, lng: coords.longitude };
+      set(currentLocationAtom, location);
+      set(userGpsLocationAtom, location);
+    } catch (error) {
+      // 권한 거부(1)·위치 불가(2)·타임아웃(3)·비보안 출처(http)는 정상 시나리오라
+      // console.error(dev 에러 오버레이 유발) 대신 warn으로 남기고 기본 위치로 폴백.
+      // GeolocationPositionError는 속성이 non-enumerable라 code/message를 직접 찍는다.
+      const { code, message } = error as Partial<GeolocationPositionError>;
+      console.warn(`위치 정보 가져오기 실패 (code=${code ?? "-"}): ${message}`);
+      set(currentLocationAtom, DEFAULT_LOCATION);
     } finally {
-      set(isLocationLoadingAtom, false);
+      pending = null;
     }
-  }
-);
+  })();
+
+  return pending;
+});

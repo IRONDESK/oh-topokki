@@ -4,12 +4,14 @@ import { useIsDesktop } from "@/shared/hooks/useIsDesktop";
 import Icons from "./Icons";
 import { cn } from "@/shared/lib/cn";
 
+export type SheetController = {
+  close: () => void;
+  isOpen: boolean;
+  unmount: () => void;
+};
+
 type BottomSheetProps = {
-  controller: {
-    close: () => void;
-    isOpen: boolean;
-    unmount: () => void;
-  };
+  controller: SheetController;
   children: ({
     isFull,
     isSticky,
@@ -22,6 +24,13 @@ type BottomSheetProps = {
 const SNAP_DISTANCE = 90; // px, full 토글/닫기 스냅 기준
 const FLICK_VELOCITY = 0.5; // px/ms, 거리가 짧아도 스냅시키는 플릭 속도 기준
 const STICKY_OFFSET = 80; // px, 이만큼 스크롤을 내려야 isSticky 활성화
+const CLOSE_ANIMATION_MS = 300;
+
+/** 닫힘 애니메이션이 끝난 뒤 unmount 한다. */
+export function closeSheet(controller: Pick<SheetController, "close" | "unmount">) {
+  controller.close();
+  setTimeout(controller.unmount, CLOSE_ANIMATION_MS);
+}
 
 export default function ScrolledBottomSheet(props: BottomSheetProps) {
   const { controller, children } = props;
@@ -46,10 +55,7 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
     offset: 0,
   });
 
-  const onClose = () => {
-    controller.close();
-    setTimeout(controller.unmount, 300);
-  };
+  const onClose = () => closeSheet(controller);
 
   const resetDragStyle = () => {
     // 인라인 transform/transition 제거 → className 트랜지션이 다시 동작

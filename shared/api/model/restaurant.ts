@@ -104,3 +104,24 @@ export type ResponseAddFavorite = {
     topokkiType: string;
   };
 };
+
+// 등록/수정 폼 값 (POST/PUT body)
+export type RestaurantFormData = {
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  phoneNumber: string;
+  topokkiType: string;
+  price: number;
+  riceTypes: string[];
+  sauceTypes: string[];
+  spiciness: number | null;
+  canChangeSpicy: boolean;
+  sideMenus: string[];
+  noodleTypes: string[];
+  sundaeType: string;
+  others: string[];
+  recommend: Array<{ type: string; url: string }>;
+  myComment: string;
+};

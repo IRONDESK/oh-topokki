@@ -16,7 +16,7 @@ import {
   putRestaurantInfo,
 } from "@/shared/api/naver-map";
 import { RequestGetRestaurantParams } from "@/shared/api/model/common";
-import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 
 export const restaurantKeys = {
   all: ["restaurant"] as const,

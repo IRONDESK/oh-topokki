@@ -10,13 +10,6 @@ export function useIsDesktop(): boolean {
       // 간단한 모바일 감지 - 모바일이 아니면 데스크톱
       const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-      // 디버깅용 로그
-      console.log('Device Detection Debug:', {
-        userAgent: navigator.userAgent,
-        isMobile,
-        result: !isMobile
-      });
-
       setIsDesktop(!isMobile);
     };
 

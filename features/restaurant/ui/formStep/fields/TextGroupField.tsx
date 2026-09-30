@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { cn } from "@/shared/lib/cn";
-import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import { TextGroupField as TextGroupFieldDef } from "@/features/restaurant/ui/formStep/place-fields";
 import Icons from "@/shared/ui/Icons";
 import { buttons, label } from "@/shared/style/variants";

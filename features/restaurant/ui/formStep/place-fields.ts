@@ -1,5 +1,5 @@
 import type { Path } from "react-hook-form";
-import type { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import type { RestaurantFormData } from "@/shared/api/model/restaurant";
 
 export interface PlaceFieldItem {
   label: string;

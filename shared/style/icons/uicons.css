@@ -1,0 +1,39 @@
+/* 자동 생성 파일 — scripts/build-icons.mjs 로 재생성 */
+@font-face{font-family:uicons-bold-rounded;src:url(./uicons-bold-rounded.woff2) format("woff2");font-display:block}
+[class^=fi-br-]:before,[class*=" fi-br-"]:before{font-family:uicons-bold-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fi-br-cross:before{content:"\f4fa"}
+.fi-br-drawer-empty:before{content:"\f59a"}
+.fi-br-menu-dots:before{content:"\f92d"}
+.fi-br-refresh:before{content:"\fb39"}
+.fi-br-search:before{content:"\fbc0"}
+.fi-br-star:before{content:"\fceb"}
+@font-face{font-family:uicons-regular-rounded;src:url(./uicons-regular-rounded.woff2) format("woff2");font-display:block}
+[class^=fi-rr-]:before,[class*=" fi-rr-"]:before{font-family:uicons-regular-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fi-rr-angle-small-down:before{content:"\f153"}
+.fi-rr-angle-small-right:before{content:"\f155"}
+.fi-rr-eye:before{content:"\f5f8"}
+.fi-rr-pencil:before{content:"\fa29"}
+.fi-rr-pepper:before{content:"\fa37"}
+.fi-rr-refresh:before{content:"\fb34"}
+.fi-rr-share:before{content:"\fbd5"}
+.fi-rr-square:before{content:"\fcd4"}
+.fi-rr-star:before{content:"\fce9"}
+.fi-rr-tags:before{content:"\fd51"}
+.fi-rr-trash:before{content:"\fe17"}
+@font-face{font-family:uicons-regular-straight;src:url(./uicons-regular-straight.woff2) format("woff2");font-display:block}
+[class^=fi-rs-]:before,[class*=" fi-rs-"]:before{font-family:uicons-regular-straight!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fi-rs-cross:before{content:"\f4f9"}
+@font-face{font-family:uicons-solid-rounded;src:url(./uicons-solid-rounded.woff2) format("woff2");font-display:block}
+[class^=fi-sr-]:before,[class*=" fi-sr-"]:before{font-family:uicons-solid-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fi-sr-add:before{content:"\f11a"}
+.fi-sr-arrow-circle-up:before{content:"\f187"}
+.fi-sr-checkbox:before{content:"\f3c1"}
+.fi-sr-map:before{content:"\f8ed"}
+.fi-sr-pepper:before{content:"\fa25"}
+.fi-sr-pepper-hot:before{content:"\fa24"}
+.fi-sr-play:before{content:"\fa7f"}
+.fi-sr-star:before{content:"\fcc1"}
+.fi-sr-triangle-warning:before{content:"\fdeb"}
+@font-face{font-family:uicons-solid-straight;src:url(./uicons-solid-straight.woff2) format("woff2");font-display:block}
+[class^=fi-ss-]:before,[class*=" fi-ss-"]:before{font-family:uicons-solid-straight!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fi-ss-social-network:before{content:"\fc4b"}

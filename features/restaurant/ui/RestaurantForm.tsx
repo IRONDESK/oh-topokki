@@ -9,27 +9,11 @@ import { RestaurantFormProvider } from "./RestaurantFormProvider";
 import PlaceSearchForm from "./formStep/PlaceSearchForm";
 import RestaurantDetailForm from "./formStep/RestaurantDetailForm";
 import { Modal } from "@/shared/ui/Modal";
-import { ResponseRestaurant } from "@/shared/api/model/restaurant";
+import {
+  RestaurantFormData,
+  ResponseRestaurant,
+} from "@/shared/api/model/restaurant";
 
-export type RestaurantFormData = {
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  phoneNumber: string;
-  topokkiType: string;
-  price: number;
-  riceTypes: string[];
-  sauceTypes: string[];
-  spiciness: number | null;
-  canChangeSpicy: boolean;
-  sideMenus: string[];
-  noodleTypes: string[];
-  sundaeType: string;
-  others: string[];
-  recommend: Array<{ type: string; url: string }>;
-  myComment: string;
-};
 
 type FormProps = ComponentProps<OverlayControllerComponent> & {
   // 있으면 수정 모드: 기존 값이 채워진 상태로 상세 스텝부터 시작

@@ -4,40 +4,26 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { overlay } from "overlay-kit";
 
-import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
+import { openRestaurantDetail } from "@/features/restaurant/ui/detail/openRestaurantDetail";
 
-export default function OpenDetailPage(props: { restaurantId: string }) {
-  const { restaurantId } = props;
+/** `/?restaurant=<id>` 딥링크로 진입하면 상세 시트를 열고, 닫히면 URL을 정리한다. */
+export default function OpenDetailPage({
+  restaurantId,
+}: {
+  restaurantId: string;
+}) {
   const router = useRouter();
 
   useEffect(() => {
-    if (restaurantId) {
-      overlay.unmountAll();
-      overlay.open(
-        (controller) => {
-          const newController = {
-            ...controller,
-            unmount() {
-              router.replace("/");
-              controller.unmount();
-            },
-          };
-
-          return (
-            <RestaurantDetail
-              restaurantId={restaurantId}
-              controller={newController}
-            />
-          );
-        },
-        { overlayId: "restaurant-detail" },
-      );
-    }
+    overlay.unmountAll();
+    openRestaurantDetail(restaurantId, {
+      onUnmount: () => router.replace("/"),
+    });
 
     return () => {
       router.replace("/");
     };
-  }, [restaurantId]);
+  }, [restaurantId, router]);
 
   return null;
 }

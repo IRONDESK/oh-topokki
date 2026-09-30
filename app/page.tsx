@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { useMapLocation } from "@/shared/hooks/useMapLocation";
 import { useSearchParams } from "next/navigation";
 
 import TopokkiMap from "@/widgets/map/ui/TopokkiMap";
@@ -18,14 +17,12 @@ function HomeContent() {
 }
 
 export default function Home() {
-  const { currentLocation } = useMapLocation();
-
   return (
     <>
       <Suspense>
         <HomeContent />
       </Suspense>
-      <TopokkiMap center={currentLocation ?? undefined} />
+      <TopokkiMap />
     </>
   );
 }

@@ -22,10 +22,20 @@ export interface NaverMaps {
   Marker: new (options: NaverMarkerOptions) => NaverMarker;
   InfoWindow: new (options: NaverInfoWindowOptions) => NaverInfoWindow;
   Event: {
-    addListener: (target: any, eventName: string, handler: () => void) => void;
-    removeListener: (target: any, eventName: string, handler: () => void) => void;
+    addListener: (
+      target: object,
+      eventName: string,
+      handler: () => void,
+    ) => NaverMapEventListener;
+    // 네이버 API는 (target, event, handler)가 아니라 addListener가 반환한 리스너 객체를 받는다.
+    removeListener: (
+      listener: NaverMapEventListener | NaverMapEventListener[],
+    ) => void;
   };
 }
+
+// addListener 반환값 (removeListener에 그대로 넘긴다)
+export type NaverMapEventListener = { readonly __brand: "NaverMapEventListener" };
 
 export interface NaverMapOptions {
   center: NaverLatLng;
@@ -35,6 +45,8 @@ export interface NaverMapOptions {
   logoControl?: boolean;
   mapDataControl?: boolean;
   zoomControl?: boolean;
+  gl?: boolean;
+  customStyleId?: string;
 }
 
 export interface NaverMarker {

@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
-import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import { TextareaField as TextareaFieldDef } from "@/features/restaurant/ui/formStep/place-fields";
 import {
   FieldShell,

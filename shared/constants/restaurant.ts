@@ -45,3 +45,17 @@ export const SIDE_MENU_TYPE: Record<string, string> = {
   sausage: "비엔나소시지",
   cheese: "치즈",
 } as const;
+
+export const TOPOKKI_TYPE_ABBR: Record<string, string> = {
+  ontable: "즉떡",
+  pan: "판떡",
+  soup: "국물",
+} as const;
+
+export const RATING_MESSAGE: Record<number, string> = {
+  1: "아쉬워요",
+  2: "평범해요",
+  3: "근처라면 가볼만 해요",
+  4: "시간내서 꼭 가보세요",
+  5: "멀어도 꼭 가보세요",
+} as const;

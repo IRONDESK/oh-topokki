@@ -1,51 +1,29 @@
-import "@flaticon/flaticon-uicons/css/all/all.css";
+// 사용하는 아이콘만 서브셋한 폰트/CSS (scripts/build-icons.mjs 로 생성)
+import "@/shared/style/icons/uicons.css";
+import type { IconName } from "@/shared/ui/icon-names";
 
-type Props =
-  | {
-      w?: "bold" | "solid" | "regular" | "thin";
-      t?: "round" | "straight";
-      name: string;
-      size?: number;
-      color?: string;
-    }
-  | {
-      w: "brands";
-      t?: never;
-      name: string;
-      size?: number;
-      color?: string;
-    };
+type Props = {
+  name: IconName;
+  w?: "bold" | "solid" | "regular";
+  t?: "round" | "straight";
+  size?: number;
+  color?: string;
+};
 
-function Icons(props: Props) {
-  const { size = 16, color } = props;
-  if (props.w === "brands") {
-    return (
-      <i
-        className={`fi fi-brands-${props.name}`}
-        style={{
-          fontSize: size,
-          height: size,
-          color,
-          display: "inline-flex",
-          alignItems: "center",
-        }}
-      ></i>
-    );
-  } else {
-    const { w = "solid", t = "round" } = props;
-    return (
-      <i
-        className={`fi fi-${w[0]}${t[0]}-${props.name}`}
-        style={{
-          fontSize: size,
-          height: size,
-          color,
-          display: "inline-flex",
-          alignItems: "center",
-        }}
-      ></i>
-    );
-  }
+function Icons({ name, w = "solid", t = "round", size = 16, color }: Props) {
+  return (
+    <i
+      aria-hidden
+      className={`fi fi-${w[0]}${t[0]}-${name}`}
+      style={{
+        fontSize: size,
+        height: size,
+        color,
+        display: "inline-flex",
+        alignItems: "center",
+      }}
+    />
+  );
 }
 
 export default Icons;

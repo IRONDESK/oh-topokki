@@ -1,59 +1,32 @@
 "use client";
 
-import { ComponentProps } from "react";
-import { useAtomValue } from "jotai";
-import type { OverlayControllerComponent } from "overlay-kit";
-import { overlay } from "overlay-kit";
-
-import { naverMapAtom } from "@/shared/store/locationStore";
-import { useNaverMap } from "@/shared/hooks/useNaverMap";
 import { useFavorites } from "@/features/favorite/api/use-favorite";
 import { ResponseFavorite } from "@/shared/api/model/restaurant";
 import { TOPOKKI_TYPE, RICE_TYPE } from "@/shared/constants/restaurant";
 
-import ScrolledBottomSheet from "@/shared/ui/ScrolledBottomSheet";
-import RestaurantDetail from "@/features/restaurant/ui/detail/RestaurantDetail";
+import ScrolledBottomSheet, {
+  closeSheet,
+  type SheetController,
+} from "@/shared/ui/ScrolledBottomSheet";
+import { openRestaurantDetail } from "@/features/restaurant/ui/detail/openRestaurantDetail";
 import Spinner from "@/shared/ui/Spinner";
 
 type Props = {
-  controller: ComponentProps<OverlayControllerComponent>;
+  controller: SheetController;
 };
 
 function FavoritesList({ controller }: Props) {
-  const { naver } = useNaverMap();
-  const map = useAtomValue(naverMapAtom);
-
   const { data: favorites, isLoading } = useFavorites();
 
+  // 목록 시트를 닫고 상세 시트를 연다 (지도 이동은 상세 시트가 처리)
   const onClickItem = (item: ResponseFavorite) => {
-    if (!map || !naver) return;
-
-    controller.close();
-    setTimeout(() => {
-      controller.unmount();
-
-      const offsetLat = 0.00195;
-      const targetLocation = new naver.LatLng(
-        item.latitude - offsetLat,
-        item.longitude,
-      );
-      map.setCenter(targetLocation);
-      map.setZoom(17);
-
-      overlay.open(
-        (detailController) => (
-          <RestaurantDetail
-            restaurantId={item.id}
-            restaurantName={item.name}
-            topokkiType={item.topokkiType}
-            price={item.price}
-            address={item.address}
-            controller={detailController}
-          />
-        ),
-        { overlayId: "restaurant-detail" },
-      );
-    }, 300);
+    closeSheet({
+      close: controller.close,
+      unmount: () => {
+        controller.unmount();
+        openRestaurantDetail(item.id, { preview: item });
+      },
+    });
   };
 
   return (

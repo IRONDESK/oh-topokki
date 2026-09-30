@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
         averageRating: true,
         sideMenus: true,
         others: true,
+        recommend: true, // 지도앱 버튼의 네이버 플레이스 링크
         createdAt: true,
       },
       orderBy: [

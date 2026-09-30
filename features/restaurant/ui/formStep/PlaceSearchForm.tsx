@@ -8,7 +8,7 @@ import { Text } from "@/shared/ui/Text";
 import { InputHead } from "@/shared/ui/InputHead";
 import Spinner from "@/shared/ui/Spinner";
 import { fixedBottom, mainButton } from "@/shared/style/variants";
-import { RestaurantFormData } from "@/features/restaurant/ui/RestaurantForm";
+import { RestaurantFormData } from "@/shared/api/model/restaurant";
 import { useNaverPlaceSearch } from "@/features/search/api/use-place-search";
 
 interface PlaceSearchResult {
