@@ -6,6 +6,7 @@ import { overlay } from "overlay-kit";
 import { useAuth } from "@/shared/context/AuthContext";
 
 import Icons from "@/shared/ui/Icons";
+import IconSymbol from "@/assets/IconSymbol";
 import { glassContainer } from "@/shared/style/variants";
 import LoginModal from "@/features/auth/ui/LoginModal";
 import SearchModal from "@/features/search/ui/SearchModal";
@@ -20,13 +21,12 @@ const RestaurantRegisterForm = dynamic(
 const containerCls =
   "select-none fixed bottom-0 left-1/2 -translate-x-1/2 mb-[calc(env(safe-area-inset-bottom,16px)-4px)] flex items-center justify-center gap-2 pb-4 w-[min(90vw,380px)]";
 
+// 사이드 버튼은 로그인 여부와 무관하게 같은 형태(가로 배열) — 3버튼일 때는 스케일만 한 단계 작게
 const sideButtonCls =
-  "flex flex-1 flex-col justify-center items-center w-max break-keep min-h-[52px] gap-0.5 text-gray-700";
+  "flex flex-1 items-center justify-center break-keep min-h-13 text-gray-700";
 
 const mainButtonCls =
-  "flex items-center justify-center h-[52px] rounded-chip bg-primary-500 text-white border-[1.5px] border-ink shadow-pop gap-1.5 tracking-[-0.05rem] text-base font-semibold active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-[transform,box-shadow] duration-150";
-
-const btnTextCls = "text-xs font-normal text-gray-600";
+  "flex items-center justify-center h-12 rounded-chip bg-primary-500 text-white border-[1.5px] border-ink shadow-pop gap-1.5 tracking-[-0.05rem] text-base font-semibold active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-[transform,box-shadow] duration-150";
 
 function Navigation() {
   const { user, loading } = useAuth();
@@ -67,36 +67,51 @@ function Navigation() {
       {showMemberActions && (
         <button
           type="button"
-          className={clsx(glassContainer, sideButtonCls)}
+          className={clsx(glassContainer, sideButtonCls, "gap-1.5")}
           data-flexible={true}
-          style={{ paddingTop: "2px" }}
           onClick={openRegisterForm}
         >
           <Icons name="add" t="round" w="solid" size={20} />
-          <span className={btnTextCls}>맛집 등록</span>
+          <span className="text-base font-medium text-gray-600">등록</span>
         </button>
       )}
       <button
         type="button"
         className={clsx(
           mainButtonCls,
-          showMemberActions ? "flex-[1.7]" : "flex-none px-7",
+          "flex-[1.7] justify-between! h-12",
+          !showMemberActions && "text-xl",
         )}
         onClick={openSearch}
       >
-        <Icons name="search" t="round" w="bold" size={20} />
-        떡볶이집 찾기
+        {/* 3버튼일 때는 폭이 좁아 라벨이 접히므로 "찾기"로 줄인다 */}
+        <span className="flex-1 text-center pl-3 whitespace-nowrap">
+          {showMemberActions ? "찾기" : "떡볶이집 찾기"}
+        </span>
+        <div className="h-12 flex items-center overflow-hidden rounded-r-3xl">
+          <IconSymbol className="h-16 w-auto opacity-90" />
+        </div>
       </button>
-      {showMemberActions && (
+      {showMemberActions ? (
         <button
           type="button"
-          className={clsx(glassContainer, sideButtonCls)}
+          className={clsx(glassContainer, sideButtonCls, "gap-1")}
           data-flexible={true}
-          style={{ paddingTop: "2px" }}
           onClick={openFavorites}
         >
-          <Icons name="star" t="round" w="bold" size={20} />
-          <span className={btnTextCls}>즐겨찾기</span>
+          <Icons name="star" t="round" w="bold" size={17} />
+          <span className="text-base font-medium text-gray-600">즐겨찾기</span>
+        </button>
+      ) : (
+        /* 비로그인 등록 버튼 — 누르면 openRegisterForm이 로그인 안내를 띄운다 */
+        <button
+          type="button"
+          className={clsx(glassContainer, sideButtonCls, "gap-2")}
+          data-flexible={true}
+          onClick={openRegisterForm}
+        >
+          <Icons name="add" t="round" w="solid" size={26} />
+          <span className="text-lg font-medium text-gray-600">등록</span>
         </button>
       )}
     </div>
