@@ -83,7 +83,7 @@ export default function ReviewComposer({
           placeholder={
             user
               ? "300자 이내의 리뷰를 남겨주세요"
-              : "익명으로 의견을 남길 수 있어요 (별점은 로그인 후 가능)"
+              : "익명으로 의견 남기기 (별점은 로그인 필요)"
           }
           fontSize="body3"
           value={content}
@@ -110,9 +110,7 @@ export default function ReviewComposer({
               w="solid"
               size={28}
               color={
-                canSubmit
-                  ? "var(--color-primary-500)"
-                  : "var(--color-gray-300)"
+                canSubmit ? "var(--color-primary-500)" : "var(--color-gray-300)"
               }
             />
           </button>

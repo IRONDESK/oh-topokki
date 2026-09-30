@@ -12,9 +12,9 @@ type Props = {
 };
 
 const EMPTY_CLS =
-  "mt-10 mb-16 mx-auto flex flex-col items-center gap-2 text-gray-500 text-base font-medium";
+  "mt-10 mb-16 pb-8 mx-auto flex flex-col items-center gap-2 text-gray-500 text-base font-medium";
 const REVIEWS_CLS =
-  "flex flex-col gap-8 my-1.5 mb-[calc(env(safe-area-inset-bottom)+32px)] pb-4 text-gray-700 text-sm font-normal";
+  "flex flex-col gap-8 my-1.5 mb-[calc(env(safe-area-inset-bottom)+32px)] pb-6 text-gray-700 text-sm font-normal";
 
 /** 리뷰 섹션: 목록 + 하단 입력창 */
 function RestaurantReview({
@@ -31,7 +31,9 @@ function RestaurantReview({
       <h3 className="text-lg font-semibold text-gray-900">
         리뷰
         {reviews.length > 0 && (
-          <span className="ml-1 font-normal text-gray-500">{reviews.length}</span>
+          <span className="ml-1 font-normal text-gray-500">
+            {reviews.length}
+          </span>
         )}
       </h3>
       {reviews.length === 0 ? (
