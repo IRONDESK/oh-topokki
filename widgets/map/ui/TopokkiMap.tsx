@@ -83,9 +83,10 @@ const TopokkiMap = () => {
         <RestaurantMarker map={map} restaurants={restaurants} />
       )}
 
+      {/* 지도를 가리지 않도록 하단 배지 자리에 작게 표시 (로딩 중엔 배지가 내려가 숨는다) */}
       {isLoading && (
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-50">
-          <Spinner size={42} thick={5} color="primary" />
+        <div className="fixed left-1/2 -translate-x-1/2 bottom-[calc(env(safe-area-inset-bottom)+52px)] mb-6 p-2 bg-black/40 backdrop-blur-[4px] rounded-full shadow-sm z-[1000]">
+          <Spinner size={18} thick={2.5} color="white" />
         </div>
       )}
 
