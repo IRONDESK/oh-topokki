@@ -39,7 +39,7 @@ DATABASE_URL="postgresql://...@ep-xxx-pooler.region.aws.neon.tech/neondb?sslmode
 DIRECT_URL="postgresql://...@ep-xxx.region.aws.neon.tech/neondb?sslmode=require"            # 다이렉트 (마이그레이션)
 BETTER_AUTH_SECRET="openssl rand -base64 32 결과 (최소 32자)"
 BETTER_AUTH_URL="http://localhost:3000"
-NEXT_PUBLIC_SITE_URL="https://oh-topokki.vercel.app"   # 대표 도메인 (canonical·sitemap·OG). 도메인 변경 시 이 값만 교체
+NEXT_PUBLIC_SITE_URL="https://tteokbokki.cc"   # 대표 도메인 (canonical·sitemap·OG). 도메인 변경 시 이 값만 교체
 ```
 
 - `.env`는 반드시 `.gitignore`에 포함. 절대 커밋 금지.
