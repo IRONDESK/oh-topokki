@@ -155,7 +155,7 @@ jobs:
 - **필드명 일관화**: `riceKinds→riceTypes`, `sauceKinds→sauceTypes`, `noodleKinds→noodleTypes`. `sideMenus`·`others`는 유지(요청대로 `sideMenus`는 "menu" 명칭 보존). 상수 `TOPOKKI_RICE_KINDS→RICE_TYPE`. 즐겨찾기 응답 alias `riceType→riceTypes`.
 - **FK 인덱스 추가**(Postgres는 FK 자동 인덱스 X): `Restaurant.authorId`, `Review.restaurantId`, `Review.authorId`, `Favorite.restaurantId`.
 - **버그 수정**: GET `sundaeType` 필터가 스칼라에 `{ has }`를 쓰던 것 → 동등 비교로. `recommend` 응답 타입 `string[]` → `{ type; url }[]`(실제 형태).
-- **남은 필터 버그(별도 작업, task_b4d5497f)**: `MapHeader` 빠른필터 칩들이 잘못된 키/오타 값으로 매핑돼 대부분 미동작. 필터 param명↔필드명 정렬, 누락된 소스 필터, 중복 로컬 상수(TOPOKKI_TYPE/RICE_KINDS) 통일은 스키마 정리와 분리해 따로 진행.
+- **필터 버그(task_b4d5497f) — 완료(2026-10-07 확인)**: `MapHeader` 빠른필터 칩의 키/값이 API 파라미터·Prisma 필드명과 일치하도록 수정됨 (`topokkiType=ontable`, `riceTypes=flour`, `sauceTypes=rose`, `noodleTypes=jjolmyeon`, `sundaeType=exists`, `maxPrice=5000`). `mapFilterAtom` → `TopokkiMap` → `/api/restaurants` 연결 동작 확인. `maxPrice`는 1인 환산(`price/priceServings`) 비교.
 
 ## TODO (다음 작업)
 
