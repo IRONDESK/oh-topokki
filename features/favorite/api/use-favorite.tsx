@@ -30,6 +30,8 @@ export const useToggleFavorite = () => {
       queryClient.invalidateQueries({
         queryKey: restaurantKeys.detail(variables.restaurantId),
       });
+      // 지도 마커의 즐겨찾기 별 표시 갱신
+      queryClient.invalidateQueries({ queryKey: restaurantKeys.lists() });
     },
   });
 };

@@ -129,8 +129,29 @@ export async function GET(req: NextRequest) {
       ...(isLocationQuery ? {} : { take: PAGE_SIZE, skip: offset }),
     });
 
-    console.log("조회된 맛집 수:", restaurantList.length);
-    return NextResponse.json(restaurantList);
+    // 로그인 유저면 즐겨찾기 여부를 함께 내려준다 (지도 마커 별 표시용, 비로그인은 null)
+    let favoriteIds: Set<string> | null = null;
+    try {
+      const user = await getAuthenticatedUser();
+      const favorites = await prisma.favorite.findMany({
+        where: {
+          userId: user.id,
+          restaurantId: { in: restaurantList.map((r) => r.id) },
+        },
+        select: { restaurantId: true },
+      });
+      favoriteIds = new Set(favorites.map((f) => f.restaurantId));
+    } catch {
+      favoriteIds = null;
+    }
+
+    const result = restaurantList.map((r) => ({
+      ...r,
+      isFavorite: favoriteIds ? favoriteIds.has(r.id) : null,
+    }));
+
+    console.log("조회된 맛집 수:", result.length);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("맛집 조회 오류:", error);
     console.error(
