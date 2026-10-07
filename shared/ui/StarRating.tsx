@@ -40,6 +40,7 @@ export default function StarRating({
           <button
             key={n}
             type="button"
+            data-value={n}
             onClick={() => onChange(n)}
             onMouseEnter={() => hover(n)}
             aria-label={`별점 ${n}점`}

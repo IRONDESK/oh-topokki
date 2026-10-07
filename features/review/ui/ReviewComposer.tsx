@@ -27,6 +27,9 @@ export default function ReviewComposer({
   const [hoverRating, setHoverRating] = useState(0); // hover 중인 별점 문구 미리보기
   const [showRating, setShowRating] = useState(false);
   const inputFocusedRef = useRef(false);
+  // 별점 팝오버를 터치 중인지 (iOS에서 input blur를 되돌릴 때 사용)
+  const touchingRatingRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const { mutate: createReview, isPending } = useCreateReview();
 
   // 로그인 리뷰는 별점(1+)까지 있어야 제출 가능, 익명은 내용만 있으면 됨
@@ -36,7 +39,8 @@ export default function ReviewComposer({
   useEffect(() => {
     if (!showRating) return;
     const onAnyScroll = () => {
-      if (!inputFocusedRef.current) setShowRating(false);
+      if (!inputFocusedRef.current && !touchingRatingRef.current)
+        setShowRating(false);
     };
     // scroll은 버블링되지 않으므로 capture로 내부 스크롤 컨테이너까지 감지
     document.addEventListener("scroll", onAnyScroll, true);
@@ -69,8 +73,35 @@ export default function ReviewComposer({
         <div
           data-visible={showRating}
           className={RATING_POPOVER_CLS}
-          // 별 탭 시 input focus를 뺏지 않게 해 모바일 키보드 유지 + blur→scroll로 닫히는 현상 방지
+          // 데스크톱: 별 클릭 시 input focus를 뺏지 않게 함
           onPointerDown={(e) => e.preventDefault()}
+          onTouchStart={(e) => {
+            touchingRatingRef.current = true;
+            const t = e.touches[0];
+            touchStartRef.current = { x: t.clientX, y: t.clientY };
+          }}
+          onTouchCancel={() => {
+            touchingRatingRef.current = false;
+          }}
+          onTouchEnd={(e) => {
+            // iOS는 touchend의 기본 동작으로 focus를 옮기므로(pointerdown으로는 못 막음)
+            // 여기서 막아 키보드를 유지한다. 대신 click이 합성되지 않으니 별점 선택도 여기서 처리.
+            e.preventDefault();
+            const t = e.changedTouches[0];
+            const s = touchStartRef.current;
+            const moved =
+              !!s && Math.hypot(t.clientX - s.x, t.clientY - s.y) > 10;
+            if (!moved) {
+              const btn = (e.target as HTMLElement).closest<HTMLElement>(
+                "button[data-value]",
+              );
+              if (btn) setRating(Number(btn.dataset.value));
+            }
+            // blur가 뒤늦게 올 수 있어 한 틱 뒤에 해제
+            setTimeout(() => {
+              touchingRatingRef.current = false;
+            }, 0);
+          }}
         >
           <StarRating
             value={rating}
@@ -112,7 +143,12 @@ export default function ReviewComposer({
             inputFocusedRef.current = true;
             if (user) setShowRating(true);
           }}
-          onBlur={() => {
+          onBlur={(e) => {
+            // 별점 팝오버 터치로 생긴 blur는 즉시 되돌려 키보드·팝오버 유지
+            if (touchingRatingRef.current) {
+              e.currentTarget.focus();
+              return;
+            }
             inputFocusedRef.current = false;
           }}
         />
