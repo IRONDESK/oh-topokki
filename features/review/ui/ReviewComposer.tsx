@@ -66,7 +66,12 @@ export default function ReviewComposer({
   return (
     <div className={INPUT_CONTAINER_CLS}>
       {user && (
-        <div data-visible={showRating} className={RATING_POPOVER_CLS}>
+        <div
+          data-visible={showRating}
+          className={RATING_POPOVER_CLS}
+          // 별 탭 시 input focus를 뺏지 않게 해 모바일 키보드 유지 + blur→scroll로 닫히는 현상 방지
+          onPointerDown={(e) => e.preventDefault()}
+        >
           <StarRating
             value={rating}
             onChange={setRating}
