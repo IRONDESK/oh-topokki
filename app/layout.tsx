@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [{ url: "/logo.png", width: 1254, height: 1254, alt: SITE_NAME }],
   },
+  // 검색엔진 소유 확인 (네이버 서치어드바이저)
+  verification: {
+    other: {
+      "naver-site-verification": "0c47f1caf82fad77ffad4c52b16c629adb3ee0d0",
+    },
+  },
 };
 export const viewport: Viewport = {
   width: "device-width",
