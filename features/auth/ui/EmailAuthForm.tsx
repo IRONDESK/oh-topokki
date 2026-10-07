@@ -30,6 +30,7 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,8 +61,12 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         toast.error("비밀번호가 일치하지 않아요");
         return;
       }
-      // 별도 체크박스 없이 [약관 동의 후 회원가입] 버튼 클릭을 약관 동의로 본다.
-      // (필수 개인정보는 계약 이행 목적이라 보호법 제15조①4호로 처리, 방침으로 고지)
+      // 만 14세 이상 확인 + 약관 동의를 체크박스 하나로 받는다.
+      // (만 14세 미만은 보호법 제22조의2 법정대리인 동의 대상이라 가입 자체를 받지 않음)
+      if (!ageConfirmed) {
+        toast.error("만 14세 이상 확인과 약관 동의가 필요해요");
+        return;
+      }
     }
 
     setLoading(true);
@@ -92,6 +97,7 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   const toggleMode = () => {
     setMode(mode === "signin" ? "signup" : "signin");
     setPasswordConfirm("");
+    setAgeConfirmed(false);
   };
 
   return (
@@ -154,25 +160,33 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       )}
 
       {mode === "signup" && (
-        <p className="px-1 text-xs font-normal leading-relaxed text-gray-500 break-keep">
-          가입하면{" "}
-          <button
-            type="button"
-            onClick={() => openLegal("terms")}
-            className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
-          >
-            서비스 이용약관
-          </button>
-          에 동의하고{" "}
-          <button
-            type="button"
-            onClick={() => openLegal("privacy")}
-            className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
-          >
-            개인정보 처리방침
-          </button>
-          을 확인한 것으로 봅니다. 만 14세 미만은 가입할 수 없어요.
-        </p>
+        <label className="flex items-start gap-2 px-1 text-xs leading-relaxed text-gray-600 break-keep cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={ageConfirmed}
+            onChange={(e) => setAgeConfirmed(e.target.checked)}
+            className="mt-0.5 size-4 shrink-0 accent-primary-500 cursor-pointer"
+          />
+          <span>
+            만 14세 이상이며,{" "}
+            <button
+              type="button"
+              onClick={() => openLegal("terms")}
+              className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
+            >
+              서비스 이용약관
+            </button>
+            과{" "}
+            <button
+              type="button"
+              onClick={() => openLegal("privacy")}
+              className="cursor-pointer font-medium text-gray-700 underline underline-offset-2"
+            >
+              개인정보 처리방침
+            </button>
+            에 동의합니다
+          </span>
+        </label>
       )}
 
       <Button type="submit" disabled={loading} className="w-full mt-1">
@@ -180,7 +194,7 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
           <span className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
         )}
         {mode === "signup"
-          ? "약관 동의 후 회원가입"
+          ? "회원가입"
           : mode === "forgot"
             ? "재설정 링크 받기"
             : "로그인"}
