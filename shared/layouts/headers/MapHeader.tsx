@@ -11,6 +11,7 @@ import { useRestaurantRanking } from "@/features/restaurant/api/use-restaurant";
 import FloatingMenu from "@/widgets/floating-menu/ui/FloatingMenu";
 import { useOpenRestaurantDetail } from "@/features/restaurant/model/detail-navigation";
 import Logo from "@/assets/Logo";
+import { ArrowDownIcon } from "@/assets/ArrowDownIcon";
 
 const SLIDE_INTERVAL = 2500;
 
@@ -204,12 +205,12 @@ export default function MapHeader() {
         </div>
       </div>
       <div className="relative z-10 flex items-center py-1 px-2.5 gap-3">
-        <ul className="inline-flex gap-1 overflow-x-auto items-center pb-0.75">
+        <ul className="inline-flex gap-1 overflow-x-auto items-center pb-0.75 pr-1">
           {FILTERS.map((filter) => (
             <li
               key={filter.name}
               className={cn(
-                "font-medium shrink-0 select-none cursor-pointer min-w-13 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm lg:text-sm transition-[transform,box-shadow] duration-150",
+                "flex items-center justify-center gap-0.5 font-medium shrink-0 select-none cursor-pointer min-w-12.5 text-center px-2.5 py-1 rounded-chip bg-primary-50 border border-primary-500/30 text-primary-600 text-sm transition-[transform,box-shadow] duration-150",
                 "hover:bg-primary-100 data-[selected=true]:hover:bg-primary-600",
                 "data-[selected=true]:bg-primary-500 data-[selected=true]:border-ink data-[selected=true]:text-white data-[selected=true]:font-semibold data-[selected=true]:shadow-pop",
               )}
@@ -217,6 +218,9 @@ export default function MapHeader() {
               onClick={() => handleFilterClick(filter)}
             >
               {filter.name}
+              {filter.value === 5000 && (
+                <ArrowDownIcon size={15} strokeWidth={2.5} />
+              )}
             </li>
           ))}
         </ul>
