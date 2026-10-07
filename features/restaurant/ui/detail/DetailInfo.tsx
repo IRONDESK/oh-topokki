@@ -38,7 +38,16 @@ function buildRows(r: ResponseRestaurant): Row[] {
     },
     r.riceTypes.length > 0 && { label: "떡 종류", value: labels(r.riceTypes, RICE_TYPE) },
     r.sauceTypes.length > 0 && { label: "소스 종류", value: labels(r.sauceTypes, SAUCE_TYPE) },
-    r.noodleTypes.length > 0 && { label: "면 종류", value: labels(r.noodleTypes, NOODLE_TYPE) },
+    // 면 종류는 데이터가 없어도 "없음"으로 항상 노출 (사리 안 되는 집임을 구분)
+    {
+      label: "면 종류",
+      value:
+        r.noodleTypes.length > 0 ? (
+          labels(r.noodleTypes, NOODLE_TYPE)
+        ) : (
+          <span className="text-gray-400">없음</span>
+        ),
+    },
     r.spiciness != null && {
       label: "매운 정도",
       value: (

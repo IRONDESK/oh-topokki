@@ -196,7 +196,8 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
           "data-[open=true]:data-[full=true]:transform-[translate3d(-50%,0,0)]",
           "data-[full=true]:pt-[env(safe-area-inset-top,4px)] data-[full=true]:rounded-none",
           // 내부 콘텐츠가 시트 폭을 넘어도 x축 스크롤이 생기지 않게 차단 (모바일은 inner에서 처리)
-          "data-[desktop=true]:overflow-y-auto data-[desktop=true]:overflow-x-hidden data-[desktop=true]:max-h-[70vh] data-[desktop=true]:min-h-[70vh]",
+          // 높이는 65vh: 시트 상단이 35vh 지점이므로 65vh여야 하단이 화면에 딱 맞음 (70vh면 5vh가 화면 밖으로 잘림)
+          "data-[desktop=true]:overflow-y-auto data-[desktop=true]:overflow-x-hidden data-[desktop=true]:max-h-[65vh] data-[desktop=true]:min-h-[65vh]",
         )}
       >
         <div

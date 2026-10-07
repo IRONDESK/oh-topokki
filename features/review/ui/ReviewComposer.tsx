@@ -24,6 +24,7 @@ export default function ReviewComposer({
   const { user } = useAuth();
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0); // 로그인 리뷰는 1점 이상 필수
+  const [hoverRating, setHoverRating] = useState(0); // hover 중인 별점 문구 미리보기
   const [showRating, setShowRating] = useState(false);
   const inputFocusedRef = useRef(false);
   const { mutate: createReview, isPending } = useCreateReview();
@@ -69,11 +70,25 @@ export default function ReviewComposer({
           <StarRating
             value={rating}
             onChange={setRating}
+            onHover={setHoverRating}
             size={28}
             className="gap-1 [&>button]:p-1"
           />
-          <span className="text-xs font-medium text-gray-500">
-            {rating > 0 ? RATING_MESSAGE[rating] : "별점을 선택해주세요"}
+          {/* hover 중엔 해당 별점 문구 미리보기(회색), 선택하면 문구·색(primary) 고정 */}
+          <span
+            className={
+              hoverRating > 0 && hoverRating !== rating
+                ? "text-xs font-medium text-gray-400"
+                : rating > 0
+                  ? "text-xs font-medium text-primary-500"
+                  : "text-xs font-medium text-gray-500"
+            }
+          >
+            {hoverRating > 0
+              ? RATING_MESSAGE[hoverRating]
+              : rating > 0
+                ? RATING_MESSAGE[rating]
+                : "별점을 선택해주세요"}
           </span>
         </div>
       )}
