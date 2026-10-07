@@ -31,11 +31,13 @@ const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
     const markers: NaverMarker[] = [];
 
     restaurants.forEach((restaurant) => {
-      // 거꾸로 된 물방울 핀 (26x36, 끝은 둥근 팁). 색상은 --color-primary-500 (data URI라 하드코딩)
-      // 즐겨찾기한 식당은 머리 부분에 흰 별 표시
+      // 거꾸로 된 물방울 핀 (본체 26x36 + 흰 테두리 2px, 끝은 둥근 팁).
+      // 색상은 --color-primary-500 (data URI라 하드코딩).
+      // 테두리는 paint-order=stroke로 fill 바깥에만 그려져 본체·별 크기에 영향 없음.
+      // 즐겨찾기한 식당은 머리 부분에 흰 별 표시.
       const svgString = `
-        <svg width="26" height="36" viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.6 42.2C10.6 34.6 2 26.8 2 16a14 14 0 1 1 28 0c0 10.8-8.6 18.6-12.6 26.2a1.75 1.75 0 0 1-2.8 0Z" fill="#FF6B43"/>
+        <svg width="30" height="40" viewBox="-3 -3 38 50" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.6 42.2C10.6 34.6 2 26.8 2 16a14 14 0 1 1 28 0c0 10.8-8.6 18.6-12.6 26.2a1.75 1.75 0 0 1-2.8 0Z" fill="#FF6B43" stroke="white" stroke-width="5" stroke-linejoin="round" paint-order="stroke"/>
           ${
             restaurant.isFavorite
               ? '<path d="M16 8l1.94 5.33 5.67.2-4.47 3.49 1.56 5.45L16 19.3l-4.7 3.17 1.56-5.45-4.47-3.49 5.67-.2Z" fill="white" stroke="white" stroke-width="2.4" stroke-linejoin="round"/>'
@@ -47,8 +49,9 @@ const RestaurantMarker = ({ map, restaurants }: RestaurantMarkerProps) => {
       const markerIcon = {
         url:
           "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString),
-        size: { width: 26, height: 36 },
-        anchor: { x: 13, y: 36 },
+        size: { width: 30, height: 40 },
+        // 흰 테두리까지 포함한 핀 끝이 좌표에 닿도록 보정
+        anchor: { x: 15, y: 39.6 },
       };
 
       const marker = new naver.Marker({
