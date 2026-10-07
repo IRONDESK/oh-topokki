@@ -92,6 +92,14 @@ export type ResponseFavorite = {
 };
 
 // 내가 등록한 맛집 (GET /api/restaurants/mine)
+export type ResponseMyReview = {
+  id: string;
+  content: string;
+  rating: number | null;
+  createdAt: string;
+  restaurant: { id: string; name: string; address: string };
+};
+
 export type ResponseMyRestaurant = {
   id: string;
   name: string;

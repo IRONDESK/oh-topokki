@@ -13,6 +13,7 @@ import {
   RequestNewReview,
   RequestUpdateReview,
   ResponseMyRestaurant,
+  ResponseMyReview,
   ResponseRankingItem,
   ResponseRestaurant,
   ResponseReview,
@@ -112,6 +113,17 @@ export const getRestaurantCount = async () => {
 export const getMyRestaurants = async () => {
   try {
     return await http.get<ResponseMyRestaurant[]>(`/api/restaurants/mine`);
+  } catch (error) {
+    if (isHttpError(error)) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+};
+
+export const getMyReviews = async () => {
+  try {
+    return await http.get<ResponseMyReview[]>(`/api/reviews/mine`);
   } catch (error) {
     if (isHttpError(error)) {
       throw new Error(error.message);

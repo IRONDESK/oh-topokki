@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   deleteRestaurantReview,
+  getMyReviews,
   getRestaurantReview,
   postRestaurantReview,
   putRestaurantReview,
@@ -14,7 +15,17 @@ export const reviewKeys = {
   lists: () => [...reviewKeys.all, "list"] as const,
   list: (restaurantId: string) =>
     [...reviewKeys.lists(), restaurantId] as const,
+  mine: () => [...reviewKeys.all, "mine"] as const,
 };
+
+/** 내가 작성한 리뷰 목록 (내 정보 시트) */
+export const useMyReviews = (options?: { enabled?: boolean }) =>
+  useQuery({
+    enabled: options?.enabled ?? true,
+    queryKey: reviewKeys.mine(),
+    queryFn: getMyReviews,
+    staleTime: 60_000,
+  });
 
 export const useReviews = (
   restaurantId: string,
@@ -40,6 +51,7 @@ export const useCreateReview = () => {
       queryClient.invalidateQueries({
         queryKey: restaurantKeys.detail(variables.restaurantId),
       });
+      queryClient.invalidateQueries({ queryKey: reviewKeys.mine() });
     },
   });
 };
@@ -56,6 +68,7 @@ export const useUpdateReview = () => {
       queryClient.invalidateQueries({
         queryKey: restaurantKeys.detail(variables.restaurantId),
       });
+      queryClient.invalidateQueries({ queryKey: reviewKeys.mine() });
     },
   });
 };
@@ -72,6 +85,7 @@ export const useDeleteReview = () => {
       queryClient.invalidateQueries({
         queryKey: restaurantKeys.detail(variables.restaurantId),
       });
+      queryClient.invalidateQueries({ queryKey: reviewKeys.mine() });
     },
   });
 };
