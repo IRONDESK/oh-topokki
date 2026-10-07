@@ -223,10 +223,11 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
             // inner가 의도치 않은 스크롤 컨테이너가 됨 → sticky 헤더가 깨진다.
             // inner가 실제 스크롤러일 때(full)만 x축을 잠근다.
             overflowX: isFull ? "hidden" : "visible",
+            // full일 때 section이 safe-area-top만큼 padding을 갖고 inner를 아래로 밀기 때문에,
+            // inner를 뷰포트 전체 높이로 잡으면 그만큼 화면 밖으로 삐져나가 하단 콘텐츠에 도달할 수 없다.
+            // (콘텐츠가 뷰포트와 비슷한 길이면 스크롤 범위가 0이 되어 스크롤 자체가 안 됨)
             height: isFull
-              ? viewportHeight
-                ? `${viewportHeight}px`
-                : "99.9dvh"
+              ? `calc(${viewportHeight ? `${viewportHeight}px` : "100dvh"} - env(safe-area-inset-top, 4px) - 1.5px)`
               : "auto",
             minHeight: 0,
             overscrollBehaviorY: "none",
