@@ -13,9 +13,9 @@ export function ArrowDownIcon({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width={strokeWidth || 2}
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth={strokeWidth || 2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="lucide lucide-arrow-down preview-icon"
     >
       <path d="M12 5v14" />
