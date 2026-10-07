@@ -46,6 +46,9 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
 
   const [isSticky, setIsSticky] = useState(false);
   const [isFull, setIsFull] = useState(false);
+  // 실제 보이는 뷰포트 높이(px). iOS는 키보드가 떠도 dvh가 줄지 않아 full 상태의
+  // 내부 스크롤 영역이 키보드 뒤까지 잡히므로 visualViewport로 보정한다.
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
 
   // 드래그 값은 렌더에 영향 주지 않으므로 ref로 관리한다.
   // (touchmove마다 setState 하면 초당 ~60회 전체 리렌더 → 자식까지 재실행되어 끊김)
@@ -154,6 +157,17 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
     resetDragStyle();
   };
 
+  // 키보드 개폐·주소창 변화에 따른 visualViewport 높이 추적 (모바일만)
+  useEffect(() => {
+    if (isDesktop) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setViewportHeight(vv.height);
+    update();
+    vv.addEventListener("resize", update);
+    return () => vv.removeEventListener("resize", update);
+  }, [isDesktop]);
+
   // overlay가 떠 있는 동안 body 스크롤 잠금
   useEffect(() => {
     if (!hasOverlays) return;
@@ -209,7 +223,11 @@ export default function ScrolledBottomSheet(props: BottomSheetProps) {
             // inner가 의도치 않은 스크롤 컨테이너가 됨 → sticky 헤더가 깨진다.
             // inner가 실제 스크롤러일 때(full)만 x축을 잠근다.
             overflowX: isFull ? "hidden" : "visible",
-            height: isFull ? "99.9dvh" : "auto",
+            height: isFull
+              ? viewportHeight
+                ? `${viewportHeight}px`
+                : "99.9dvh"
+              : "auto",
             minHeight: 0,
             overscrollBehaviorY: "none",
             WebkitOverflowScrolling: "touch",

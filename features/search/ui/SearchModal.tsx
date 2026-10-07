@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from "es-toolkit";
 import { useAtomValue } from "jotai";
 import { useMapFocus } from "@/shared/hooks/useMapFocus";
@@ -38,7 +38,24 @@ type Props = {
   controller: SheetController;
 };
 
-const sectionTitleCls = "text-sm font-semibold text-gray-500";
+const sectionTitleCls = "text-base font-semibold text-gray-500";
+
+/** 검색 결과가 "없음 → 있음"으로 바뀔 때 시트를 full로 확장한다.
+ *  반 열림 + 키보드 상태에선 보이는 영역이 너무 좁다. 이후 결과가 갱신돼도 다시 끌어올리지 않는다. */
+function ExpandOnResults({
+  when,
+  expand,
+}: {
+  when: boolean;
+  expand: () => void;
+}) {
+  const expandRef = useRef(expand);
+  expandRef.current = expand;
+  useEffect(() => {
+    if (when) expandRef.current();
+  }, [when]);
+  return null;
+}
 
 function SearchModal({ controller }: Props) {
   const openDetail = useOpenRestaurantDetail();
@@ -100,11 +117,14 @@ function SearchModal({ controller }: Props) {
   const showResults = !filterOpen && (keyword !== "" || filterActive);
   const filterTags = activeFilterTags(filters);
 
+  const hasResults = showResults && !isLoading && (data?.items.length ?? 0) > 0;
+
   return (
     <ScrolledBottomSheet controller={controller}>
       {({ expand }) => (
         // 필터 모드에서는 full 높이를 채워 하단 버튼(mt-auto)이 시트 바닥에 붙게 한다
         <div className={cn("px-4", filterOpen && "flex min-h-full flex-col")}>
+          <ExpandOnResults when={hasResults} expand={expand} />
           <div className="flex items-center gap-2 px-0.5 py-1 pb-2.5 mb-2.5 border-b border-gray-200">
             <button
               type="button"
@@ -197,7 +217,9 @@ function SearchModal({ controller }: Props) {
 
               {nearby.length > 0 && (
                 <section className="flex flex-col gap-1">
-                  <h3 className={cn(sectionTitleCls, "pb-1")}>주변의 떡볶이</h3>
+                  <h3 className={cn(sectionTitleCls, "pb-1")}>
+                    내 주변 떡볶이
+                  </h3>
                   <ul>
                     {nearby.map((item) => (
                       <li key={item.id}>
@@ -313,7 +335,7 @@ function SearchModal({ controller }: Props) {
                           </span>
                         </p>
                         {matchedTexts.length > 0 && (
-                          <p className="flex items-center justify-start gap-1">
+                          <p className="flex items-center justify-start gap-1 text-xs">
                             <Icons
                               name="tags"
                               w="regular"
@@ -325,7 +347,7 @@ function SearchModal({ controller }: Props) {
                                 key={text}
                                 text={text}
                                 keyword={keyword}
-                                highlightClassName="text-xs font-medium px-1.5 py-0.5 rounded-md bg-primary-50 border border-primary-200 text-primary-700"
+                                highlightClassName="text-xs font-medium px-1 py-0.5 bg-primary-50 text-primary-700"
                               />
                             ))}
                           </p>
