@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const pageParam = searchParams.get("page");
     const page = Math.max(parseInt(pageParam || "1", 10), 1);
 
-    const PAGE_SIZE = 10 as const;
+    const PAGE_SIZE = 15 as const;
     const offset = (page - 1) * PAGE_SIZE;
     const searchTerm = (query ?? "").trim();
 

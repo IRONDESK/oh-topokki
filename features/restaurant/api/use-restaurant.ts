@@ -1,5 +1,6 @@
 import {
   keepPreviousData,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
@@ -98,11 +99,16 @@ export const useRestaurantSearch = (
   query: string,
   filters?: SearchRestaurantFilters,
 ) =>
-  useQuery({
+  useInfiniteQuery({
     // 키워드 없이 필터만으로도 조회 가능
     enabled: query.trim().length > 0 || hasAnySearchFilter(filters),
     queryKey: restaurantKeys.search(query, filters),
-    queryFn: () => getRestaurantSearch({ query, ...filters }),
+    queryFn: ({ pageParam }) =>
+      getRestaurantSearch({ query, ...filters, page: pageParam }),
+    initialPageParam: 1,
+    // 서버 pagination.hasNext 기준으로 다음 페이지 결정 (15개 단위)
+    getNextPageParam: (last) =>
+      last.pagination.hasNext ? last.pagination.currentPage + 1 : undefined,
     staleTime: 5 * 60_000,
   });
 

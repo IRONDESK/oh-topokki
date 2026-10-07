@@ -57,6 +57,35 @@ function ExpandOnResults({
   return null;
 }
 
+/** 목록 끝에 두면 화면에 들어올 때 다음 페이지를 불러온다. (시트 내부 스크롤도 viewport 교차로 감지됨) */
+function LoadMoreSentinel({
+  loading,
+  onVisible,
+}: {
+  loading: boolean;
+  onVisible: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const onVisibleRef = useRef(onVisible);
+  onVisibleRef.current = onVisible;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) onVisibleRef.current();
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="flex justify-center py-6">
+      {loading && <Spinner size={24} thick={3} color="primary" />}
+    </div>
+  );
+}
+
 function SearchModal({ controller }: Props) {
   const openDetail = useOpenRestaurantDetail();
   const focusMap = useMapFocus();
@@ -74,10 +103,8 @@ function SearchModal({ controller }: Props) {
   const filterActive = hasAnySearchFilter(filters);
 
   // 패널이 열려 있는 동안에도 같은 쿼리로 "N곳 보기" 카운트를 미리 보여준다
-  const { data, isLoading } = useRestaurantSearch(
-    debounced,
-    filterActive ? filters : undefined,
-  );
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useRestaurantSearch(debounced, filterActive ? filters : undefined);
 
   // 검색 조건이 아무것도 없을 때 보여줄 주변의 떡볶이 (GPS 없으면 조회하지 않음)
   const idle = !filterOpen && keyword === "" && !filterActive;
@@ -117,7 +144,13 @@ function SearchModal({ controller }: Props) {
   const showResults = !filterOpen && (keyword !== "" || filterActive);
   const filterTags = activeFilterTags(filters);
 
-  const hasResults = showResults && !isLoading && (data?.items.length ?? 0) > 0;
+  // 무한 스크롤: 받아온 페이지를 이어붙여 렌더
+  const items = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data],
+  );
+  const totalCount = data?.pages[0]?.pagination.totalCount ?? null;
+  const hasResults = showResults && !isLoading && items.length > 0;
 
   return (
     <ScrolledBottomSheet controller={controller}>
@@ -169,11 +202,7 @@ function SearchModal({ controller }: Props) {
               onChange={setFilters}
               onApply={() => setFilterOpen(false)}
               onReset={() => setFilters({})}
-              resultCount={
-                filterActive || keyword !== ""
-                  ? (data?.pagination.totalCount ?? null)
-                  : null
-              }
+              resultCount={filterActive || keyword !== "" ? totalCount : null}
             />
           )}
 
@@ -280,7 +309,7 @@ function SearchModal({ controller }: Props) {
             </div>
           )}
 
-          {showResults && !isLoading && data && data.items.length === 0 && (
+          {showResults && !isLoading && data && items.length === 0 && (
             <p className="pt-8 text-center text-sm text-gray-500">
               {filterActive
                 ? "조건에 맞는 떡볶이집이 없어요"
@@ -290,7 +319,7 @@ function SearchModal({ controller }: Props) {
 
           {showResults && (
             <div className="flex flex-col gap-6 items-start">
-              {data?.items.map((item) => {
+              {items.map((item) => {
                 const matchedTexts =
                   keyword === ""
                     ? []
@@ -374,6 +403,15 @@ function SearchModal({ controller }: Props) {
                 );
               })}
             </div>
+          )}
+
+          {showResults && hasNextPage && (
+            <LoadMoreSentinel
+              loading={isFetchingNextPage}
+              onVisible={() => {
+                if (!isFetchingNextPage) fetchNextPage();
+              }}
+            />
           )}
         </div>
       )}
