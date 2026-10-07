@@ -160,12 +160,12 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       )}
 
       {mode === "signup" && (
-        <label className="flex items-start gap-2 px-1 text-xs leading-relaxed text-gray-600 break-keep cursor-pointer select-none">
+        <label className="flex items-start gap-2 px-1 py-1 text-base leading-relaxed text-gray-600 break-keep cursor-pointer select-none">
           <input
             type="checkbox"
             checked={ageConfirmed}
             onChange={(e) => setAgeConfirmed(e.target.checked)}
-            className="mt-0.5 size-4 shrink-0 accent-primary-500 cursor-pointer"
+            className="mt-0.5 size-5 shrink-0 accent-primary-500 cursor-pointer"
           />
           <span>
             만 14세 이상이며,{" "}
@@ -189,7 +189,12 @@ export default function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         </label>
       )}
 
-      <Button type="submit" disabled={loading} className="w-full mt-1">
+      <Button
+        type="submit"
+        // 회원가입은 만 14세 이상·약관 동의 체크 후에만 활성화
+        disabled={loading || (mode === "signup" && !ageConfirmed)}
+        className="w-full mt-1"
+      >
         {loading && (
           <span className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
         )}
