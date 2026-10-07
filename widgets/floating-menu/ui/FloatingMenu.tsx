@@ -3,12 +3,16 @@ import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { overlay } from "overlay-kit";
 import LoginModal from "@/features/auth/ui/LoginModal";
+import UserAvatar from "@/features/auth/ui/UserAvatar";
+import Icons from "@/shared/ui/Icons";
 
-// 약관 본문은 모달을 열 때만 로드
+// 약관 본문/내 정보 시트는 열 때만 로드
 const ServiceInfoModal = dynamic(
   () => import("@/features/legal/ui/ServiceInfoModal"),
 );
-const WithdrawSheet = dynamic(() => import("@/features/auth/ui/WithdrawSheet"));
+const MyInfoSheet = dynamic(() => import("@/features/auth/ui/MyInfoSheet"));
+
+const CONTACT_EMAIL = "todaytopokki@gmail.com";
 
 type Props = {
   close: () => void;
@@ -29,14 +33,19 @@ export default function FloatingMenu(props: Props) {
     overlay.open((controller) => <LoginModal {...controller} />);
   };
 
-  const openWithdraw = () => {
+  const openMyInfo = () => {
     onClose();
-    overlay.open((controller) => <WithdrawSheet controller={controller} />);
+    overlay.open((controller) => <MyInfoSheet controller={controller} />);
   };
 
   const openServiceInfo = () => {
     onClose();
     overlay.open((controller) => <ServiceInfoModal {...controller} />);
+  };
+
+  const onLogout = async () => {
+    await signOut();
+    onClose();
   };
 
   useEffect(() => {
@@ -81,35 +90,43 @@ export default function FloatingMenu(props: Props) {
           </button>
         ) : (
           <>
-            <p className="text-base text-center font-medium">
-              {user?.nickname}님의{"\n"}오늘의 떡볶이는
-            </p>
+            <div className="flex items-center gap-2 px-1">
+              <UserAvatar image={user.image} nickname={user.nickname} size={32} />
+              <span className="text-base font-medium text-gray-800 truncate">
+                {user.nickname}
+              </span>
+            </div>
             <button
               type="button"
-              onClick={signOut}
-              className="cursor-pointer m-auto mt-1 py-1 px-2 rounded-md text-xs font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-500 hover:border-gray-300 border border-transparent "
+              onClick={openMyInfo}
+              className="cursor-pointer mt-1.5 flex items-center justify-center gap-0.5 w-full py-1.5 rounded-md border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-100"
             >
-              로그아웃
+              내 정보
+              <Icons name="angle-small-right" w="regular" size={15} />
             </button>
           </>
         )}
-        <ul className="flex flex-col text-left  gap-px text-gray-600 border-t border-gray-200 w-full mt-2 pt-2 text-sm font-normal [&>li]:cursor-pointer [&>li]:py-1">
-          {user && (
-            <li className="p-2 hover:bg-gray-100 rounded-sm">내 작성 글</li>
-          )}
+        <ul className="flex flex-col text-left gap-px text-gray-600 border-t border-gray-200 w-full mt-2 pt-2 text-sm font-normal [&>li]:cursor-pointer [&>li]:py-1">
           <li
             className="p-2 hover:bg-gray-100 rounded-sm"
             onClick={openServiceInfo}
           >
             서비스 안내
           </li>
-          <li className="p-2 hover:bg-gray-100 rounded-sm">문의</li>
+          <li
+            className="p-2 hover:bg-gray-100 rounded-sm"
+            onClick={() => {
+              window.location.href = `mailto:${CONTACT_EMAIL}`;
+            }}
+          >
+            문의
+          </li>
           {user && (
             <li
               className="p-2 hover:bg-gray-100 rounded-sm text-gray-400"
-              onClick={openWithdraw}
+              onClick={onLogout}
             >
-              회원 탈퇴
+              로그아웃
             </li>
           )}
         </ul>

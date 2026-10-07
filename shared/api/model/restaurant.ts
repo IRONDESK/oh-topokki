@@ -91,6 +91,21 @@ export type ResponseFavorite = {
   memo: string | null;
 };
 
+// 내가 등록한 맛집 (GET /api/restaurants/mine)
+export type ResponseMyRestaurant = {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  price: number | null;
+  priceServings: number;
+  topokkiType: "ontable" | "pan" | "soup" | null;
+  reviewCount: number;
+  averageRating: number;
+  createdAt: string;
+};
+
 export type RequestAddFavorite = {
   restaurantId: string;
   memo?: string;

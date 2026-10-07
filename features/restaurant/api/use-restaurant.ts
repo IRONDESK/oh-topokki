@@ -11,6 +11,7 @@ import {
   getRestaurantDetail,
   getRestaurantInfo,
   getRestaurantRanking,
+  getMyRestaurants,
   getRestaurantSearch,
   postRestaurantInfo,
   putRestaurantInfo,
@@ -34,6 +35,7 @@ export const restaurantKeys = {
     [...restaurantKeys.searches(), query, filters ?? {}] as const,
   count: () => [...restaurantKeys.all, "count"] as const,
   ranking: () => [...restaurantKeys.all, "ranking"] as const,
+  mine: () => [...restaurantKeys.all, "mine"] as const,
 };
 
 export const useRestaurantList = (
@@ -47,6 +49,14 @@ export const useRestaurantList = (
     staleTime: 60_000,
     // 지도 이동으로 좌표가 바뀌어도 새 데이터가 올 때까지 기존 마커 유지
     placeholderData: keepPreviousData,
+  });
+
+export const useMyRestaurants = (options?: { enabled?: boolean }) =>
+  useQuery({
+    enabled: options?.enabled ?? true,
+    queryKey: restaurantKeys.mine(),
+    queryFn: getMyRestaurants,
+    staleTime: 60_000,
   });
 
 export const useRestaurantCount = () =>
