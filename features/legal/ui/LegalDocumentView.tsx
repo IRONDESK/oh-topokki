@@ -96,41 +96,44 @@ export default function LegalDocumentView({ versions, showHistory }: Props) {
       {showHistory && (
         <section className="flex flex-col gap-2 pt-4 border-t border-gray-200">
           <h4 className="text-base font-semibold text-gray-800">개정 이력</h4>
-          <table className={TABLE_CLS}>
-            <thead>
-              <tr>
-                <th>버전</th>
-                <th>개정일(시행일)</th>
-                <th>주요 내용</th>
-              </tr>
-            </thead>
-            <tbody>
-              {versions.map((v) => (
-                <tr
-                  key={v.version}
-                  data-selected={v.version === doc.version}
-                  className="data-[selected=true]:bg-primary-50"
-                >
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => setSelected(v.version)}
-                      className={cn(
-                        "cursor-pointer font-medium",
-                        v.version === doc.version
-                          ? "text-primary-700"
-                          : "underline text-gray-600",
-                      )}
-                    >
-                      v{v.version}
-                    </button>
-                  </td>
-                  <td>{formatDate(v.effectiveDate)}</td>
-                  <td>{v.summary}</td>
+          {/* 표만 좌우 스크롤 (본문 표와 동일하게 시트 전체가 가로로 밀리지 않도록) */}
+          <div className="overflow-x-auto -mx-1 px-1">
+            <table className={TABLE_CLS}>
+              <thead>
+                <tr>
+                  <th>버전</th>
+                  <th>개정일(시행일)</th>
+                  <th>주요 내용</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {versions.map((v) => (
+                  <tr
+                    key={v.version}
+                    data-selected={v.version === doc.version}
+                    className="data-[selected=true]:bg-primary-50"
+                  >
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => setSelected(v.version)}
+                        className={cn(
+                          "cursor-pointer font-medium",
+                          v.version === doc.version
+                            ? "text-primary-700"
+                            : "underline text-gray-600",
+                        )}
+                      >
+                        v{v.version}
+                      </button>
+                    </td>
+                    <td>{formatDate(v.effectiveDate)}</td>
+                    <td>{v.summary}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
     </article>

@@ -6,7 +6,7 @@ export const PRIVACY_VERSIONS: LegalDocument[] = [
     version: "1.1",
     effectiveDate: "2026-10-13",
     summary:
-      "Microsoft Clarity 이용 행태 분석 도입에 따른 처리 목적·수집 항목·보유 기간·위탁·국외 이전·쿠키 항목 추가, 중대한 변경의 사전 공지 기간 30일 → 10일",
+      "Microsoft Clarity 이용 행태 분석 도입에 따른 처리 목적·수집 항목·보유 기간·위탁·국외 이전·쿠키 항목 추가",
     preface: `${OPERATOR.name}(이하 "운영자")는 「개인정보 보호법」 제30조에 따라 ${OPERATOR.service} 서비스(이하 "서비스") 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 다음과 같이 개인정보 처리방침을 수립·공개합니다.`,
     sections: [
       {
