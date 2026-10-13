@@ -29,7 +29,10 @@ import Icons from "@/shared/ui/Icons";
 import Spinner from "@/shared/ui/Spinner";
 import NaverMapButton from "@/shared/ui/NaverMapButton";
 import { buttons } from "@/shared/style/variants";
-import { TOPOKKI_TYPE } from "@/shared/constants/restaurant";
+import {
+  TOPOKKI_TYPE,
+  TOPOKKI_TYPE_ABBR,
+} from "@/shared/constants/restaurant";
 import { SearchRestaurantFilters } from "@/shared/api/model/restaurant";
 import { cn } from "@/shared/lib/cn";
 import { calculateDistance } from "@/shared/lib/distance";
@@ -263,8 +266,8 @@ function SearchModal({ controller }: Props) {
                             openDetail(item.id, item);
                           }}
                         >
-                          <span className="shrink-0 px-1.5 py-0.5 rounded-md bg-primary-50 border border-primary-200 text-primary-700 text-xs font-medium">
-                            {TOPOKKI_TYPE[item.topokkiType]}
+                          <span className="shrink-0 px-1.5 py-0.5 rounded-md bg-primary-50 text-primary-700 text-xs font-medium">
+                            {TOPOKKI_TYPE_ABBR[item.topokkiType]}
                           </span>
                           <span className="flex-1 truncate text-base text-gray-700">
                             {item.name}
