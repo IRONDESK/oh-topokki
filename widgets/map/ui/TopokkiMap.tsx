@@ -9,6 +9,7 @@ import {
 
 import MapView from "./MapView";
 import RestaurantMarker from "./RestaurantMarker";
+import MapControls from "./MapControls";
 import Spinner from "@/shared/ui/Spinner";
 import MapHeader from "@/shared/layouts/headers/MapHeader";
 import Icons from "@/shared/ui/Icons";
@@ -78,6 +79,7 @@ const TopokkiMap = () => {
     <div className="relative w-full h-[calc(100vh-1px)] overflow-hidden">
       <MapHeader />
       <MapView />
+      <MapControls />
 
       {map && restaurants && restaurants.length > 0 && (
         <RestaurantMarker map={map} restaurants={restaurants} />

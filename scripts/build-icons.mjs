@@ -16,7 +16,10 @@ const ICONS = {
   br: [
     "cross",
     "drawer-empty",
+    "location-crosshairs",
     "menu-dots",
+    "minus",
+    "plus",
     "refresh",
     "search",
     "settings-sliders",

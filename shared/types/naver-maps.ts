@@ -3,7 +3,10 @@ export interface NaverMap {
   getCenter(): NaverLatLng;
   getBounds(): NaverLatLngBounds;
   setCenter(latlng: NaverLatLng): void;
-  setZoom(zoom: number): void;
+  // useEffect=true면 애니메이션으로 확대/축소
+  setZoom(zoom: number, useEffect?: boolean): void;
+  getZoom(): number;
+  panTo(latlng: NaverLatLng): void;
 }
 
 export interface NaverLatLngBounds {

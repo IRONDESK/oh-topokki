@@ -3,7 +3,10 @@
 [class^=fi-br-]:before,[class*=" fi-br-"]:before{font-family:uicons-bold-rounded!important;font-style:normal;font-weight:400!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 .fi-br-cross:before{content:"\f4fa"}
 .fi-br-drawer-empty:before{content:"\f59a"}
+.fi-br-location-crosshairs:before{content:"\f8d6"}
 .fi-br-menu-dots:before{content:"\f92d"}
+.fi-br-minus:before{content:"\f954"}
+.fi-br-plus:before{content:"\fab1"}
 .fi-br-refresh:before{content:"\fb39"}
 .fi-br-search:before{content:"\fbc0"}
 .fi-br-settings-sliders:before{content:"\fbd6"}
