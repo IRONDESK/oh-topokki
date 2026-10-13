@@ -6,6 +6,7 @@ import { AuthProvider } from "@/shared/context/AuthContext";
 import { OverlayProvider } from "overlay-kit";
 import { Provider as JotaiProvider } from "jotai";
 import { Toaster } from "sonner";
+import ClarityInit from "@/shared/lib/ClarityInit";
 
 function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -29,6 +30,7 @@ function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <JotaiProvider>
         <AuthProvider>
+          <ClarityInit />
           <Toaster
             duration={2000}
             position="top-center"

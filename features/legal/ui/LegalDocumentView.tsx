@@ -65,6 +65,10 @@ export default function LegalDocumentView({ versions, showHistory }: Props) {
           v{doc.version}
         </span>
         시행일 {formatDate(doc.effectiveDate)}
+        {/* 개정안은 시행일 전에 미리 게시(사전 공지)하므로 아직 적용 전임을 표시 */}
+        {new Date(doc.effectiveDate) > new Date() && (
+          <span className="text-primary-600">(시행 예정)</span>
+        )}
         {!isLatest && (
           <button
             type="button"
