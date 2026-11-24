@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { debounce } from "es-toolkit";
 import { useAtomValue } from "jotai";
 import { useMapFocus } from "@/shared/hooks/useMapFocus";
@@ -52,10 +52,9 @@ function ExpandOnResults({
   when: boolean;
   expand: () => void;
 }) {
-  const expandRef = useRef(expand);
-  expandRef.current = expand;
+  const onExpand = useEffectEvent(expand);
   useEffect(() => {
-    if (when) expandRef.current();
+    if (when) onExpand();
   }, [when]);
   return null;
 }
@@ -69,14 +68,13 @@ function LoadMoreSentinel({
   onVisible: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const onVisibleRef = useRef(onVisible);
-  onVisibleRef.current = onVisible;
+  const onIntersect = useEffectEvent(onVisible);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) onVisibleRef.current();
+      if (entry.isIntersecting) onIntersect();
     });
     io.observe(el);
     return () => io.disconnect();
@@ -100,7 +98,8 @@ function SearchModal({ controller }: Props) {
   const [selected, setSelected] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<SearchRestaurantFilters>({});
-  const [recent, setRecent] = useState<string[]>([]);
+  // overlay로만 열리는 클라이언트 전용 컴포넌트라 초기값에서 바로 읽는다
+  const [recent, setRecent] = useState<string[]>(getRecentSearches);
 
   const keyword = debounced.trim();
   const filterActive = hasAnySearchFilter(filters);
@@ -125,10 +124,6 @@ function SearchModal({ controller }: Props) {
       )
       .slice(0, 3);
   }, [gps, nearbyData]);
-
-  useEffect(() => {
-    setRecent(getRecentSearches());
-  }, []);
 
   useEffect(() => {
     const d = debounce(() => {

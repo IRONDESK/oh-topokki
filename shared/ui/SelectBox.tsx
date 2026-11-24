@@ -10,9 +10,9 @@ interface SelectBoxProps
 export const SelectBox = (
   props: SelectBoxProps & { ref?: React.Ref<HTMLInputElement> },
 ) => {
-  const { title, description, icon, ...rest } = props;
+  const { title, description, icon, ref, ...rest } = props;
   const internalRef = useRef<HTMLInputElement>(null);
-  useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
+  useImperativeHandle(ref, () => internalRef.current as HTMLInputElement);
 
   return (
     <label className="relative flex justify-center items-stretch cursor-pointer w-full border-[1.5px] border-gray-200 rounded-lg p-3 break-keep text-gray-600 text-center transition-colors has-[input:checked]:bg-primary-50 has-[input:checked]:border-primary-400 has-[input:checked]:text-primary-700">

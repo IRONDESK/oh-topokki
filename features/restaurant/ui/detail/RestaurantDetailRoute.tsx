@@ -32,10 +32,12 @@ export default function RestaurantDetailRoute({
   );
 
   useEffect(() => {
-    setIsOpen(true);
+    // 닫힌 위치가 한 번 그려진 다음 프레임에 열어 슬라이드 인이 보이게 한다
+    const raf = requestAnimationFrame(() => setIsOpen(true));
     store.set(detailPendingAtom, false);
     // 임시 상세 시트·검색·즐겨찾기 등 상세를 열기 전 띄워 둔 오버레이 정리
     overlay.unmountAll();
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

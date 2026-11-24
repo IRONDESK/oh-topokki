@@ -13,9 +13,9 @@ type InputBaseProp = Omit<
 export const InputHead = (
   props: InputBaseProp & { ref?: React.Ref<HTMLInputElement> },
 ) => {
-  const { placeholder, fontSize, ...rest } = props;
+  const { placeholder, fontSize, ref, ...rest } = props;
   const internalRef = useRef<HTMLInputElement>(null);
-  useImperativeHandle(props.ref, () => internalRef.current as HTMLInputElement);
+  useImperativeHandle(ref, () => internalRef.current as HTMLInputElement);
 
   return (
     <div className="relative w-full">
@@ -32,7 +32,7 @@ export const InputHead = (
       />
       <span
         style={{ ...rest.style }}
-        data-hide={(props?.value as string)?.length > 0}
+        data-hide={(rest.value as string)?.length > 0}
         className={clsx(
           "absolute left-0 top-0 text-3xl font-medium text-gray-400 transition-all duration-[0.25s]",
           "peer-[:not(:placeholder-shown)]:opacity-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2",
